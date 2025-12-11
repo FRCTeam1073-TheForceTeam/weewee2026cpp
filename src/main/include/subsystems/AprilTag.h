@@ -4,10 +4,15 @@
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
+#include <wpinet/UDPClient.h>
+#include <wpi/Logger.h>
+#include <array>
 
 class AprilTag : public frc2::SubsystemBase {
  public:
   AprilTag();
+
+  ~AprilTag();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -21,6 +26,7 @@ class AprilTag : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
  private:
-  // Components (e.g. motor controllers and sensors) should generally be
-  // declared private and exposed only through public methods.
+  wpi::Logger m_logger;
+  wpi::UDPClient m_udp_client;
+  std::array<uint8_t, 1024> m_packet_buffer;
 };
