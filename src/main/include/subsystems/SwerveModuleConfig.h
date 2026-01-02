@@ -6,33 +6,71 @@
 #include <frc/geometry/Translation2d.h>
 #include <cmath>
 
+/**  @brief This class provides the configuration specific to indivudal swerve modules and
+ *  associated helper functions.
+ * 
+ * This configuration is typically fixed at runtime matching wiring and physical
+ * configuration of the modules and CAN ID assignment in firmware.
+*/
 class SwerveModuleConfig {
  public:
   SwerveModuleConfig();
 
-  int moduleNumber;
-  const double gearRatio = 6.75;
-  const double wheelDiameterMeters = 0.1016;
-  frc::Translation2d position;
-  const double rotationsPerMeter = gearRatio/(wheelDiameterMeters * 1.06 * M_PI); // 1.06 is the measure correction factor while driving
-  const double radiansPerRotation = (150/7) / (2 * M_PI);
-  const double steerCurrentLimit = 20;
-  const double driveCurrentLimit = 35;
-  const double steerCurrentThreshold = 12;
-  const double driveCurrentThreshold = 22;
-  const double steerCurrentThresholdTime = 0.1;
-  const double driveCurrentThresholdTime = 0.25;
-  double steerP;
-  double steerI;
-  double steerD;
-  double steerV;
-  double driveP;
-  double driveI;
-  double driveD;
-  double driveV;
-  double driveA;
-  const double driveMaxIntegrator = 400.0;
-  const double steerMaxIntegrator = 400.0;
+  // Fluent builder for setting ID.
+  SwerveModuleConfig & with_id(int num) {
+    _number = num;
+    return *this;
+  }
+
+  // Fluent builder for setting position.
+  SwerveModuleConfig & with_position(const frc::Translation2d& pos) {
+    _position = pos;
+    return *this;
+  }
 
 
+  SwerveModuleConfig & with_drive_motor_id(int id) {
+    _driveMotorId = id;
+    return *this;
+  }
+
+  SwerveModuleConfig & with_steer_motor_id(int id) {
+    _steerMotorId = id;
+    return *this;
+  }
+
+  SwerveModuleConfig & with_steer_encoder_id(int id) {
+    _steerEncoderId = id;
+    return *this;
+  }
+
+  static const std::string canBus;   /// Every module is on a the same CANBus in a robot.
+
+  /**
+   * Returns true if this is a valid swerve module config (all fields set).
+   */
+  bool is_valid() const;
+
+  /// @brief  Return which module number this is.
+  int number() const { return _number;}
+
+  /// @brief  Return the position of the module center within the robot.
+  const frc::Translation2d& position() { return _position; }
+
+  /// @brief Return the CANBus ID for the drive motor of the module.
+  int drive_motor_id() { return _driveMotorId; }
+
+  /// @brief Return the CANBus ID for the steering motor of the module.
+  int steer_motor_id() { return _steerMotorId; }
+
+  /// @brief Return the CANBus ID for the steering encoder on the module.
+  int steer_encoder_id() { return _steerEncoderId; }
+
+private:
+
+  int _number;                  /// Every module has a unique numnber 0, through ...N (typically 4).
+  frc::Translation2d _position; /// Every module has a unique position within the robot relative to robot center in hardware.
+  int _driveMotorId;            /// Every module has a unique drive motor CAN ID in firmware
+  int _steerMotorId;            /// Every module has a unique steer motor CAN ID in firmware
+  int _steerEncoderId;          /// Every module has a unique encoder CAN ID in firmware
 };

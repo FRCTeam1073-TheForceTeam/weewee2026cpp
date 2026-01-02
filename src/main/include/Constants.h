@@ -14,8 +14,18 @@
  * they are needed.
  */
 
-namespace OperatorConstants {
+namespace Constants {
 
-inline constexpr int kDriverControllerPort = 0;
+class Operator {
+    public:
+    static constexpr int kDriverControllerPort = 0;
+};
+
+
+class Drivetrain {
+    public:
+    static constexpr float foo = 0.0f;
+
+};
 
 }  // namespace OperatorConstants

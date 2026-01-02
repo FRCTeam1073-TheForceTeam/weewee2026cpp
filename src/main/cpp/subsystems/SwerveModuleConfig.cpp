@@ -4,28 +4,25 @@
 
 #include "subsystems/SwerveModuleConfig.h"
 
-SwerveModuleConfig::SwerveModuleConfig():position(frc::Translation2d(units::meter_t(0.0) , units::meter_t(0.0))){
-    steerP = 0;
-    steerI = 0;
-    steerD = 0;
-    steerV = 0;
-    driveP = 0;
-    driveI = 0;
-    driveD = 0;
-    driveV = 0;
-    driveA = 0;
-    moduleNumber = -1;
+/// @brief This is the same for all swerve modules in the system.
+const std::string SwerveModuleConfig::canBus = "rio";
 
-    SwerveModuleConfig();{
-        driveP = 0.3;
-        driveI = 0.0;
-        driveD = 0.001;
-        driveV = 0.12;
-        driveA = 0.05;
-        steerP = 30.0;
-        steerI = 4.0;
-        steerD = 1.0;
-        steerV = 0.12;
-    }
+SwerveModuleConfig::SwerveModuleConfig() : 
+_number(-1), 
+_position(frc::Translation2d(units::meter_t(0.0) , units::meter_t(0.0))), 
+_driveMotorId(-1), 
+_steerMotorId(-1), 
+_steerEncoderId(-1) {
 
 }
+
+
+bool SwerveModuleConfig::is_valid() const {
+    if (_number < 0) return false;
+    if (_driveMotorId < 0) return false;
+    if (_steerMotorId < 0) return false;
+    if (_steerEncoderId < 0) return false;
+
+    return true;
+}
+

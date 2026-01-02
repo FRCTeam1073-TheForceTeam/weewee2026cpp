@@ -21,15 +21,9 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  // frc2::CommandPtr GetAutonomousCommand();
 
  private:
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  frc2::CommandXboxController m_driverController{
-      OperatorConstants::kDriverControllerPort};
-
-  // The robot's subsystems are defined here...
-  ExampleSubsystem m_subsystem;
 
   void ConfigureBindings();
 };
