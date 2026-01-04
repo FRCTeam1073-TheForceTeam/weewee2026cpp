@@ -11,13 +11,12 @@
 
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
+#include <frc/geometry/Translation2d.h>
 
 #include "SwerveControlConfig.h"
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/CANcoder.hpp>
-#include <frc/geometry/Translation2d.h>
-#include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 
 #include <string>
 
@@ -45,7 +44,7 @@ class SwerveModule {
   /**
    * Strongly typed swerve module detailed state feedback with units.
    */
-  struct DetailedState {
+  struct Feedback {
       units::time::second_t timeStamp = 0.0_s;
       units::angle::radian_t steeringAngle = 0.0_rad;
       units::angular_velocity::radians_per_second_t steeringVelocity = 0.0_rad_per_s;
@@ -55,7 +54,7 @@ class SwerveModule {
   };
 
 
-  SwerveModule(Ids ids, frc::Translation2d location, const std::string& canBus);
+  SwerveModule(Ids ids, frc::Translation2d location, const ctre::phoenix6::CANBus& canBus);
 
   /// @brief Is the configuration valid? 
   bool IsConfigurationValid() const;
@@ -77,7 +76,7 @@ class SwerveModule {
    * This sampling implementation provides basic latency compensation for tighter control performance.
    * 
    */
-  const DetailedState& SampleState(units::time::second_t now);
+  const Feedback& SampleFeedback(units::time::second_t now);
 
   /// Get the current cached swerve modulestate:
   const frc::SwerveModuleState& GetState() const { return _latestSwerveModuleState; }
@@ -98,8 +97,6 @@ class SwerveModule {
 
   // Helper function for configuring steering hardware.
   bool ConfigureSteerHardware();
-
-
 
   // Did this module configure successfully?
   bool _hardwareConfigured;
@@ -127,7 +124,7 @@ class SwerveModule {
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _driveCurrentSig;
 
   // Cached state read from hardware during most recent sample() operation:
-  DetailedState _latestState;
+  Feedback _latestFeedback;
   frc::SwerveModuleState _latestSwerveModuleState;
   frc::SwerveModulePosition _latestSwerveModulePosition;
 

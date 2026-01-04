@@ -8,7 +8,7 @@
 using namespace ctre::phoenix6;
 using namespace ctre::phoenix;
 
-const std::string Drivetrain::canBus = "rio";
+const CANBus Drivetrain::canBus("rio");
 
 Drivetrain::Drivetrain() : 
     _imu(PigeonId, canBus),
@@ -58,7 +58,7 @@ void Drivetrain::Periodic()  {
     auto yaw_angle = frc::Rotation2d(compensatedYaw);
 
     for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
-        _swerveModules[ii].SampleState(now);
+        _swerveModules[ii].SampleFeedback(now);
         _swerveModulePositions[ii] = _swerveModules[ii].GetPosition();
         _swerveModuleStates[ii] = _swerveModules[ii].GetState();
     }

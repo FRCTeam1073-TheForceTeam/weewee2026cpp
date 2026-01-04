@@ -7,10 +7,10 @@
 
 using namespace ctre::phoenix6;
 
-SwerveModule::SwerveModule(Ids ids, frc::Translation2d location, const std::string& canBus) :
+SwerveModule::SwerveModule(Ids ids, frc::Translation2d location, const CANBus& canBus) :
+    _hardwareConfigured(true),
     _ids(ids), 
     _location(std::move(location)), 
-    _hardwareConfigured(true),
     _steerMotor(ids.steerMotorId, canBus), 
     _driveMotor(ids.driveMotorId, canBus),
     _steerEncoder(ids.steerEncoderId, canBus),
@@ -70,14 +70,14 @@ bool SwerveModule::ConfigureHardware() {
 
 
     // Sample the hardware state once we're configured.
-    SampleState(frc::Timer::GetFPGATimestamp());
+    SampleFeedback(frc::Timer::GetFPGATimestamp());
 
     return configured;
 }
 
 
 
-const SwerveModule::DetailedState& SwerveModule::SampleState(units::time::second_t now) {
+const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t now) {
 
     // Refresh input signals:
     BaseStatusSignal::RefreshAll(_steerPositionSig, _steerVelocitySig, _drivePositionSig, _driveVelocitySig, _driveCurrentSig);
@@ -87,28 +87,28 @@ const SwerveModule::DetailedState& SwerveModule::SampleState(units::time::second
     auto compensatedDrivePos = BaseStatusSignal::GetLatencyCompensatedValue(_drivePositionSig, _driveVelocitySig);
 
     // Now refresh our latest module state based on the latency compensated values:
-    _latestState.timeStamp = now;
-    _latestState.driveVelocity = _driveVelocitySig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
-    _latestState.drivePosition = _drivePositionSig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
-    _latestState.driveCurrent = _driveCurrentSig.GetValue();
+    _latestFeedback.timeStamp = now;
+    _latestFeedback.driveVelocity = _driveVelocitySig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestFeedback.drivePosition = _drivePositionSig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestFeedback.driveCurrent = _driveCurrentSig.GetValue();
 
     // Steering Axis incorporates the gear ratio in the control setup:
-    _latestState.steeringVelocity = _steerVelocitySig.GetValue();
-    _latestState.steeringAngle = _steerPositionSig.GetValue();
+    _latestFeedback.steeringVelocity = _steerVelocitySig.GetValue();
+    _latestFeedback.steeringAngle = _steerPositionSig.GetValue();
 
 
     // Compute two simpler outputs:
 
     // Swerve module state:
-    _latestSwerveModuleState.angle = _latestState.steeringAngle;
-    _latestSwerveModuleState.speed = _latestState.driveVelocity;
+    _latestSwerveModuleState.angle = _latestFeedback.steeringAngle;
+    _latestSwerveModuleState.speed = _latestFeedback.driveVelocity;
 
     // Swerve module position:
-    _latestSwerveModulePosition.angle = _latestState.steeringAngle;
-    _latestSwerveModulePosition.distance = _latestState.drivePosition;
+    _latestSwerveModulePosition.angle = _latestFeedback.steeringAngle;
+    _latestSwerveModulePosition.distance = _latestFeedback.drivePosition;
 
     // Return our latest state (reference):
-    return _latestState;
+    return _latestFeedback;
 }
 
 
