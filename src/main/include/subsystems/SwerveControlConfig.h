@@ -14,27 +14,20 @@
 class SwerveControlConfig {
     public:
 
-    SwerveControlConfig();
-
-    // static const units::length::meter_t wheel_diameter = units::length::meter_t(0.1016);
-    // static const units::dimensionless::scalar_t gear_ratio = units::dimensionless::scalar_t(6.75);
-    // static const auto rotations_per_meter = gear_ratio/(units::constants::PI() * wheel_diameter);
-
     // Drive Constants:
-    static constexpr units::length::meter_t drive_wheel_diameter = 0.1016_m;
-    static constexpr units::dimensionless::scalar_t drive_gear_ratio = 6.75;
-    static constexpr units::unit_t<units::detail::unit_multiply<units::angle::turns, units::inverse<units::length::meter>>, double, units::linear_scale> drive_rotations_per_meter =
-        units::angle::turn_t(1) * drive_gear_ratio / (drive_wheel_diameter * units::constants::pi);
-    static constexpr units::current::ampere_t drive_current_limit = 35.0_A;
+    static constexpr units::length::meter_t DriveWheelDiameter = 0.1016_m;
+    static constexpr auto DriveGearRatio = units::angle::turn_t(675.0)/ units::angle::turn_t(100.0);
+    static constexpr auto DriveMetersPerMotorTurn = DriveWheelDiameter * units::constants::pi / (units::angle::turn_t(1.0) * DriveGearRatio);
+    static constexpr units::current::ampere_t DriveCurrentLimit = 35.0_A;
+    static constexpr units::velocity::meters_per_second_t MaxModuleSpeed = 3.5_m/1.0_s;
 
     // Steer Constants:
-    static constexpr units::dimensionless::scalar_t steer_gear_ratio = (150.0/7.0);
-    static constexpr units::current::ampere_t steer_current_limit = 20.0_A;
+    static constexpr auto SteerGearRatio = (units::angle::turn_t(150.0)/units::angle::turn_t(7.0));
+    static constexpr units::current::ampere_t SteerCurrentLimit = 20.0_A;
 
     // Controller Configurations:
-    ctre::phoenix6::configs::SlotConfigs drive_control_config() const;
-    ctre::phoenix6::configs::SlotConfigs steer_control_config() const;
-
+    static ctre::phoenix6::configs::Slot0Configs GetDriveControlConfig();
+    static ctre::phoenix6::configs::Slot0Configs GetSteerControlConfig();
 
     private:
 

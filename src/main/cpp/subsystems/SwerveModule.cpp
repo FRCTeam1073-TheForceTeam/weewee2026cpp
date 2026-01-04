@@ -5,15 +5,15 @@
 #include "subsystems/SwerveModule.h"
 #include <iostream>
 
-
 using namespace ctre::phoenix6;
 
-SwerveModule::SwerveModule(SwerveModuleConfig cfg, std::shared_ptr<SwerveControlConfig> con_cfg):
-    _module_cfg(cfg),
-    _control_cfg(con_cfg),
-    _steerMotor(_module_cfg.steer_motor_id(), SwerveModuleConfig::canBus), 
-    _driveMotor(_module_cfg.drive_motor_id(), SwerveModuleConfig::canBus),
-    _steerEncoder(_module_cfg.steer_encoder_id(), SwerveModuleConfig::canBus),
+SwerveModule::SwerveModule(Ids ids, frc::Translation2d location, const std::string& canBus) :
+    _ids(ids), 
+    _location(std::move(location)), 
+    _hardwareConfigured(true),
+    _steerMotor(ids.steerMotorId, canBus), 
+    _driveMotor(ids.driveMotorId, canBus),
+    _steerEncoder(ids.steerEncoderId, canBus),
     _driveVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
     _steerPositionVoltage(units::angle::turn_t(0.0)),
     _steerVelocitySig{_steerEncoder.GetVelocity(false)}, // Grab the signals we'll need later.
@@ -22,84 +22,132 @@ SwerveModule::SwerveModule(SwerveModuleConfig cfg, std::shared_ptr<SwerveControl
     _drivePositionSig{_driveMotor.GetPosition(false)},
     _driveCurrentSig{_driveMotor.GetTorqueCurrent(false)}
 {
+    // Start out not moving:
+    _targetState.angle = 0_deg;
+    _targetState.speed = 0_mps;
+
+    // Controllers use slot 0:
     _driveVelocityVoltage.WithSlot(0); // Normal drive control using Slot0.
     _steerPositionVoltage.WithSlot(0); // Normal steering control using Slot0
     
+    // Try to configure the hardware once we're constructed and remember if we succeed.
+    _hardwareConfigured &= ConfigureHardware();
+
+    if (!_hardwareConfigured) {
+        std::cerr << "SwerveModule[" << _ids.number << "] failed to configure!" << std::endl;
+    } else {
+        std::cerr << "SwerveModule[" << _ids.number << "] configured." << std::endl;
+    }
 }
 
-
-bool SwerveModule::configure_hardware() {
-
-    if (!_control_cfg) {
-        // TODO: Log configuration errors.
-        return false;
-    }
-
-    if (!configure_drive_hardware()) {
-        // TODO: Log configuration errors.
-        return false;
-    }
-
-    if (!configure_steer_hardware()) {
-        // TODO: Log configuration errors.
-        return false;
-    }
+bool SwerveModule::IsConfigurationValid() const {
+    if (_ids.number < 0) return false;
+    if (_ids.driveMotorId < 0) return false;
+    if (_ids.steerMotorId < 0) return false;
+    if (_ids.steerEncoderId < 0) return false;
 
     return true;
 }
 
 
+bool SwerveModule::ConfigureHardware() {
+    bool configured = true;
 
-const SwerveModule::State& SwerveModule::sample(units::time::microsecond_t now) {
+    if (!IsConfigurationValid()) {
+        std::cerr << "SwerveModule[" << _ids.number << "] failed to configure drive hardware!" << std::endl;
+        configured = false;
+    }
+    if (!ConfigureDriveHardware()) {
+        std::cerr << "SwerveModule[" << _ids.number << "] failed to configure drive hardware!" << std::endl;
+        configured = false;
+    }
+
+    if (!ConfigureSteerHardware()) {
+        std::cerr << "SwerveModule[" << _ids.number << "] failed to configure steer hardware!" << std::endl;
+        configured = false;
+    }
+
+
+
+    // Sample the hardware state once we're configured.
+    SampleState(frc::Timer::GetFPGATimestamp());
+
+    return configured;
+}
+
+
+
+const SwerveModule::DetailedState& SwerveModule::SampleState(units::time::second_t now) {
 
     // Refresh input signals:
     BaseStatusSignal::RefreshAll(_steerPositionSig, _steerVelocitySig, _drivePositionSig, _driveVelocitySig, _driveCurrentSig);
 
-    // Compensate positions:
+    // Latency compensated positions:
     auto compensatedSteeringPos = BaseStatusSignal::GetLatencyCompensatedValue(_steerPositionSig, _steerVelocitySig);
     auto compensatedDrivePos = BaseStatusSignal::GetLatencyCompensatedValue(_drivePositionSig, _driveVelocitySig);
 
     // Now refresh our latest module state based on the latency compensated values:
-    _latestState.time_stamp = now;
-    // _latestState.drive_velocity = _driveVelocitySig.GetValue(); // TODO: Unit conversions.
-    // _latestState.drive_position = _drivePositionSig.GetValue();
-    // _latestState.drive_current = _driveCurrentSig.GetValue();
+    _latestState.timeStamp = now;
+    _latestState.driveVelocity = _driveVelocitySig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestState.drivePosition = _drivePositionSig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestState.driveCurrent = _driveCurrentSig.GetValue();
 
-    // _latestState.steering_velocity = _steerVelocitySig.GetValue();
-    // _latestState.steering_angle = _steerPositionSig.GetValue();
+    // Steering Axis incorporates the gear ratio in the control setup:
+    _latestState.steeringVelocity = _steerVelocitySig.GetValue();
+    _latestState.steeringAngle = _steerPositionSig.GetValue();
+
+
+    // Compute two simpler outputs:
+
+    // Swerve module state:
+    _latestSwerveModuleState.angle = _latestState.steeringAngle;
+    _latestSwerveModuleState.speed = _latestState.driveVelocity;
+
+    // Swerve module position:
+    _latestSwerveModulePosition.angle = _latestState.steeringAngle;
+    _latestSwerveModulePosition.distance = _latestState.drivePosition;
 
     // Return our latest state (reference):
     return _latestState;
 }
 
 
-void SwerveModule::set_command(Command cmd) {
+void SwerveModule::SetCommand(frc::SwerveModuleState cmd) {
+
+    if (!_hardwareConfigured) return; // No controls if configure failed.
+
+    // Cache command for reference later.
+    _targetState = cmd;
 
     // Convert and send this command to the hardware.
+    auto drive_motor_velocity = _targetState.speed / SwerveControlConfig::DriveMetersPerMotorTurn;
+    auto steering_angle = units::angle::degree_t(_targetState.angle.Degrees());
 
-    // Save our latest command.
-    _latestCommand = cmd;
+    // Controller commands.
+    _driveMotor.SetControl(_driveVelocityVoltage.WithVelocity(drive_motor_velocity));
+    _steerMotor.SetControl(_steerPositionVoltage.WithPosition(steering_angle));
 }
 
+  void SwerveModule::SetDriveBrakeMode(bool brake) {
+    if (brake)
+        _driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake);
+    else
+        _driveMotor.SetNeutralMode(signals::NeutralModeValue::Coast);
+  }
 
-
-bool SwerveModule::configure_drive_hardware() {
+bool SwerveModule::ConfigureDriveHardware() {
     configs::TalonFXConfiguration configs{};
 
-    configs.TorqueCurrent.PeakForwardTorqueCurrent = 30_A;
-    configs.TorqueCurrent.PeakReverseTorqueCurrent = -30_A;
+    configs.TorqueCurrent.PeakForwardTorqueCurrent = SwerveControlConfig::DriveCurrentLimit;
+    configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::DriveCurrentLimit;
     
 
     configs.Voltage.PeakForwardVoltage = 8_V;
     configs.Voltage.PeakReverseVoltage = -8_V;
 
-    // Slot zero for the normal control loop.
-    configs.Slot0.kS = 0.0f;
-    configs.Slot0.kV = 0.12; // Karken X60:  500kV, 500rpm per V = 8.33 rps per V, 1/8.33 = 0.12 v/rps
-    configs.Slot0.kP = 0.11;
-    configs.Slot0.kI = 0.0;
-    configs.Slot0.kD = 0.0;
-    configs.Slot0.kA = 0.0;
+    // Slot zero for the normal control loop:
+    configs.Slot0 = SwerveControlConfig::GetDriveControlConfig();
+
 
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
@@ -126,10 +174,10 @@ bool SwerveModule::configure_drive_hardware() {
 
 }
 
-bool SwerveModule::configure_steer_hardware() {
+bool SwerveModule::ConfigureSteerHardware() {
 
     // Default encoder configuration:
-    configs::CANcoderConfiguration encoder_configs{};
+    configs::CANcoderConfiguration  encoder_configs;
     _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s); 
 
     // Read back the magnet sensor config for this module.
@@ -138,7 +186,8 @@ bool SwerveModule::configure_steer_hardware() {
     if (!status.IsOK()) {
         // Log error.
     }
-    std::cout << "Swerve Module " << _module_cfg.number() << " Encoder Offset: " << magSenseConfig.MagnetOffset.value() << std::endl;
+
+    std::cout << "SwerveModule [" << _ids.number << "] Encoder offset: " << magSenseConfig.MagnetOffset.value() << std::endl;
 
     // Faster signals for steering encoder:
     BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, _steerPositionSig, _steerVelocitySig);
@@ -146,24 +195,19 @@ bool SwerveModule::configure_steer_hardware() {
     // Steering motor configuration:
     configs::TalonFXConfiguration configs{};
 
-    configs.TorqueCurrent.PeakForwardTorqueCurrent = 30_A;
-    configs.TorqueCurrent.PeakReverseTorqueCurrent = -30_A;
+    configs.TorqueCurrent.PeakForwardTorqueCurrent = SwerveControlConfig::SteerCurrentLimit;
+    configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::SteerCurrentLimit;
 
     configs.Voltage.PeakForwardVoltage = 8_V;
     configs.Voltage.PeakReverseVoltage = -8_V;
 
     // Slot zero for the normal control loop.
-    configs.Slot0.kS = 0.0f;
-    configs.Slot0.kV = 0.12; // Karken X60:  500kV, 500rpm per V = 8.33 rps per V, 1/8.33 = 0.12 v/rps
-    configs.Slot0.kP = 0.11;
-    configs.Slot0.kI = 0.0;
-    configs.Slot0.kD = 0.0;
-    configs.Slot0.kA = 0.0;
+    configs.Slot0 = SwerveControlConfig::GetSteerControlConfig();
 
     // Set up steering for using remote CANcoder feedback:
-    configs.Feedback.WithFeedbackRemoteSensorID(_module_cfg.steer_encoder_id());
+    configs.Feedback.WithFeedbackRemoteSensorID(_ids.steerEncoderId);
     configs.Feedback.WithFeedbackSensorSource(ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder);
-    configs.Feedback.WithRotorToSensorRatio(150.0/7.0);
+    configs.Feedback.WithRotorToSensorRatio(SwerveControlConfig::SteerGearRatio.value());
     configs.Feedback.WithSensorToMechanismRatio(1.0);
 
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::Clockwise_Positive);

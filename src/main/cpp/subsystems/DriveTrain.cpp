@@ -3,8 +3,137 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/DriveTrain.h"
+#include <iostream>
 
-DriveTrain::DriveTrain() = default;
+using namespace ctre::phoenix6;
+using namespace ctre::phoenix;
 
-// This method will be called once per scheduler run
-void DriveTrain::Periodic() {}
+const std::string Drivetrain::canBus = "rio";
+
+Drivetrain::Drivetrain() : 
+    _imu(PigeonId, canBus),
+    _swerveModules{
+        SwerveModule({ 0,  14, 15, 10}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 1,  16, 17, 11}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 2,  18, 19, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 3,  20, 21, 13}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
+    _kinematics(_swerveModules[0].GetLocation(), 
+                 _swerveModules[1].GetLocation(), 
+                 _swerveModules[2].GetLocation(), 
+                 _swerveModules[3].GetLocation()),
+    _odometry(_kinematics, frc::Rotation2d(), 
+                {_swerveModules[0].GetPosition(),
+                _swerveModules[1].GetPosition(),
+                _swerveModules[2].GetPosition(),
+                _swerveModules[3].GetPosition()}, 
+                frc::Pose2d()),
+    _yawSig(_imu.GetYaw()),
+    _pitchSig(_imu.GetPitch()),
+    _rollSig(_imu.GetRoll()),
+    _yawRateSig(_imu.GetAngularVelocityZDevice()),
+    _hardwareConfigured(false),
+    _parkingBrake(false)
+{
+
+    _hardwareConfigured &= ConfigureHardware();
+
+    for (size_t ii(0); ii < _swerveModules.size(); ++ii) 
+        _hardwareConfigured &= _swerveModules[ii].HardwareConfigured();
+
+    if (_hardwareConfigured) {
+        std::cerr << "Drivetrain hardware configuration error!!" << std::endl;
+    }    
+}
+
+
+void Drivetrain::Periodic()  {
+    // Sample all the hardware:
+    auto now = frc::Timer::GetFPGATimestamp();
+
+    // Sample IMU signals and latency compensate the IMU data:
+    BaseStatusSignal::RefreshAll(_yawSig, _yawRateSig, _pitchSig, _rollSig);
+
+    // Latency compensated yaw:
+    auto compensatedYaw = BaseStatusSignal::GetLatencyCompensatedValue(_yawSig, _yawRateSig);
+    auto yaw_angle = frc::Rotation2d(compensatedYaw);
+
+    for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
+        _swerveModules[ii].SampleState(now);
+        _swerveModulePositions[ii] = _swerveModules[ii].GetPosition();
+        _swerveModuleStates[ii] = _swerveModules[ii].GetState();
+    }
+
+    // Update odometry and chassis speeds once we've sampled the hardware:
+    _speeds = _kinematics.ToChassisSpeeds(_swerveModuleStates);
+    _odometry.Update(yaw_angle, _swerveModulePositions);
+
+    // TODO: Compute extra pushing forces on the chassis based on torque feedback
+
+    if (_parkingBrake) {
+        // Hardcoded brake mode:
+        // Leaves brake command on, does nothing here.
+    } else {
+        // Normal command pathway:
+        auto moduleCommands = _kinematics.ToSwerveModuleStates(_targetSpeeds);
+        frc::SwerveDriveKinematics<4>::DesaturateWheelSpeeds(&moduleCommands, SwerveControlConfig::MaxModuleSpeed);  // Keep commands feasible.
+
+        // Send the commands to swerve module hardware:
+        for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
+            moduleCommands[ii].Optimize(_swerveModulePositions[ii].angle);
+            _swerveModules[ii].SetCommand(moduleCommands[ii]);
+        }
+    }
+
+}
+
+/// Reset the odometry to a specific pose on the field.
+void Drivetrain::ResetOdometry(const frc::Pose2d pose) {
+    _odometry.ResetPosition(_yawSig.GetValue(), 
+                {_swerveModules[0].GetPosition(),
+                _swerveModules[1].GetPosition(),
+                _swerveModules[2].GetPosition(),
+                _swerveModules[3].GetPosition()}, 
+                pose);
+}
+
+
+void Drivetrain::SetParkingBrake(bool brakeOn) {
+
+    if (brakeOn) {
+        // Command modules to braked state:
+        // Zero target:
+        _targetSpeeds.vx = 0.0_mps;
+        _targetSpeeds.vy = 0.0_mps;
+        _targetSpeeds.omega = 0.0_rad/1.0_s;
+
+        _swerveModules[0].SetCommand(frc::SwerveModuleState(0.0_mps, units::angle::degree_t(45.0)));
+        _swerveModules[1].SetCommand(frc::SwerveModuleState(0.0_mps, units::angle::degree_t(-45.0)));
+        _swerveModules[2].SetCommand(frc::SwerveModuleState(0.0_mps, units::angle::degree_t(-45.0)));
+        _swerveModules[3].SetCommand(frc::SwerveModuleState(0.0_mps, units::angle::degree_t(45.0)));
+    }
+
+    _parkingBrake = brakeOn;
+}
+
+
+double Drivetrain::GetAverageLoad() const {
+    return 0.0;
+}
+
+
+bool Drivetrain::ConfigureHardware() {
+    configs::Pigeon2Configuration configs;
+
+    // Apply configuration waiting for confirmation.
+    auto status = _imu.GetConfigurator().Apply(configs, 1_s);
+
+    if (!status.IsOK()) {
+        std::cerr << "Drivetrain: IMU Hardware configuration error." << std::endl;
+        return false;
+    }
+
+    // Set IMU readings for 100Hz.
+    BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz,_yawRateSig, _yawSig);
+
+    return true;
+}

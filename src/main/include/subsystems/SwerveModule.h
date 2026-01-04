@@ -8,7 +8,10 @@
 #include <units/length.h>
 #include <units/velocity.h>
 #include <units/current.h>
-#include "SwerveModuleConfig.h"
+
+#include <frc/kinematics/SwerveModulePosition.h>
+#include <frc/kinematics/SwerveModuleState.h>
+
 #include "SwerveControlConfig.h"
 
 #include <ctre/phoenix6/TalonFX.hpp>
@@ -29,42 +32,44 @@ class SwerveModule {
  public:
 
   /**
-   * Strongly typed swerve module state feedback with units.
+   * The collection of IDs that are associated with a specific swerve module and its number.
    */
-  class State {
-    public:
-      State() = default;
-      units::time::microsecond_t time_stamp = 0.0_us;
-      units::angle::radian_t steering_angle = 0.0_rad;
-      units::angular_velocity::radians_per_second_t steering_velocity = 0.0_rad_per_s;
-      units::velocity::meters_per_second_t drive_velocity = 0.0_m/1.0_s;
-      units::length::meter_t drive_position = 0.0_m;
-      units::current::ampere_t drive_current = 0.0_A; // Allows approximate effort computation and direction of force.
+  struct Ids {
+    int number = -1;                  /// Every module has a unique numnber 0, through ...N (typically 4).
+    int driveMotorId = -1;            /// Every module has a unique drive motor CAN ID in firmware
+    int steerMotorId = -1;            /// Every module has a unique steer motor CAN ID in firmware
+    int steerEncoderId = -1;          /// Every module has a unique encoder CAN ID in firmware
   };
+
 
   /**
-   * Strongly typed swerve module command with units.
+   * Strongly typed swerve module detailed state feedback with units.
    */
-  class Command {
-    public:
-      Command() = default;
-      Command(units::time::microsecond_t now, units::angle::radian_t steer, units::velocity::meters_per_second_t drive) : 
-        time_stamp(now), 
-        steering_angle(steer),
-        drive_velocity(drive) {};
-      units::time::microsecond_t time_stamp = 0.0_us;
-      units::angle::radian_t steering_angle = 0.0_rad;
-      units::velocity::meters_per_second_t drive_velocity = 0.0_m/1.0_s;
+  struct DetailedState {
+      units::time::second_t timeStamp = 0.0_s;
+      units::angle::radian_t steeringAngle = 0.0_rad;
+      units::angular_velocity::radians_per_second_t steeringVelocity = 0.0_rad_per_s;
+      units::velocity::meters_per_second_t driveVelocity = 0.0_m/1.0_s;
+      units::length::meter_t drivePosition = 0.0_m;
+      units::current::ampere_t driveCurrent = 0.0_A; // Allows approximate effort computation and direction of force.
   };
 
-  SwerveModule(SwerveModuleConfig mod_cfg, std::shared_ptr<SwerveControlConfig> con_cfg);
+
+  SwerveModule(Ids ids, frc::Translation2d location, const std::string& canBus);
+
+  /// @brief Is the configuration valid? 
+  bool IsConfigurationValid() const;
+
+  const Ids& GetConfiguration() const { return _ids;}
+
+  /// @brief  Return the position of the module center within the robot.
+  const frc::Translation2d& GetLocation() { return _location; }
 
   /// Configure the hardware for this module.
-  bool configure_hardware();
+  bool ConfigureHardware();
 
-
-  /// Access the swerve module config:
-  const SwerveModuleConfig& module_config() const { _module_cfg;}
+  /// Return true if the hardware configuration succeeded.
+  bool HardwareConfigured() const { return _hardwareConfigured; }
 
   /** Sample the hardware feedback information from the module, given the current timestamp which is store with the state.
    *  This avoids duplicating the sampling of time multiple times per update cycle.
@@ -72,27 +77,37 @@ class SwerveModule {
    * This sampling implementation provides basic latency compensation for tighter control performance.
    * 
    */
-  const State& sample(units::time::microsecond_t now);
+  const DetailedState& SampleState(units::time::second_t now);
 
-  /// Read the current swerve modulestate:
-  const State& state() const { return _latestState; }
+  /// Get the current cached swerve modulestate:
+  const frc::SwerveModuleState& GetState() const { return _latestSwerveModuleState; }
 
-  /// Update the commands to the hardware.
-  void set_command(Command cmd);
+  /// Get feedback as swerve module position: 
+  const frc::SwerveModulePosition& GetPosition() const { return _latestSwerveModulePosition; }
+
+  /// Send the command to the hardware and cache them.
+  void SetCommand(frc::SwerveModuleState cmd);
+
+  /// Set the drive brake mode:
+  void SetDriveBrakeMode(bool brakes = true);
 
  private:
 
   // Helper function for configuring drive hardware.
-  bool configure_drive_hardware();
+  bool ConfigureDriveHardware();
 
   // Helper function for configuring steering hardware.
-  bool configure_steer_hardware();
+  bool ConfigureSteerHardware();
+
+
+
+  // Did this module configure successfully?
+  bool _hardwareConfigured;
 
   // Module-specific configuration:
-  SwerveModuleConfig _module_cfg;
+  Ids _ids;
+  frc::Translation2d _location; /// Every module has a unique position within the robot relative to robot center in hardware.
 
-  // Shared controller-level configuration:
-  std::shared_ptr<SwerveControlConfig> _control_cfg;
 
   // Hardware interfaces:
   ctre::phoenix6::hardware::TalonFX _steerMotor;
@@ -112,9 +127,10 @@ class SwerveModule {
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _driveCurrentSig;
 
   // Cached state read from hardware during most recent sample() operation:
-  State _latestState;
+  DetailedState _latestState;
+  frc::SwerveModuleState _latestSwerveModuleState;
+  frc::SwerveModulePosition _latestSwerveModulePosition;
 
   // Cached last command sent from drivetrain:
-  Command _latestCommand;
-
+  frc::SwerveModuleState _targetState;
 };

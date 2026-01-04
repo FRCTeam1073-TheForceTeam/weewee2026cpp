@@ -1,25 +1,23 @@
 #include "subsystems/SwerveControlConfig.h"
 
-SwerveControlConfig::SwerveControlConfig() {
-}
 
-ctre::phoenix6::configs::SlotConfigs SwerveControlConfig::drive_control_config() const {
-    ctre::phoenix6::configs::SlotConfigs config;
+ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetDriveControlConfig() {
+    ctre::phoenix6::configs::Slot0Configs config;
     config.kV = 0.12;
-    config.kP = 0.0;
+    config.kP = 0.2;
     config.kI = 0.0;
     config.kD = 0.0;
-    config.kA = 0.0;
+    config.kA = 0.01;
     config.kS = 0.0;
 
     return config;
 }
 
-ctre::phoenix6::configs::SlotConfigs SwerveControlConfig::steer_control_config() const {
-    ctre::phoenix6::configs::SlotConfigs config;
+ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetSteerControlConfig() {
+    ctre::phoenix6::configs::Slot0Configs config;
     config.kV = 0.12;
-    config.kP = 0.0;
-    config.kI = 0.0;
+    config.kP = 0.15;
+    config.kI = 0.05;
     config.kD = 0.0;
     config.kA = 0.0;
     config.kS = 0.0;
