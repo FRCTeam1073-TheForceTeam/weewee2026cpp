@@ -12,7 +12,7 @@
 #include <variant>
 #include <frc/filter/Debouncer.h>
 #include <frc/Joystick.h>
-#include <frc2/command/button/JoystickButton.h>
+#include <frc/XboxController.h>
 
 class OI : public frc2::SubsystemBase {
     public:
@@ -39,10 +39,12 @@ class OI : public frc2::SubsystemBase {
             ViewButton = 6,
             MenuButton = 7,
         };
+
+        //TODO: do we want a stick double value to radians
         
         // feedback
         struct Feedback {
-            units::radians leftStickX; //TODO: put in the other values
+            //TODO: figure out what to put in here
         };
 
         // Constructor
@@ -53,41 +55,65 @@ class OI : public frc2::SubsystemBase {
         // access the feedback from the controllers
         const Feedback& GetFeedback() const { return _feedback; }
 
+        double GetDriverLeftX();
+        double GetDriverLeftY();
+        double GetDriverRightX();
+        double GetDriverRightY();
+        double GetOperatorLeftX();
+        double GetOperatorLeftY();
+        double GetOperatorRightX();
+        double GetOperatorRightY();
 
-        //TODO: figure out what these units actually should be
-        units::radians GetDriverLeftX();
-        units::radians GetDriverLeftY();
-        units::radians GetDriverRightX();
-        units::radians GetDriverRightY();
-        units::radians GetOperatorLeftX();
-        units::radians GetOperatorLeftY();
-        units::radians GetOperatorRightX();
-        units::radians GetOperatorRightY();
+        double GetDriverLeftTrigger();
+        double GetDriverRightTriggger();
+        double GetOperatorLeftTrigger();
+        double GetOperatorRightTrigger();
 
-        // get button values
-        
+        bool GetDriverAButton();
+        bool GetDriverBButton();
+        bool GetDriverXButton();
+        bool GetDriverYButton();
+        bool GetDriverMenuButton();
+        bool GetDriverViewButton();
+        bool GetDriverLeftBumper();
+        bool GetDriverRightBumper();
+        bool GetDriverDPadUp();
+        bool GetDriverDPadRight();
+        bool GetDriverDPadLeft();
+        bool GetDriverDPadDown();
+
+        bool GetOperatorAButton();
+        bool GetOperatorBButton();
+        bool GetOperatorXButton();
+        bool GetOperatorYButton();
+        bool GetOperatorMenuButton();
+        bool GetOperatorViewButton();
+        bool GetOperatorLeftBumper();
+        bool GetOperatorRightBumper();
+        bool GetOperatorDPadUp();
+        bool GetOperatorDPadRight();
+        bool GetOperatorDPadLeft();
+        bool GetOperatorDPadDown();
+
+        void ZeroDriverController();
+        void ZeroOperatorController();
 
     private:
         bool ConfigureHardware();
         bool _hardwareConfigured;
 
-        double LEFT_X_ZERO;
-        double LEFT_Y_ZERO;
-        double RIGHT_X_ZERO;
-        double RIGHT_Y_ZERO;
-
         Feedback _feedback;
 
         // create the controller objects
-        frc::Joystick _driverController;
-        frc::Joystick _operatorController;    
+        frc::XboxController _driverController;
+        frc::XboxController _operatorController;    
 
         // TODO: make debouncers for indevidual buttons
         // general debouncer for buttons
         frc::Debouncer m_debouncer{50_ms, frc::Debouncer::DebounceType::kBoth};
 
-        frc2::JoystickButton _driverAButton;
-        frc2::JoystickButton _driverBButton;
-        frc2::JoystickButton _driverXButton;
-        frc2::JoystickButton _driverYButton;
+        double LEFT_X_ZERO;
+        double LEFT_Y_ZERO;
+        double RIGHT_X_ZERO;
+        double RIGHT_Y_ZERO;
 };
