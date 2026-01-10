@@ -99,9 +99,6 @@ class OI : public frc2::SubsystemBase {
         void ZeroOperatorController();
 
     private:
-        bool ConfigureHardware();
-        bool _hardwareConfigured;
-
         Feedback _feedback;
 
         // create the controller objects

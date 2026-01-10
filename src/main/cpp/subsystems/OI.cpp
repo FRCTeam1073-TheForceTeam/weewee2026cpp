@@ -7,16 +7,8 @@
 
 OI::OI() :
 _driverController(0),
-_operatorController(1),
-_hardwareConfigured(false)
-{
-    _hardwareConfigured &= ConfigureHardware();
-
-    if (_hardwareConfigured) {
-        std::cerr << "OI hardware configuration error!!" << std::endl;
-    }
-}
-
+_operatorController(1)
+{}
 
 // This method will be called once per scheduler run
 void OI::Periodic() {}
@@ -188,8 +180,4 @@ void OI::ZeroOperatorController() {
     LEFT_Y_ZERO = GetOperatorLeftY();
     RIGHT_X_ZERO = GetOperatorRightX();
     RIGHT_Y_ZERO = GetOperatorRightY();
-}
-
-bool OI::ConfigureHardware() {
-
 }
