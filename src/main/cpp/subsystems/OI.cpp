@@ -93,22 +93,20 @@ bool OI::GetDriverRightBumper() {
     return _driverController.GetRightBumper();
 }
 
-//TODO: no idea how DPAd works
 bool OI::GetDriverDPadUp() {
-    return false;
-    // return _driverController.POVUp();
+    return _driverController.GetPOV(0);
 }
 
 bool OI::GetDriverDPadRight() {
-    return false;
+    return _driverController.GetPOV(90);
 }
 
 bool OI::GetDriverDPadLeft() {
-    return false;
+    return _driverController.GetPOV(270);
 }
 
 bool OI::GetDriverDPadDown() {
-    return false;
+    return _driverController.GetPOV(180);
 }
 
 bool OI::GetOperatorAButton() {
@@ -143,21 +141,20 @@ bool OI::GetOperatorRightBumper() {
     return _operatorController.GetRightBumper();
 }
 
-//TODO: no idea how DPad works
 bool OI::GetOperatorDPadUp() {
-    return false;
+    return _driverController.GetPOV(0);
 }
 
 bool OI::GetOperatorDPadRight() {
-    return false;
+    return _driverController.GetPOV(90);
 }
 
 bool OI::GetOperatorDPadLeft() {
-    return false;
+    return _driverController.GetPOV(270);
 }
 
 bool OI::GetOperatorDPadDown() {
-    return false;
+    return _driverController.GetPOV(180);
 }
 
 void OI::ZeroDriverController() {
