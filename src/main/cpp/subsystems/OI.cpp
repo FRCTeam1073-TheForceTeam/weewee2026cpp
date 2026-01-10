@@ -21,34 +21,175 @@ _hardwareConfigured(false)
 // This method will be called once per scheduler run
 void OI::Periodic() {}
 
-double GetDriverLeftX() {
+double OI::GetDriverLeftX() {
     return _driverController.GetLeftX();
 }
 
-double GetDriverLeftY() {
+double OI::GetDriverLeftY() {
     return _driverController.GetLeftY();
-};
+}
 
-double GetDriverRightX() {
+double OI::GetDriverRightX() {
     return _driverController.GetRightX();
-};
+}
 
-double GetDriverRightY() {
+double OI::GetDriverRightY() {
     return _driverController.GetRightY();
-};
+}
 
-double GetOperatorLeftX() {
+double OI::GetOperatorLeftX() {
     return _operatorController.GetLeftX();
-};
+}
 
-double GetOperatorLeftY() {
+double OI::GetOperatorLeftY() {
     return _operatorController.GetLeftY();
-};
+}
 
-double GetOperatorRightX() {
+double OI::GetOperatorRightX() {
     return _operatorController.GetRightX();
-};
+}
 
-double GetOperatorRightY() {
+double OI::GetOperatorRightY() {
     return _operatorController.GetRightY();
-};
+}
+
+double OI::GetDriverLeftTrigger() {
+    return _driverController.GetLeftTriggerAxis();
+}
+
+double OI::GetDriverRightTriggger() {
+    return _driverController.GetRightTriggerAxis();
+}
+
+double OI::GetOperatorLeftTrigger() {
+    return _operatorController.GetRightTriggerAxis();
+}
+
+double OI::GetOperatorRightTrigger() {
+    return _operatorController.GetRightTriggerAxis();
+}
+
+bool OI::GetDriverAButton() {
+    return _driverController.GetAButton();
+}
+
+bool OI::GetDriverBButton() {
+    return _driverController.GetBButton();
+}
+
+bool OI::GetDriverXButton() {
+    return _driverController.GetXButton();
+}
+
+bool OI::GetDriverYButton() {
+    return _driverController.GetYButton();
+}
+
+bool OI::GetDriverMenuButton() {
+    return _driverController.GetStartButton();
+}
+
+bool OI::GetDriverViewButton() {
+    return _driverController.GetBackButton();
+}
+
+bool OI::GetDriverLeftBumper() {
+    return _driverController.GetLeftBumper();
+}
+
+bool OI::GetDriverRightBumper() {
+    return _driverController.GetRightBumper();
+}
+
+//TODO: no idea how DPAd works
+bool OI::GetDriverDPadUp() {
+    return false;
+    // return _driverController.POVUp();
+}
+
+bool OI::GetDriverDPadRight() {
+    return false;
+}
+
+bool OI::GetDriverDPadLeft() {
+    return false;
+}
+
+bool OI::GetDriverDPadDown() {
+    return false;
+}
+
+bool OI::GetOperatorAButton() {
+    return _operatorController.GetAButton();
+}
+
+bool OI::GetOperatorBButton() {
+    return _operatorController.GetBButton();
+}
+
+bool OI::GetOperatorXButton() {
+    return _operatorController.GetXButton();
+}
+
+bool OI::GetOperatorYButton() {
+    return _operatorController.GetYButton();
+}
+
+bool OI::GetOperatorMenuButton() {
+    return _operatorController.GetStartButton();
+}
+
+bool OI::GetOperatorViewButton() {
+    return _operatorController.GetBackButton();
+}
+
+bool OI::GetOperatorLeftBumper() {
+    return _operatorController.GetLeftBumper();
+}
+
+bool OI::GetOperatorRightBumper() {
+    return _operatorController.GetRightBumper();
+}
+
+//TODO: no idea how DPad works
+bool OI::GetOperatorDPadUp() {
+    return false;
+}
+
+bool OI::GetOperatorDPadRight() {
+    return false;
+}
+
+bool OI::GetOperatorDPadLeft() {
+    return false;
+}
+
+bool OI::GetOperatorDPadDown() {
+    return false;
+}
+
+void OI::ZeroDriverController() {
+    LEFT_X_ZERO = 0;
+    LEFT_Y_ZERO = 0;
+    RIGHT_X_ZERO = 0;
+    RIGHT_Y_ZERO = 0;
+    LEFT_X_ZERO = GetDriverLeftX();
+    LEFT_Y_ZERO = GetDriverLeftY();
+    RIGHT_X_ZERO = GetDriverRightX();
+    RIGHT_Y_ZERO = GetDriverRightY();
+}
+
+void OI::ZeroOperatorController() {
+    LEFT_X_ZERO = 0;
+    LEFT_Y_ZERO = 0;
+    RIGHT_X_ZERO = 0;
+    RIGHT_Y_ZERO = 0;
+    LEFT_X_ZERO = GetOperatorLeftX();
+    LEFT_Y_ZERO = GetOperatorLeftY();
+    RIGHT_X_ZERO = GetOperatorRightX();
+    RIGHT_Y_ZERO = GetOperatorRightY();
+}
+
+bool OI::ConfigureHardware() {
+
+}
