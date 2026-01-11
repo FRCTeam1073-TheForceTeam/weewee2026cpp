@@ -13,10 +13,10 @@ const CANBus Drivetrain::canBus("rio");
 Drivetrain::Drivetrain() : 
     _imu(PigeonId, canBus),
     _swerveModules{
-        SwerveModule({ 0,  14, 15, 10}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 1,  16, 17, 11}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 2,  18, 19, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 3,  20, 21, 13}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
+        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
+        SwerveModule({ 3,  26, 17, 15}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
     _kinematics(_swerveModules[0].GetLocation(), 
                  _swerveModules[1].GetLocation(), 
                  _swerveModules[2].GetLocation(), 
