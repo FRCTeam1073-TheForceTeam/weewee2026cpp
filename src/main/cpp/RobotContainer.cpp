@@ -10,6 +10,12 @@
 #include "commands/ExampleCommand.h"
 
 RobotContainer::RobotContainer() {
+  noPosition = "No Position",
+  rightPosition = "Right Auto",
+  leftPosition = "Left Auto",
+  centerPosition = "Center Auto",
+  testAuto = "Test Auto",
+  cmd_teleopDrive(Drivetrain m_drivetrain, OI m_OI),
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
@@ -17,9 +23,9 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-
- 
 }
+
+
 
 // frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 //  // TODO:

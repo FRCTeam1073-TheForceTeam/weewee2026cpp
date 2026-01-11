@@ -8,7 +8,11 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
+#include <frc/smartdashboard/SendableChooser.h>
 #include "subsystems/ExampleSubsystem.h"
+#include "subsystems/DriveTrain.h"
+#include "subsystems/OI.h"
+#include "commands/TeleopDrive.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -20,10 +24,38 @@
 class RobotContainer {
  public:
   RobotContainer();
-
   // frc2::CommandPtr GetAutonomousCommand();
+  bool haveInitStartPos;
+
+  void autonomousInit();
+
+  Command GetAutonomousCommand();
+  Command GetTeleopCommand();
+  Command GetDisbaledCommand();
+
+  void disblaedInit();
+
+  bool FindStartPos();
+
+  bool DisabledPeriodic();
+
 
  private:
+  const Drivetrain m_drivetrain;
+  const OI m_OI;
+
+  const TeleopDrive cmd_teleopDrive;
+
+  bool isRed;
+
+  const frc::SendableChooser<std::string> m_positionChooser;
+  const std::string noPosition;
+  const std::string rightPosition;
+  const std::string leftPosition;
+  const std::string centerPosition;
+
+  const frc::SendableChooser<std::string> m_levelChooser;
+  const std::string testAuto;
 
   void ConfigureBindings();
 };
