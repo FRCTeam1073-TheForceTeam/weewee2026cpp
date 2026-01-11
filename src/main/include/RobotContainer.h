@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
@@ -23,15 +25,23 @@
  */
 class RobotContainer {
  public:
+
+  static const std::string noPosition;
+  static const std::string rightPosition;
+  static const std::string leftPosition;
+  static const std::string centerPosition;
+  static const std::string testAuto;
+
+  
   RobotContainer();
   // frc2::CommandPtr GetAutonomousCommand();
   bool haveInitStartPos;
 
   void autonomousInit();
 
-  Command GetAutonomousCommand();
-  Command GetTeleopCommand();
-  Command GetDisbaledCommand();
+  frc2::Command GetAutonomousCommand();
+  frc2::Command GetTeleopCommand();
+  frc2::Command GetDisbaledCommand();
 
   void disblaedInit();
 
@@ -41,21 +51,18 @@ class RobotContainer {
 
 
  private:
-  const Drivetrain m_drivetrain;
-  const OI m_OI;
+  std::shared_ptr<Drivetrain> m_drivetrain;
+  std::shared_ptr<OI> m_OI;
 
-  const TeleopDrive cmd_teleopDrive;
+  std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
   bool isRed;
 
   const frc::SendableChooser<std::string> m_positionChooser;
-  const std::string noPosition;
-  const std::string rightPosition;
-  const std::string leftPosition;
-  const std::string centerPosition;
+
 
   const frc::SendableChooser<std::string> m_levelChooser;
-  const std::string testAuto;
+
 
   void ConfigureBindings();
 };

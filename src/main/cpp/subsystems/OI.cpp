@@ -49,7 +49,7 @@ double OI::GetDriverLeftTrigger() {
     return _driverController.GetLeftTriggerAxis();
 }
 
-double OI::GetDriverRightTriggger() {
+double OI::GetDriverRightTrigger() {
     return _driverController.GetRightTriggerAxis();
 }
 
@@ -86,11 +86,11 @@ bool OI::GetDriverViewButton() {
 }
 
 bool OI::GetDriverLeftBumper() {
-    return _driverController.GetLeftBumper();
+    return _driverController.GetLeftBumperButton();
 }
 
 bool OI::GetDriverRightBumper() {
-    return _driverController.GetRightBumper();
+    return _driverController.GetRightBumperButton();
 }
 
 bool OI::GetDriverDPadUp() {
@@ -134,11 +134,11 @@ bool OI::GetOperatorViewButton() {
 }
 
 bool OI::GetOperatorLeftBumper() {
-    return _operatorController.GetLeftBumper();
+    return _operatorController.GetLeftBumperButton();
 }
 
 bool OI::GetOperatorRightBumper() {
-    return _operatorController.GetRightBumper();
+    return _operatorController.GetRightBumperButton();
 }
 
 bool OI::GetOperatorDPadUp() {

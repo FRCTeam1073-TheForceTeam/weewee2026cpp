@@ -65,7 +65,7 @@ class OI : public frc2::SubsystemBase {
         double GetOperatorRightY();
 
         double GetDriverLeftTrigger();
-        double GetDriverRightTriggger();
+        double GetDriverRightTrigger();
         double GetOperatorLeftTrigger();
         double GetOperatorRightTrigger();
 

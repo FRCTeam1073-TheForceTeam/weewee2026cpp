@@ -89,12 +89,12 @@ const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t
     // Now refresh our latest module state based on the latency compensated values:
     _latestFeedback.timeStamp = now;
     _latestFeedback.driveVelocity = _driveVelocitySig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
-    _latestFeedback.drivePosition = _drivePositionSig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestFeedback.drivePosition = compensatedDrivePos * SwerveControlConfig::DriveMetersPerMotorTurn;
     _latestFeedback.driveCurrent = _driveCurrentSig.GetValue();
 
     // Steering Axis incorporates the gear ratio in the control setup:
     _latestFeedback.steeringVelocity = _steerVelocitySig.GetValue();
-    _latestFeedback.steeringAngle = _steerPositionSig.GetValue();
+    _latestFeedback.steeringAngle = compensatedSteeringPos;
 
 
     // Compute two simpler outputs:

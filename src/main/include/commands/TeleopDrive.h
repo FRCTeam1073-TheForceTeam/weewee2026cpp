@@ -9,16 +9,17 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <cmath>
+#include <memory>
 
 class TeleopDrive
-    : public frc2::Command {
+    : public frc2::CommandHelper<frc2::Command, TeleopDrive> {
 public:
   /**
    * Creates a new ExampleCommand.
    *
    * @param drivetrain The subsystem used by this command.
    */
-    explicit TeleopDrive(Drivetrain* drivetrain, OI* oi);
+    explicit TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi);
 
     void Initialize() override;
     void Execute() override;
@@ -26,8 +27,8 @@ public:
     void End(bool interupted) override;
 
 private:
-    Drivetrain m_drivetrain;
-    OI m_OI;
+    std::shared_ptr<Drivetrain> m_drivetrain;
+    std::shared_ptr<OI> m_OI;
 
     frc::ChassisSpeeds speeds;
 

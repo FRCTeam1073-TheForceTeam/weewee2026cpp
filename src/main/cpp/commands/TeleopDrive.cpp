@@ -4,10 +4,11 @@
 
 #include "commands/TeleopDrive.h"
 #include <frc/DriverStation.h>
-
 #include <iostream>
 
-TeleopDrive::TeleopDrive(Drivetrain* drivetrain, OI* oi) : m_drivetrain{drivetrain}, m_OI{oi} {
+TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi) : 
+    m_drivetrain{drivetrain}, 
+    m_OI{oi} {
     allianceSign = 1,
     fieldCentric = true,
     lastParkingBreakButton = false,
@@ -18,7 +19,7 @@ TeleopDrive::TeleopDrive(Drivetrain* drivetrain, OI* oi) : m_drivetrain{drivetra
     angle_tolerance = 0.05_rad,
     torqueGate = 65_Nm,
     // Register that this command requires the subsystem.
-    AddRequirements({drivetrain, oi});
+    AddRequirements({m_drivetrain.get(), m_OI.get()});
 }
 
 void TeleopDrive::Initialize() {
@@ -33,37 +34,37 @@ void TeleopDrive::Initialize() {
 }
 
 void TeleopDrive::Execute() {
-    leftY = oi.getDriverLeftY();
-    leftX = oi.getDriverLeftX();
-    rightX = oi.getDriverRightX();
+    leftY = m_OI->GetDriverLeftY();
+    leftX = m_OI->GetDriverLeftX();
+    rightX =  m_OI->GetDriverRightX();
 
     frc::SmartDashboard::PutBoolean("TeleopDrive/Parking Break", parked);
 
-    if(oi.GetDriverRightBumper() && lastFieldCentricButton == false) {
+    if(m_OI->GetDriverRightBumper() && lastFieldCentricButton == false) {
         fieldCentric = !fieldCentric;
     }
-    lastFieldCentricButton = oi.GetDriverRightBumper();
+    lastFieldCentricButton = m_OI->GetDriverRightBumper();
 
-    if(oi.getDriverLeftBumper() && lastParkingBreakButton == false) {
+    if(m_OI->GetDriverLeftBumper() && lastParkingBreakButton == false) {
         parked = !parked;
     }
-    lastParkingBreakButton = oi.GetDriverLeftBumper();
+    lastParkingBreakButton = m_OI->GetDriverLeftBumper();
 
-    if(parked && !drivetrain.GetParkingBreak()) {
-        drivetrain.ParkingBreak(true);
+    if(parked && !m_drivetrain->GetParkingBrake()) {
+        m_drivetrain->SetParkingBrake(true);
     }
-    if(!parked && drivetrain.GetParkingBreak()) {
-        drivetrain.ParkingBreak(false);
+    if(!parked && m_drivetrain->GetParkingBrake()) {
+        m_drivetrain->SetParkingBrake(false);
     }
     else {
-        bool dPadUp = oi.GetDriverDPadUp();
-        bool dPadDown = oi.GetDriverDPadDown();
-        bool dPadLeft = oi.GetDriverDPadLeft();
-        bool dPadRight = oi.GetDriverDPadRight();
+        bool dPadUp = m_OI->GetDriverDPadUp();
+        bool dPadDown = m_OI->GetDriverDPadDown();
+        bool dPadLeft = m_OI->GetDriverDPadLeft();
+        bool dPadRight = m_OI->GetDriverDPadRight();
 
         if(!(dPadUp || dPadRight || dPadLeft || dPadDown)) {
-            mult1 = 1.0 + (oi.GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
-            mult2 = 1.0 + (oi.GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
+            mult1 = 1.0 + (m_OI->GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
+            mult2 = 1.0 + (m_OI->GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
         }
 
         //set deadzones

@@ -82,8 +82,8 @@ class ExampleSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _exampleMotor;
 
   // CTRE hardware feedback signals:
-  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _exampleVelocitySig;
   ctre::phoenix6::StatusSignal<units::angle::turn_t> _examplePositionSig;
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _exampleVelocitySig;
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _exampleCurrentSig;
 
 
