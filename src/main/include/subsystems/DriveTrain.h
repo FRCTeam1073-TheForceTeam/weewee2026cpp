@@ -14,6 +14,7 @@
 
 
 
+
 // Hardware abstraction
 #include <ctre/phoenix6/Pigeon2.hpp>
 
@@ -61,11 +62,21 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Get average motor loading:
   double GetAverageLoad() const;
 
+  /// Set the debug mode
+  void SetDebugMode(bool removeBug);
+  void ZeroHeading();
+  
+  units::angle::degree_t GetGyroHeadingDegrees();
+  units::angle::radian_t GetGyroHeadingRadians();
+  double GetPitch();
+  double GetRoll();
 
  private:
 
   /// Helper function to configure all hardware.
   bool ConfigureHardware();
+
+  bool debug;
 
   // Hardware device for IMU sensor:
   ctre::phoenix6::hardware::Pigeon2 _imu;

@@ -1,9 +1,11 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+#pragma once
 
 #include "subsystems/DriveTrain.h"
 #include <iostream>
+#include <frc/kinematics/ChassisSpeeds.h>
 
 using namespace ctre::phoenix6;
 using namespace ctre::phoenix;
@@ -44,6 +46,7 @@ Drivetrain::Drivetrain() :
         std::cerr << "Drivetrain hardware configuration error!!" << std::endl;
     }    
 }
+    bool debug = false;
 
 
 void Drivetrain::Periodic()  {
@@ -120,6 +123,24 @@ double Drivetrain::GetAverageLoad() const {
     return 0.0;
 }
 
+units::angle::degree_t Drivetrain::GetGyroHeadingDegrees(){
+    return _imu.GetYaw().Refresh().GetValue();
+}
+
+units::angle::radian_t Drivetrain::GetGyroHeadingRadians(){
+    return _imu.GetYaw().Refresh().GetValue();
+}
+
+double Drivetrain::GetPitch(){
+    return _imu.GetPitch().Refresh().GetValueAsDouble();
+}
+
+double Drivetrain::GetRoll(){
+    return _imu.GetRoll().Refresh().GetValueAsDouble();
+}
+
+
+
 
 bool Drivetrain::ConfigureHardware() {
     configs::Pigeon2Configuration configs;
@@ -136,4 +157,12 @@ bool Drivetrain::ConfigureHardware() {
     BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz,_yawRateSig, _yawSig);
 
     return true;
+}
+
+void Drivetrain::SetDebugMode(bool removeBug) {
+    debug = removeBug;
+}
+
+void Drivetrain::ZeroHeading(){
+    _imu.SetYaw(0_deg);
 }
