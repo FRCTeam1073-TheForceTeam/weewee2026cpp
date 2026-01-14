@@ -131,14 +131,6 @@ units::angle::radian_t Drivetrain::GetGyroHeadingRadians(){
     return _imu.GetYaw().Refresh().GetValue();
 }
 
-double Drivetrain::GetPitch(){
-    return _imu.GetPitch().Refresh().GetValueAsDouble();
-}
-
-double Drivetrain::GetRoll(){
-    return _imu.GetRoll().Refresh().GetValueAsDouble();
-}
-
 
 
 

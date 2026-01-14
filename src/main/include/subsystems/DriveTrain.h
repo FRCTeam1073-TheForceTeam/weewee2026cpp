@@ -59,6 +59,8 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Set the drive axis braking mode:
   void SetParkingBrake(bool brakeOn);
 
+  void SetTargetChassisSpeeds(frc::ChassisSpeeds speeds);
+
   /// Get average motor loading:
   double GetAverageLoad() const;
 
@@ -68,8 +70,6 @@ class Drivetrain : public frc2::SubsystemBase {
   
   units::angle::degree_t GetGyroHeadingDegrees();
   units::angle::radian_t GetGyroHeadingRadians();
-  double GetPitch();
-  double GetRoll();
 
  private:
 
