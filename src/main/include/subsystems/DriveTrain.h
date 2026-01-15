@@ -12,11 +12,11 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/geometry/Pose2d.h>
 
-
-
-
 // Hardware abstraction
 #include <ctre/phoenix6/Pigeon2.hpp>
+
+//Network tables import
+#include <wpi/sendable/SendableBuilder.h>
 
 #include "subsystems/SwerveModule.h"
 
@@ -34,7 +34,31 @@ class Drivetrain : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  
+  units::velocity::meters_per_second_t GetTargetVx();
+
+  units::velocity::meters_per_second_t GetTargetVy();
+
+  units::angular_velocity::radians_per_second_t GetTargetOmega();
+
+  void InitSendable(wpi::SendableBuilder& builder) override;
+
+    /// Set the debug mode
+  void SetDebugMode(bool removeBug);
+
+  units::angle::degree_t GetGyroHeadingDegrees();
+
+  units::angle::radian_t GetGyroHeadingRadians();
+
+  units::angle::degree_t GetWrappedGyroHeadingDegrees();
+
+  units::angle::degree_t GetWrappedGyroHeadingRadians();
+
+  /// Get the pitch of the chassis:
+  units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
+
+  /// Get the roll of the chassis:
+  units::angle::degree_t GetRoll() const { return _rollSig.GetValue(); }
+
   /// Return the chassis speeds for the drivetrain (in robot coordinates).
   const frc::ChassisSpeeds& GetChassisSpeeds() const { return _speeds; }
 
@@ -47,29 +71,16 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Reset the odometry to a specific pose on the field.
   void ResetOdometry(const frc::Pose2d pose);
 
-  /// Get the pitch of the chassis:
-  units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
-
-  /// Get the roll of the chassis:
-  units::angle::degree_t GetRoll() const { return _rollSig.GetValue(); }
-
   /// Return the state of drivetrain brakes.  
   bool GetParkingBrake() const { return _parkingBrake; }
 
   /// Set the drive axis braking mode:
   void SetParkingBrake(bool brakeOn);
 
-  void SetTargetChassisSpeeds(frc::ChassisSpeeds speeds);
-
   /// Get average motor loading:
-  double GetAverageLoad() const;
+  units::force::newton_t GetAverageLoad() const;
 
-  /// Set the debug mode
-  void SetDebugMode(bool removeBug);
   void ZeroHeading();
-  
-  units::angle::degree_t GetGyroHeadingDegrees();
-  units::angle::radian_t GetGyroHeadingRadians();
 
  private:
 
