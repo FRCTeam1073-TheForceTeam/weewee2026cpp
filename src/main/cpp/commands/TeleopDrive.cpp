@@ -17,7 +17,7 @@ TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr
     last_error = 0,
     last_snap_time = 0,
     angle_tolerance = 0.05_rad,
-    torqueGate = 65_Nm,
+    torqueGate = 65_N,
     // Register that this command requires the subsystem.
     AddRequirements({m_drivetrain.get(), m_OI.get()});
 }
@@ -37,6 +37,7 @@ void TeleopDrive::Execute() {
     leftY = m_OI->GetDriverLeftY();
     leftX = m_OI->GetDriverLeftX();
     rightX =  m_OI->GetDriverRightX();
+    avgTorque = m_drivetrain->GetAverageLoad();
 
     frc::SmartDashboard::PutBoolean("TeleopDrive/Parking Break", parked);
 
@@ -65,25 +66,56 @@ void TeleopDrive::Execute() {
         if(!(dPadUp || dPadRight || dPadLeft || dPadDown)) {
             mult1 = 1.0 + (m_OI->GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
             mult2 = 1.0 + (m_OI->GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
+
+            //set deadzones
+            if(std::abs(leftY) < 0.15) {leftY = 0;}
+            if(std::abs(leftX) < 0.15) {leftX = 0;}
+            if(std::abs(rightX) < 0.15) {rightX = 0;}
+
+            vx = std::clamp((allianceSign * leftY * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
+            vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
+            omega = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
+
+            frc::SmartDashboard::PutNumber("TeleopDrive/vx", vx.value());
+            frc::SmartDashboard::PutNumber("TeleopDrive/vy", vy.value());
+            frc::SmartDashboard::PutNumber("TeleopDrive/w", omega.value());
+            frc::SmartDashboard::PutNumber("TeleopDrive/AvgTorque", avgTorque.value());
+            frc::SmartDashboard::PutBoolean("TeleopDrive/FieldCentric", fieldCentric);
+
+            if(fieldCentric) {
+                m_drivetrain->SetChassisSpeeds(
+                    frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                        vx,
+                        vy,
+                        omega,
+                        frc::Rotation2d{m_drivetrain->GetWrappedGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
+                    )
+                );
+            }
+            else {
+                m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega});
+            }
         }
+        else {
+            frc::ChassisSpeeds creepSpeeds = frc::ChassisSpeeds{};
 
-        //set deadzones
-        if(std::abs(leftY) < 0.15) {leftY = 0;}
-        if(std::abs(leftX) < 0.15) {leftX = 0;}
-        if(std::abs(rightX) < 0.15) {leftX = 0;}
-
-        vx = std::clamp((allianceSign * leftY * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
-        vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
-        w = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
-
-        frc::SmartDashboard::PutNumber("TeleopDrive/vx", vx.value());
-        frc::SmartDashboard::PutNumber("TeleopDrive/vy", vy.value());
-        frc::SmartDashboard::PutNumber("TeleopDrive/w", w.value());
-        frc::SmartDashboard::PutBoolean("TeleopDrive/FieldCentric", fieldCentric);
-
-        //TODO: do not know how to set chassis speeds, might not be in code
-        Command::Execute();
+            if(dPadUp) {
+                creepSpeeds.vx = 0.2_mps;
+            }
+            if(dPadDown) {
+                creepSpeeds.vx = -0.2_mps;
+            }
+            if(dPadRight) {
+                creepSpeeds.vy = -0.2_mps;
+            }
+            if(dPadLeft) {
+                creepSpeeds.vy = 0.2_mps;
+            }
+            m_drivetrain->SetChassisSpeeds(creepSpeeds);
+        }
     }
+
+    Command::Execute();
 }
 
 void TeleopDrive::End(bool interuppted) {

@@ -33,7 +33,6 @@ private:
     frc::ChassisSpeeds speeds;
 
     units::angle::radian_t angle_tolerance;
-    frc::Rotation2d rotation;
     frc::PIDController snapPIDProfile{0.05, 0.0, 0.0, 1_s};
 
     bool fieldCentric;
@@ -57,15 +56,16 @@ private:
 
     units::velocity::meters_per_second_t vx;
     units::velocity::meters_per_second_t vy;
-    units::angular_velocity::radians_per_second_t w;
+    units::angular_velocity::radians_per_second_t omega;
 
     int allianceSign;
 
-    units::torque::newton_meter_t frontLeftTorque;
-    units::torque::newton_meter_t frontRightTorque;
-    units::torque::newton_meter_t backLeftTorque;
-    units::torque::newton_meter_t backRightTorque;
-    units::torque::newton_meter_t torqueGate;
+    units::force::newton_t frontLeftTorque;
+    units::force::newton_t frontRightTorque;
+    units::force::newton_t backLeftTorque;
+    units::force::newton_t backRightTorque;
+    units::force::newton_t avgTorque;
+    units::force::newton_t torqueGate;
 
     //TODO: aprilTagFinde, Localizer, and Lidar stuff
 
