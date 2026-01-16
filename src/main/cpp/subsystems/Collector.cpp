@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "subsystems/ExampleSubsystem.h"
+#include "subsystems/Collector.h"
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 
 using namespace ctre::phoenix6;
@@ -12,12 +12,12 @@ using namespace ctre::phoenix6;
 /**
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
-ExampleSubsystem::ExampleSubsystem() :
+Subsystem::Subsystem() :
 _hardwareConfigured(true),
-_exampleMotor(ExampleMotorId, CANBus("rio")),
-_examplePositionSig(_exampleMotor.GetPosition()),
-_exampleVelocitySig(_exampleMotor.GetVelocity()),
-_exampleCurrentSig(_exampleMotor.GetTorqueCurrent()),
+_Motor(MotorId, CANBus("rio")),
+_PositionSig(_Motor.GetPosition()),
+_VelocitySig(_Motor.GetVelocity()),
+_CurrentSig(_Motor.GetTorqueCurrent()),
 _commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
 _commandPositionVoltage(units::angle::turn_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
@@ -29,31 +29,31 @@ _commandPositionVoltage(units::angle::turn_t(0.0)) {
   // Do hardware configuration and track if it succeeds:
   _hardwareConfigured = ConfigureHardware();
   if (!_hardwareConfigured) {
-    std::cerr << "ExampleSubsystem: Hardware Failed To Configure!" << std::endl;
+    std::cerr << "Subsystem: Hardware Failed To Configure!" << std::endl;
   }
 
 }
 
 
   /// Set the command for the system.
-void ExampleSubsystem::SetCommand(Command cmd) {
+void Subsystem::SetCommand(Command cmd) {
   // Sometimes you need to do something immediate to the hardware.
   // We can just set our target internal value.
   _command = cmd;
 }
 
 
-void ExampleSubsystem::Periodic() {
+void Subsystem::Periodic() {
   // Sample the hardware:
-  BaseStatusSignal::RefreshAll(_examplePositionSig, _exampleVelocitySig, _exampleCurrentSig);
+  BaseStatusSignal::RefreshAll(_PositionSig, _VelocitySig, _CurrentSig);
 
   // Latency compensate the feedback when you sample a value and its rate:
-  auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_examplePositionSig, _exampleVelocitySig);
+  auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_PositionSig, _VelocitySig);
 
   // Populate feedback cache:
-  _feedback.force = _exampleCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
+  _feedback.force = _CurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
   _feedback.position = compensatedPos / TurnsPerMeter; // Convert from hardare units to subsystem units. Divide by conversion to produce feedback.
-  _feedback.velocity = _exampleVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
+  _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
 
 
   // // Process command:
@@ -64,7 +64,7 @@ void ExampleSubsystem::Periodic() {
       // Multiply by conversion to produce commands.
       auto angular_vel = std::get<units::velocity::meters_per_second_t>(_command) * TurnsPerMeter;
       // Send to hardware:
-      _exampleMotor.SetControl(_commandVelocityVoltage.WithVelocity(angular_vel));
+      _Motor.SetControl(_commandVelocityVoltage.WithVelocity(angular_vel));
   } else if (std::holds_alternative<units::length::meter_t>(_command)) {
       // Send position based command:
 
@@ -72,15 +72,15 @@ void ExampleSubsystem::Periodic() {
       auto angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
 
       // Send to hardware:
-      _exampleMotor.SetControl(_commandPositionVoltage.WithPosition(angle));
+      _Motor.SetControl(_commandPositionVoltage.WithPosition(angle));
   } else {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
-    _exampleMotor.SetControl(controls::NeutralOut());
+    _Motor.SetControl(controls::NeutralOut());
   }
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
-bool ExampleSubsystem::ConfigureHardware() {
+bool Subsystem::ConfigureHardware() {
 configs::TalonFXConfiguration configs{};
 
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 10.0_A; // Set current limits to keep from breaking things.
@@ -107,14 +107,14 @@ configs::TalonFXConfiguration configs{};
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
     // Set the control configuration for the drive motor:
-    auto status = _exampleMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+    auto status = _Motor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
         // Log errors.
     }
 
     // Set our neutral mode to brake on:
-    status = _exampleMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
+    status = _Motor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
         // Log errors.
@@ -123,7 +123,7 @@ configs::TalonFXConfiguration configs{};
 
     // Depends on mechanism/subsystem design:
     // Optionally start out at zero after initialization:
-    _exampleMotor.SetPosition(units::angle::turn_t(0));
+    _Motor.SetPosition(units::angle::turn_t(0));
 
     // Log errors.
     return false;
