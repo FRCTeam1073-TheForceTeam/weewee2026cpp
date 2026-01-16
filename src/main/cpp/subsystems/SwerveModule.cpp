@@ -170,7 +170,7 @@ bool SwerveModule::ConfigureDriveHardware() {
     _driveMotor.SetPosition(units::angle::turn_t(0));
 
     // Log errors.
-    return false;
+    return true;
 
 }
 
@@ -228,5 +228,5 @@ bool SwerveModule::ConfigureSteerHardware() {
     }
 
     // Log errors.
-    return false;
+    return true;
 }

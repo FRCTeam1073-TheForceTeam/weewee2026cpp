@@ -24,7 +24,7 @@ class Drivetrain : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the Pigeon2:
-  static constexpr int PigeonId = 16;
+  static constexpr int PigeonId = 5;
   static const ctre::phoenix6::CANBus canBus;
 
   Drivetrain();
