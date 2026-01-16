@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-#pragma once
 
 #include "subsystems/DriveTrain.h"
 #include <iostream>
@@ -10,7 +9,7 @@
 using namespace ctre::phoenix6;
 using namespace ctre::phoenix;
 
-const CANBus Drivetrain::canBus("rio");
+const CANBus Drivetrain::canBus(CANBus::RoboRIO());
 bool debug = false;
 
 Drivetrain::Drivetrain() :
@@ -19,7 +18,7 @@ Drivetrain::Drivetrain() :
         SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
         SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
         SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 3,  26, 17, 15}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
+        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
     _kinematics(_swerveModules[0].GetLocation(), 
                  _swerveModules[1].GetLocation(), 
                  _swerveModules[2].GetLocation(), 
@@ -106,7 +105,7 @@ void Drivetrain::InitSendable(wpi::SendableBuilder& builder) {
     builder.AddDoubleProperty("Odo Y", [this] {return GetOdometry().Y().value(); }, nullptr);
     builder.AddDoubleProperty("Odo Theta (Radians)", [this] {return GetOdometry().Rotation().Radians().value(); }, nullptr);
     builder.AddDoubleProperty("Odo Gyro Heading (Degrees)", [this] {return GetGyroHeadingDegrees().value(); }, nullptr);
-    builder.AddDoubleProperty("Odo Wrapped Gyro Heading (Degrees)", [this] {return GetWrappedGyroHeadingDegrees().value(); }, nullptr);
+    // builder.AddDoubleProperty("Odo Wrapped Gyro Heading (Degrees)", [this] {return GetWrappedGyroHeadingDegrees().value(); }, nullptr);
     builder.AddDoubleProperty("Target Vx", [this] {return GetTargetVx().value(); }, nullptr);
     builder.AddDoubleProperty("Target Vy", [this] {return GetTargetVy().value(); }, nullptr);
     builder.AddDoubleProperty("Target Omega", [this] {return GetTargetOmega().value(); }, nullptr);
@@ -154,13 +153,13 @@ units::angle::radian_t Drivetrain::GetGyroHeadingRadians(){
     return _imu.GetYaw().Refresh().GetValue();
 }
 
-units::angle::degree_t Drivetrain::GetWrappedGyroHeadingDegrees() {
-    return units::angle::degree_t(std::fmod(GetGyroHeadingDegrees().value(), 180));
-}
+// units::angle::degree_t Drivetrain::GetWrappedGyroHeadingDegrees() {
+//     return units::angle::degree_t(std::fmod(GetGyroHeadingDegrees().value(), 180));
+// }
 
-units::angle::degree_t Drivetrain::GetWrappedGyroHeadingRadians() {
-    return units::angle::degree_t(std::fmod(GetGyroHeadingRadians().value(), std::numbers::pi));
-}
+// units::angle::degree_t Drivetrain::GetWrappedGyroHeadingRadians() {
+//     return units::angle::degree_t(std::fmod(GetGyroHeadingRadians().value(), std::numbers::pi));
+// }
 
 bool Drivetrain::ConfigureHardware() {
     configs::Pigeon2Configuration configs;

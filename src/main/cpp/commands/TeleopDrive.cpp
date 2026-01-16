@@ -88,7 +88,7 @@ void TeleopDrive::Execute() {
                         vx,
                         vy,
                         omega,
-                        frc::Rotation2d{m_drivetrain->GetWrappedGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
+                        frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
                     )
                 );
             }
@@ -114,8 +114,6 @@ void TeleopDrive::Execute() {
             m_drivetrain->SetChassisSpeeds(creepSpeeds);
         }
     }
-
-    Command::Execute();
 }
 
 void TeleopDrive::End(bool interuppted) {

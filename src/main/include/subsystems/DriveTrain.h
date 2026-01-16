@@ -49,9 +49,9 @@ class Drivetrain : public frc2::SubsystemBase {
 
   units::angle::radian_t GetGyroHeadingRadians();
 
-  units::angle::degree_t GetWrappedGyroHeadingDegrees();
+  // units::angle::degree_t GetWrappedGyroHeadingDegrees();
 
-  units::angle::degree_t GetWrappedGyroHeadingRadians();
+  // units::angle::degree_t GetWrappedGyroHeadingRadians();
 
   /// Get the pitch of the chassis:
   units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
