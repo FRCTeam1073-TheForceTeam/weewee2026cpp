@@ -25,7 +25,7 @@ std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(photon::P
     for(auto& result : results){
         if(result.HasTargets()){
             //I don't know a good way of turning a std::span into an std::vector so I just did this
-            auto& r = result.GetTargets();
+            std::span<const photon::PhotonTrackedTarget> r = result.GetTargets();
             for(auto& c : r)
             {
                 targets.push_back(c);
@@ -75,7 +75,7 @@ frc::Transform3d AprilTagFinder::getRobotCam(int index) {
 void AprilTagFinder::Periodic() {
     visionMeasurements.clear();
     for (auto& cam : cameras) {
-        auto measurements = getCamMeasurements(cam.camera, cam.transform);
+        std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam.camera, cam.transform);
         visionMeasurements.insert(
             visionMeasurements.end(),
             measurements.begin(),
