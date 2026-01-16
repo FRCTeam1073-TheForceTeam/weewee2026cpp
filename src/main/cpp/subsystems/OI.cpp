@@ -102,6 +102,7 @@ bool OI::GetDriverDPadRight() {
 }
 
 bool OI::GetDriverDPadLeft() {
+    return _driverController.GetPOV() == 270;
 }
 
 bool OI::GetDriverDPadDown() {
