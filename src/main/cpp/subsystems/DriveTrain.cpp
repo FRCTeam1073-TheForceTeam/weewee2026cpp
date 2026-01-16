@@ -87,28 +87,16 @@ void Drivetrain::Periodic()  {
 
 }
 
-units::velocity::meters_per_second_t Drivetrain::GetTargetVx() {
-    return _targetSpeeds.vx;
-}
-
-units::velocity::meters_per_second_t Drivetrain::GetTargetVy() {
-    return _targetSpeeds.vx;
-}
-
-units::angular_velocity::radians_per_second_t Drivetrain::GetTargetOmega() {
-    return _targetSpeeds.omega;
-}
-
 void Drivetrain::InitSendable(wpi::SendableBuilder& builder) {
+    // possibly remove this
     builder.AddDoubleProperty("Parking Break", [this] {return GetParkingBrake(); }, nullptr);
     builder.AddDoubleProperty("Odo X", [this] {return GetOdometry().X().value(); }, nullptr);
     builder.AddDoubleProperty("Odo Y", [this] {return GetOdometry().Y().value(); }, nullptr);
     builder.AddDoubleProperty("Odo Theta (Radians)", [this] {return GetOdometry().Rotation().Radians().value(); }, nullptr);
     builder.AddDoubleProperty("Odo Gyro Heading (Degrees)", [this] {return GetGyroHeadingDegrees().value(); }, nullptr);
-    // builder.AddDoubleProperty("Odo Wrapped Gyro Heading (Degrees)", [this] {return GetWrappedGyroHeadingDegrees().value(); }, nullptr);
-    builder.AddDoubleProperty("Target Vx", [this] {return GetTargetVx().value(); }, nullptr);
-    builder.AddDoubleProperty("Target Vy", [this] {return GetTargetVy().value(); }, nullptr);
-    builder.AddDoubleProperty("Target Omega", [this] {return GetTargetOmega().value(); }, nullptr);
+    builder.AddDoubleProperty("Target Vx", _targetSpeeds.vx, nullptr);
+    builder.AddDoubleProperty("Target Vy", _targetSpeeds.vy, nullptr);
+    builder.AddDoubleProperty("Target Omega", _targetSpeeds.omega, nullptr);
     builder.AddDoubleProperty("Pitch", [this] {return GetPitch().value(); }, nullptr);
     builder.AddDoubleProperty("Roll", [this] {return GetRoll().value(); }, nullptr);
 }
@@ -152,14 +140,6 @@ units::angle::degree_t Drivetrain::GetGyroHeadingDegrees(){
 units::angle::radian_t Drivetrain::GetGyroHeadingRadians(){
     return _imu.GetYaw().Refresh().GetValue();
 }
-
-// units::angle::degree_t Drivetrain::GetWrappedGyroHeadingDegrees() {
-//     return units::angle::degree_t(std::fmod(GetGyroHeadingDegrees().value(), 180));
-// }
-
-// units::angle::degree_t Drivetrain::GetWrappedGyroHeadingRadians() {
-//     return units::angle::degree_t(std::fmod(GetGyroHeadingRadians().value(), std::numbers::pi));
-// }
 
 bool Drivetrain::ConfigureHardware() {
     configs::Pigeon2Configuration configs;

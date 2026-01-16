@@ -34,12 +34,6 @@ class Drivetrain : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  units::velocity::meters_per_second_t GetTargetVx();
-
-  units::velocity::meters_per_second_t GetTargetVy();
-
-  units::angular_velocity::radians_per_second_t GetTargetOmega();
-
   void InitSendable(wpi::SendableBuilder& builder) override;
 
     /// Set the debug mode
@@ -48,10 +42,6 @@ class Drivetrain : public frc2::SubsystemBase {
   units::angle::degree_t GetGyroHeadingDegrees();
 
   units::angle::radian_t GetGyroHeadingRadians();
-
-  // units::angle::degree_t GetWrappedGyroHeadingDegrees();
-
-  // units::angle::degree_t GetWrappedGyroHeadingRadians();
 
   /// Get the pitch of the chassis:
   units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }

@@ -155,14 +155,16 @@ bool SwerveModule::ConfigureDriveHardware() {
     auto status = _driveMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config DriveTrain Hardware Configurator Application Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Set our neutral mode to brake on:
     status = _driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config DriveTrain Hardware Neutral Mode Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
 
@@ -184,7 +186,8 @@ bool SwerveModule::ConfigureSteerHardware() {
     configs::MagnetSensorConfigs magSenseConfig;
     auto status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
     if (!status.IsOK()) {
-        // Log error.
+        std::cerr << "Config Steer Hardware Refresh Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     std::cout << "SwerveModule [" << _ids.number << "] Encoder offset: " << magSenseConfig.MagnetOffset.value() << std::endl;
@@ -217,14 +220,16 @@ bool SwerveModule::ConfigureSteerHardware() {
     status = _driveMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config Steer Hardware Configurator Apply Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Set our neutral mode to brake on:
     status = _driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config Steer Hardware Neutral Mode Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Log errors.
