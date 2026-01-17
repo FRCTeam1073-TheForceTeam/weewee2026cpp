@@ -39,11 +39,12 @@ Drivetrain::Drivetrain() :
 
     _hardwareConfigured &= ConfigureHardware();
 
-    for (size_t ii(0); ii < _swerveModules.size(); ++ii) 
+    for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
         _hardwareConfigured &= _swerveModules[ii].HardwareConfigured();
+    }
 
     if (_hardwareConfigured) {
-        std::cerr << "Drivetrain hardware configuration error!!" << std::endl;
+        std::cerr << "!! Drivetrain hardware configuration error !!" << std::endl;
     }    
 }
 
