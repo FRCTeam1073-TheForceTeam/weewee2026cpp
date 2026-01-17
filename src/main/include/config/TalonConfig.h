@@ -10,6 +10,4 @@
  */
 class TalonConfig {
     public:
-    
-
-}
+};

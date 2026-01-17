@@ -1,21 +1,22 @@
 #include "subsystems/AprilTagFinder.h"
 
-std::vector<AprilTagFinder::RobotCamera> AprilTagFinder::cameras = std::vector<AprilTagFinder::RobotCamera>();
+std::vector<AprilTagFinder::RobotCamera> AprilTagFinder::_cameras = {
+};
 
 frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d cameraToRobot) {
     return fieldRelativeTagPose.TransformBy(cameraToTarget.Inverse()).TransformBy(cameraToRobot);
 }
 
-AprilTagFinder::VisionMeasurement::VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID, units::meter_t range) {
-    this->pose = pose;
-    this->relativePose = relativePose;
-    this->timeStamp = timeStamp;
-    this->tagID = tagID;
-    this->range = range;
-}
+AprilTagFinder::VisionMeasurement::VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID, units::meter_t range) :
+    _pose(pose),
+    _relativePose(relativePose),
+    _timeStamp(timeStamp),
+    _tagID(tagID),
+    _range(range)
+{}
 
 std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getAllMeasurements() {
-    return visionMeasurements;
+    return _visionMeasurements;
 }
 
 std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(photon::PhotonCamera& camera) {
@@ -45,14 +46,13 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurement
         
         units::time::second_t responseTimestamp = frc::Timer::GetFPGATimestamp();//- result.metadata.getLatencyMillis() / 1000.0;
         units::meter_t range = 0_m;
-
         for (auto& target : result.GetTargets()) {
             if (FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).has_value()){
                 if (target.GetPoseAmbiguity() != -1 && target.GetPoseAmbiguity() < ambiguityThreshold){
                 frc::Transform3d best = target.GetBestCameraToTarget();
                 frc::Pose3d robotPose = estimateFieldToRobotAprilTag(best,
-                                                    FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
-                                                    camTransform3d.Inverse());
+                    FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
+                    camTransform3d.Inverse());
                 range = target.bestCameraToTarget.Translation().Norm();
                 frc::Transform2d relativePose = toTransform2d(camTransform3d+best);
                 measurements.push_back(VisionMeasurement(robotPose.ToPose2d(), relativePose, responseTimestamp, target.GetFiducialId(), range));
@@ -69,15 +69,15 @@ frc::Transform2d AprilTagFinder::toTransform2d(frc::Transform3d t3d) {
 }
 
 frc::Transform3d AprilTagFinder::getRobotCam(int index) {
-    return cameras[index].transform;
+    return _cameras[index].transform;
 }
 
 void AprilTagFinder::Periodic() {
-    visionMeasurements.clear();
-    for (auto& cam : cameras) {
+    _visionMeasurements.clear();
+    for (auto& cam : _cameras) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam.camera, cam.transform);
-        visionMeasurements.insert(
-            visionMeasurements.end(),
+        _visionMeasurements.insert(
+            _visionMeasurements.end(),
             measurements.begin(),
             measurements.end()
         );
