@@ -146,8 +146,8 @@ bool SwerveModule::ConfigureDriveHardware() {
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::DriveCurrentLimit;
     
 
-    configs.Voltage.PeakForwardVoltage = 8_V;
-    configs.Voltage.PeakReverseVoltage = -8_V;
+    configs.Voltage.PeakForwardVoltage = SwerveControlConfig::DriveVoltageLimit;
+    configs.Voltage.PeakReverseVoltage = -SwerveControlConfig::DriveVoltageLimit;
 
     // Slot zero for the normal control loop:
     configs.Slot0 = SwerveControlConfig::GetDriveControlConfig();
@@ -184,11 +184,15 @@ bool SwerveModule::ConfigureSteerHardware() {
 
     // Default encoder configuration:
     configs::CANcoderConfiguration  encoder_configs;
-    _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s); 
+    auto status = _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s);
+    if (!status.IsOK()) {
+        std::cerr << "Config Steer Encoder Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
+    }
 
     // Read back the magnet sensor config for this module.
     configs::MagnetSensorConfigs magSenseConfig;
-    auto status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
+    status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
     if (!status.IsOK()) {
         std::cerr << "Config Steer Hardware Refresh Error: SwerveModule[" << _ids.number << "]" << std::endl;
         return false;
@@ -205,8 +209,8 @@ bool SwerveModule::ConfigureSteerHardware() {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = SwerveControlConfig::SteerCurrentLimit;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::SteerCurrentLimit;
 
-    configs.Voltage.PeakForwardVoltage = 8_V;
-    configs.Voltage.PeakReverseVoltage = -8_V;
+    configs.Voltage.PeakForwardVoltage = SwerveControlConfig::SteerVoltageLimit;
+    configs.Voltage.PeakReverseVoltage = -SwerveControlConfig::SteerVoltageLimit;
 
     // Slot zero for the normal control loop.
     configs.Slot0 = SwerveControlConfig::GetSteerControlConfig();
@@ -221,7 +225,7 @@ bool SwerveModule::ConfigureSteerHardware() {
     configs.ClosedLoopGeneral.WithContinuousWrap(true);  // Wrapping controls on the steering axis.
 
     // Set the control configuration for the drive motor:
-    status = _driveMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+    status = _steerMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
         std::cerr << "Config Steer Hardware Configurator Apply Error: SwerveModule[" << _ids.number << "]" << std::endl;
