@@ -62,11 +62,16 @@ void Drivetrain::Periodic()  {
     for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
         _swerveModules[ii].SampleFeedback(now);
         _swerveModulePositions[ii] = _swerveModules[ii].GetPosition();
-        _swerveModuleStates[ii] = _swerveModules[ii].GetState();
+        _swerveModuleStates[ii] = _swerveModules[ii].GetState(); // getState() returns SwerveModuleStates
+        // _swerveModuleStates[ii]
+        std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].speed.value() << std::endl;
+        std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].angle.Degrees().value() << std::endl;
     }
 
+
+
     // Update odometry and chassis speeds once we've sampled the hardware:
-    _speeds = _kinematics.ToChassisSpeeds(_swerveModuleStates);
+    _speeds = _kinematics.ToChassisSpeeds(_swerveModuleStates); // this is frc::SwerveDriveKinematics.ToChassisSpeeds, not regular frc::Kinematics
     _odometry.Update(yaw_angle, _swerveModulePositions);
 
     // TODO: Compute extra pushing forces on the chassis based on torque feedback

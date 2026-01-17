@@ -18,7 +18,6 @@ const std::string RobotContainer::testAuto = "Test Auto";
 
 
 RobotContainer::RobotContainer() {
-
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));

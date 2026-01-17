@@ -11,6 +11,8 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/geometry/Pose2d.h>
+// "a wrapper around std:array that does compile time size checking"
+#include <wpi/array.h>
 
 // Hardware abstraction
 #include <ctre/phoenix6/Pigeon2.hpp>
