@@ -181,16 +181,16 @@ bool SwerveModule::ConfigureDriveHardware() {
 bool SwerveModule::ConfigureSteerHardware() {
 
     // Default encoder configuration:
-    configs::CANcoderConfiguration  encoder_configs;
-    auto status = _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s);
-    if (!status.IsOK()) {
-        std::cerr << "Config Steer Encoder Error: SwerveModule[" << _ids.number << "]" << std::endl;
-        return false;
-    }
+    // configs::CANcoderConfiguration  encoder_configs;
+    // auto status = _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s);
+    // if (!status.IsOK()) {
+    //     std::cerr << "Config Steer Encoder Error: SwerveModule[" << _ids.number << "]" << std::endl;
+    //     return false;
+    // }
 
     // Read back the magnet sensor config for this module.
     configs::MagnetSensorConfigs magSenseConfig;
-    status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
+    auto status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
     if (!status.IsOK()) {
         std::cerr << "Config Steer Hardware Refresh Error: SwerveModule[" << _ids.number << "]" << std::endl;
         return false;
