@@ -58,22 +58,23 @@ void TeleopDrive::Execute() {
         m_drivetrain->SetParkingBrake(false);
     }
     else {
-        bool dPadUp = m_OI->GetDriverDPadUp();
-        bool dPadDown = m_OI->GetDriverDPadDown();
-        bool dPadLeft = m_OI->GetDriverDPadLeft();
-        bool dPadRight = m_OI->GetDriverDPadRight();
+        bool driverDPadUp = m_OI->GetDriverDPadUp();
+        bool driverDPadDown = m_OI->GetDriverDPadDown();
+        bool driverDPadLeft = m_OI->GetDriverDPadLeft();
+        bool driverDPadRight = m_OI->GetDriverDPadRight();
+        int driverDPadAngle = m_OI->GetDriverDPadAngle();
 
-            mult1 = 1.0 + (m_OI->GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
-            mult2 = 1.0 + (m_OI->GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
+        mult1 = 1.0 + (m_OI->GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
+        mult2 = 1.0 + (m_OI->GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
 
-            //set deadzones
-            if(std::abs(leftY) < 0.15) {leftY = 0;}
-            if(std::abs(leftX) < 0.15) {leftX = 0;}
-            if(std::abs(rightX) < 0.15) {rightX = 0;}
+        //set deadzones
+        if(std::abs(leftY) < 0.15) {leftY = 0;}
+        if(std::abs(leftX) < 0.15) {leftX = 0;}
+        if(std::abs(rightX) < 0.15) {rightX = 0;}
 
-            vx = std::clamp((allianceSign * leftY * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
-            vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
-            omega = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
+        vx = std::clamp((allianceSign * leftY * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
+        vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
+        omega = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
 
         frc::SmartDashboard::PutNumber("TeleopDrive/vx", vx.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/vy", vy.value());
@@ -83,6 +84,11 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/leftX", leftX);
         frc::SmartDashboard::PutNumber("TeleopDrive/leftY", leftY);
         frc::SmartDashboard::PutNumber("TeleopDrive/rightX", rightX);
+        frc::SmartDashboard::PutNumber("TeleopDrive/Driver DPad angle", driverDPadAngle);
+        frc::SmartDashboard::PutBoolean("TeleopDrive/Driver DPad Up", driverDPadUp);
+        frc::SmartDashboard::PutBoolean("TeleopDrive/Driver DPad Down", driverDPadDown);
+        frc::SmartDashboard::PutBoolean("TeleopDrive/Driver DPad Left", driverDPadLeft);
+        frc::SmartDashboard::PutBoolean("TeleopDrive/Driver DPad Right", driverDPadRight);
 
         // odometry centric drive
         if(fieldCentric) {
