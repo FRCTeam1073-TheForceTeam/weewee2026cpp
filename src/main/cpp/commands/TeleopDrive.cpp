@@ -72,13 +72,6 @@ void TeleopDrive::Execute() {
             if(std::abs(leftX) < 0.15) {leftX = 0;}
             if(std::abs(rightX) < 0.15) {rightX = 0;}
 
-            std::cerr << "alliancesign: " << allianceSign << std::endl;
-            std::cerr << "leftY: " << leftY << std::endl;
-            std::cerr << "maximumLinearVelocity: " << maximumLinearVelocity.value() << std::endl;
-            std::cerr << "mult1: " << mult1 << std::endl;
-            std::cerr << "mult2: " << mult2 << std::endl;
-            std::cerr << "rihjtX: " << rightX << std::endl;
-            std::cerr << "maximumRotationVelocity: " << maximumRotationVelocity.value() << std::endl;
             vx = std::clamp((allianceSign * leftY * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
             vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
             omega = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
@@ -104,32 +97,14 @@ void TeleopDrive::Execute() {
             //     );
             // }
             // else {
-            m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega});
+
+            m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega}); // Chassis speeds for OI controll
+
             // }
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
-            std::cerr << "getchassisspeed omega: " << m_drivetrain->GetChassisSpeeds().omega.value() << std::endl;
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
-            std::cerr << "getchassisspeed x: " << m_drivetrain->GetChassisSpeeds().vx.value() << std::endl;
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
-            std::cerr << "getchassisspeed y: " << m_drivetrain->GetChassisSpeeds().vy.value() << std::endl;
         }
-        
-        frc::ChassisSpeeds creepSpeeds = frc::ChassisSpeeds{};
-
-        if(dPadUp) {
-            creepSpeeds.vx = 0.2_mps;
-        }
-        if(dPadDown) {
-            creepSpeeds.vx = -0.2_mps;
-        }
-        if(dPadRight) {
-            creepSpeeds.vy = -0.2_mps;
-        }
-        if(dPadLeft) {
-            creepSpeeds.vy = 0.2_mps;
-        }
-        m_drivetrain->SetChassisSpeeds(creepSpeeds);
-        
     }
 }
 

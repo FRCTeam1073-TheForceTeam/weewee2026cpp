@@ -22,7 +22,7 @@ double OI::GetDriverLeftY() {
 }
 
 double OI::GetDriverRightX() {
-    return _driverController.GetRightX();
+    return -1 * _driverController.GetRightX();
 }
 
 double OI::GetDriverRightY() {
@@ -30,7 +30,7 @@ double OI::GetDriverRightY() {
 }
 
 double OI::GetOperatorLeftX() {
-    return _operatorController.GetLeftX();
+    return -1 * _operatorController.GetLeftX();
 }
 
 double OI::GetOperatorLeftY() {

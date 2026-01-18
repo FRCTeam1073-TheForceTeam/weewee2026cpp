@@ -15,10 +15,10 @@ bool debug = false;
 Drivetrain::Drivetrain() :
     _imu(PigeonId, canBus),
     _swerveModules{
-        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
+        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(2.54_m, 2.54_m), canBus), 
+        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(2.54_m, -2.54_m), canBus), 
+        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(-2.54_m, 2.54_m), canBus), 
+        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(-2.54_m, -2.54_m), canBus)},
     _kinematics(_swerveModules[0].GetLocation(), 
                  _swerveModules[1].GetLocation(), 
                  _swerveModules[2].GetLocation(), 
@@ -64,8 +64,8 @@ void Drivetrain::Periodic()  {
         _swerveModulePositions[ii] = _swerveModules[ii].GetPosition();
         _swerveModuleStates[ii] = _swerveModules[ii].GetState(); // getState() returns SwerveModuleStates
         // _swerveModuleStates[ii]
-        std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].speed.value() << std::endl;
-        std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].angle.Degrees().value() << std::endl;
+        // std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].speed.value() << std::endl;
+        // std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].angle.Degrees().value() << std::endl;
     }
 
 
