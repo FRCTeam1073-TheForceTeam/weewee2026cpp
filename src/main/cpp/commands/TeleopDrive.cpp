@@ -63,7 +63,6 @@ void TeleopDrive::Execute() {
         bool dPadLeft = m_OI->GetDriverDPadLeft();
         bool dPadRight = m_OI->GetDriverDPadRight();
 
-        if(!(dPadUp || dPadRight || dPadLeft || dPadDown)) {
             mult1 = 1.0 + (m_OI->GetDriverLeftTrigger() * ((std::sqrt(36)) - 1));
             mult2 = 1.0 + (m_OI->GetDriverRightTrigger() * ((std::sqrt(36)) - 1));
 
@@ -76,34 +75,32 @@ void TeleopDrive::Execute() {
             vy = std::clamp((allianceSign * leftX * maximumLinearVelocity / 25) * mult1 * mult2, -maximumLinearVelocity, maximumLinearVelocity);
             omega = std::clamp((rightX * maximumRotationVelocity / 25) * mult1 * mult2, -maximumRotationVelocity, maximumRotationVelocity);
 
+        frc::SmartDashboard::PutNumber("TeleopDrive/vx", vx.value());
+        frc::SmartDashboard::PutNumber("TeleopDrive/vy", vy.value());
+        frc::SmartDashboard::PutNumber("TeleopDrive/omega", omega.value());
+        frc::SmartDashboard::PutNumber("TeleopDrive/AvgTorque", avgTorque.value());
+        frc::SmartDashboard::PutBoolean("TeleopDrive/FieldCentric", fieldCentric);
+        frc::SmartDashboard::PutNumber("TeleopDrive/leftX", leftX);
+        frc::SmartDashboard::PutNumber("TeleopDrive/leftY", leftY);
+        frc::SmartDashboard::PutNumber("TeleopDrive/rightX", rightX);
 
-            frc::SmartDashboard::PutNumber("TeleopDrive/vx", vx.value());
-            frc::SmartDashboard::PutNumber("TeleopDrive/vy", vy.value());
-            frc::SmartDashboard::PutNumber("TeleopDrive/omega", omega.value());
-            frc::SmartDashboard::PutNumber("TeleopDrive/AvgTorque", avgTorque.value());
-            frc::SmartDashboard::PutBoolean("TeleopDrive/FieldCentric", fieldCentric);
-            frc::SmartDashboard::PutNumber("TeleopDrive/leftX", leftX);
-            frc::SmartDashboard::PutNumber("TeleopDrive/leftY", leftY);
-            frc::SmartDashboard::PutNumber("TeleopDrive/rightX", rightX);
-
-            // odometry centric drive
-            if(fieldCentric) {
-                m_drivetrain->SetChassisSpeeds(
-                    frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                        vx,
-                        vy,
-                        omega,
-                        frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()}
-                    )
-                );
-            }
-            else { // robot centric drive
-                m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega});
-            }
-            frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
-            frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
-            frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
+        // odometry centric drive
+        if(fieldCentric) {
+            m_drivetrain->SetChassisSpeeds(
+                frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                    vx,
+                    vy,
+                    omega,
+                    frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()}
+                )
+            );
         }
+        else { // robot centric drive
+            m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{allianceSign * -vx, allianceSign * -vy, omega});
+        }
+        frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
+        frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
+        frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
     }
 }
 
