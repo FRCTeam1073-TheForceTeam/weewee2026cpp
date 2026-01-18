@@ -26,7 +26,7 @@ void TeleopDrive::Initialize() {
     std::cerr << "TeleopDrive Init" << std::endl;
     Command::Initialize();
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
-        allianceSign = -1;
+        allianceSign = 1;
     }
     else {
         allianceSign = -1;
@@ -86,21 +86,20 @@ void TeleopDrive::Execute() {
             frc::SmartDashboard::PutNumber("TeleopDrive/leftY", leftY);
             frc::SmartDashboard::PutNumber("TeleopDrive/rightX", rightX);
 
-            // if(fieldCentric) {
-            //     m_drivetrain->SetChassisSpeeds(
-            //         frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-            //             vx,
-            //             vy,
-            //             omega,
-            //             frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
-            //         )
-            //     );
-            // }
-            // else {
-
-            m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega}); // Chassis speeds for OI controll
-
-            // }
+            // odometry centric drive
+            if(fieldCentric) {
+                m_drivetrain->SetChassisSpeeds(
+                    frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                        vx,
+                        vy,
+                        omega,
+                        frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()}
+                    )
+                );
+            }
+            else { // robot centric drive
+                m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds{vx, vy, omega});
+            }
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
             frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());

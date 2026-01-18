@@ -20,6 +20,8 @@ const std::string RobotContainer::testAuto = "Test Auto";
 RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
+
+  m_drivetrain->ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(3.15159_rad)));
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
 
   // Configure the button bindings
