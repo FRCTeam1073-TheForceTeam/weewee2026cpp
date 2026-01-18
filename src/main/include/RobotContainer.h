@@ -4,11 +4,17 @@
 
 #pragma once
 
+#include <memory>
+
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
+#include <frc/smartdashboard/SendableChooser.h>
 #include "subsystems/ExampleSubsystem.h"
+#include "subsystems/DriveTrain.h"
+#include "subsystems/OI.h"
+#include "commands/TeleopDrive.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -19,11 +25,44 @@
  */
 class RobotContainer {
  public:
-  RobotContainer();
 
+  static const std::string noPosition;
+  static const std::string rightPosition;
+  static const std::string leftPosition;
+  static const std::string centerPosition;
+  static const std::string testAuto;
+
+  
+  RobotContainer();
   // frc2::CommandPtr GetAutonomousCommand();
+  bool haveInitStartPos;
+
+  void autonomousInit();
+
+  frc2::Command GetAutonomousCommand();
+  frc2::Command GetTeleopCommand();
+  frc2::Command GetDisbaledCommand();
+
+  void disblaedInit();
+
+  bool FindStartPos();
+
+  bool DisabledPeriodic();
+
 
  private:
+  std::shared_ptr<Drivetrain> m_drivetrain;
+  std::shared_ptr<OI> m_OI;
+
+  // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
+
+  bool isRed;
+
+  const frc::SendableChooser<std::string> m_positionChooser;
+
+
+  const frc::SendableChooser<std::string> m_levelChooser;
+
 
   void ConfigureBindings();
 };
