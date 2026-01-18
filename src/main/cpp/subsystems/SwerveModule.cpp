@@ -5,6 +5,8 @@
 #include "subsystems/SwerveModule.h"
 #include <iostream>
 
+#include <units/math.h>
+
 using namespace ctre::phoenix6;
 
 SwerveModule::SwerveModule(Ids ids, frc::Translation2d location, const CANBus& canBus) :
@@ -112,22 +114,39 @@ const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t
 }
 
 
-void SwerveModule::SetCommand(frc::SwerveModuleState cmd) {
+void SwerveModule::SetCommand(const frc::SwerveModuleState& cmd, units::force::newton_t ffx, units::force::newton_t ffy) {
 
     if (!_hardwareConfigured) return; // No controls if configure failed
     
 
     // Cache command for reference later.
     _targetState = cmd;
+    // Cache feedforward forces as a vector to use later. In Newtons.
+    _feedForwardForce.x() = ffx.value();
+    _feedForwardForce.y() = ffy.value();
+
 
     // Convert and send this command to the hardware.
-    auto drive_motor_velocity = _targetState.speed / SwerveControlConfig::DriveMetersPerMotorTurn;
-    auto steering_angle = units::angle::degree_t(_targetState.angle.Degrees());
+    auto desired_drive_velocity = _targetState.speed / SwerveControlConfig::DriveMetersPerMotorTurn;
+    auto desired_steer_angle = units::angle::degree_t(_targetState.angle.Degrees());
+
+    // Scrub compensation:
+    // Desired steering angle as a 2D unit vector:
+    Eigen::Vector2d desired_steering_dir(units::math::cos(desired_steer_angle), units::math::sin(desired_steer_angle));
+    // Compute drive vector direction:
+    Eigen::Vector2d latest_steering_dir(_latestSwerveModuleState.angle.Cos(), _latestSwerveModuleState.angle.Sin());
+
+    // Compute the alignment of the desired_steering_dir and the latest_steering_dir:
+    auto alignment_scale = units::math::abs(units::dimensionless_t(desired_steering_dir.dot(latest_steering_dir)));
+    // Scrub compensation:
+    desired_drive_velocity = desired_drive_velocity * alignment_scale;
+
+    // TODO: Incorporate feed-foward forces into the drive motor based on angle:
 
     // Controller commands.
     // std::cerr << "Swerve Module [" << _ids.number << "] command " << drive_motor_velocity.value() << ", " << steering_angle.value() << std::endl;
-    _driveMotor.SetControl(_driveVelocityVoltage.WithSlot(0).WithVelocity(drive_motor_velocity));
-    _steerMotor.SetControl(_steerPositionVoltage.WithSlot(0).WithPosition(steering_angle));
+    _driveMotor.SetControl(_driveVelocityVoltage.WithSlot(0).WithVelocity(desired_drive_velocity));
+    _steerMotor.SetControl(_steerPositionVoltage.WithSlot(0).WithPosition(desired_steer_angle));
 }
 
   void SwerveModule::SetDriveBrakeMode(bool brake) {

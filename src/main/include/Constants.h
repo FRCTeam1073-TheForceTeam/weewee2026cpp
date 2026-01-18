@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #pragma once
+#include <units/angular_velocity.h>
+#include <units/voltage.h>
+
 
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
@@ -28,4 +31,23 @@ class Drivetrain {
 
 };
 
-}  // namespace OperatorConstants
+// Special backwards unit Phoenix6 / CTRE Library uses.
+using VoltsPerRPS =  units::compound_unit<units::voltage::volt, units::inverse<units::angular_velocity::turns_per_second>>;
+
+class KrakenX60 {
+    public:
+    static constexpr auto kV = 509.3_rpm / 1.0_V;
+};
+
+class KrakenX44 {
+    public:
+    static constexpr auto kV = 653.8_rpm / 1.0_V;
+};
+
+class Falcon {
+    public:
+    static constexpr auto kV = 534.8_rpm / 1.0_V;
+};
+
+
+}  // namespace Constants

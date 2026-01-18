@@ -18,6 +18,8 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/CANcoder.hpp>
 
+#include <Eigen/Geometry>
+
 #include <string>
 
 /**
@@ -84,8 +86,14 @@ class SwerveModule {
   /// Get feedback as swerve module position: 
   const frc::SwerveModulePosition& GetPosition() const { return _latestSwerveModulePosition; }
 
-  /// Send the command to the hardware and cache them.
-  void SetCommand(frc::SwerveModuleState cmd);
+  /**  Send the command to the hardware and cache them.
+   * 
+   * Takes the desired module control state (cmd) and
+   * also takes in computed feed-forward compensation forces from drivetrain,
+   * these default to 0 force.
+   * 
+   */
+  void SetCommand(const frc::SwerveModuleState & cmd, units::force::newton_t ffx = 0.0_N, units::force::newton_t ffy = 0.0_N);
 
   /// Set the drive brake mode:
   void SetDriveBrakeMode(bool brakes = true);
@@ -130,4 +138,7 @@ class SwerveModule {
 
   // Cached last command sent from drivetrain:
   frc::SwerveModuleState _targetState;
+
+  // Cached last feed-forward forces from drivetrain:
+  Eigen::Vector2d _feedForwardForce; // This is in Newtons.
 };

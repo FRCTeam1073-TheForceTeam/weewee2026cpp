@@ -1,13 +1,18 @@
 #include "subsystems/SwerveControlConfig.h"
 
 
+/***
+ * Important Information Available Here on Motor Constants: https://www.reca.lc/motors
+ */
+
+
 ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetDriveControlConfig() {
     ctre::phoenix6::configs::Slot0Configs config;
-    config.kV = 0.12;
+    config.kV = 0.1124;  // 534rpm/V = 8.9 rps/V => 0.1124 V/rps  (Falcon500)
     config.kP = 0.3;
     config.kI = 0.0;
     config.kD = 0.0;
-    config.kA = 0.01;
+    config.kA = 0.0;
     config.kS = 0.0;
 
     return config;
@@ -15,7 +20,7 @@ ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetDriveControlConfig
 
 ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetSteerControlConfig() {
     ctre::phoenix6::configs::Slot0Configs config;
-    config.kV = 0.12;
+    config.kV = 0.1124;  // 534rpm/V = 8.9 rps/V => 0.1124 V/rps  (Falcon500)
     config.kP = 10.0;
     config.kI = 0.1;
     config.kD = 0.0;
