@@ -37,17 +37,18 @@ class AprilTagFinder : public frc2::SubsystemBase {
     };
     struct RobotCamera{
     public: 
-        photon::PhotonCamera camera;
-        frc::Transform3d transform;
+        std::shared_ptr<photon::PhotonCamera> _camera;
+        frc::Transform3d _transform;
+        RobotCamera(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d transform) : _camera(camera), _transform(transform) {};
     };
     
     static frc::Pose3d estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d cameraToRobot);
 
     std::vector<VisionMeasurement> getAllMeasurements();
 
-    std::vector<photon::PhotonTrackedTarget> getCamTargets(photon::PhotonCamera& camera);
+    std::vector<photon::PhotonTrackedTarget> getCamTargets(std::shared_ptr<photon::PhotonCamera> camera);
 
-    std::vector<VisionMeasurement> getCamMeasurements(photon::PhotonCamera& camera, frc::Transform3d camTransform3d);
+    std::vector<VisionMeasurement> getCamMeasurements(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d camTransform3d);
 
     frc::Transform2d toTransform2d(frc::Transform3d t3d);
 

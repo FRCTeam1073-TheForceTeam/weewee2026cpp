@@ -1,6 +1,9 @@
 #include "subsystems/AprilTagFinder.h"
-
 std::vector<AprilTagFinder::RobotCamera> AprilTagFinder::_cameras = {
+    RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d()),
+    RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d()),
+    RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d()),
+    RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d())
 };
 
 frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d cameraToRobot) {
@@ -19,8 +22,8 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getAllMeasurement
     return _visionMeasurements;
 }
 
-std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(photon::PhotonCamera& camera) {
-    std::vector<photon::PhotonPipelineResult> results = camera.GetAllUnreadResults();
+std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(std::shared_ptr<photon::PhotonCamera> camera) {
+    std::vector<photon::PhotonPipelineResult> results = camera->GetAllUnreadResults();
     std::vector<photon::PhotonTrackedTarget> targets = std::vector<photon::PhotonTrackedTarget>();
 
     for(auto& result : results){
@@ -36,9 +39,9 @@ std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(photon::P
     return targets;
 }
 
-std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurements(photon::PhotonCamera& camera, frc::Transform3d camTransform3d) {
+std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurements(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d camTransform3d) {
     std::vector<VisionMeasurement> measurements = std::vector<VisionMeasurement>();
-    std::vector<photon::PhotonPipelineResult> results = camera.GetAllUnreadResults();
+    std::vector<photon::PhotonPipelineResult> results = camera->GetAllUnreadResults();
 
     for (auto& result : results){
         if (result.HasTargets()){
@@ -69,17 +72,22 @@ frc::Transform2d AprilTagFinder::toTransform2d(frc::Transform3d t3d) {
 }
 
 frc::Transform3d AprilTagFinder::getRobotCam(int index) {
-    return _cameras[index].transform;
+    return _cameras[index]._transform;
 }
 
 void AprilTagFinder::Periodic() {
     _visionMeasurements.clear();
     for (auto& cam : _cameras) {
-        std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam.camera, cam.transform);
+        std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam._camera, cam._transform);
         _visionMeasurements.insert(
             _visionMeasurements.end(),
             measurements.begin(),
             measurements.end()
         );
+    }
+    for(auto& vm : _visionMeasurements){
+        std::cout << "ID: " << vm._tagID << std::endl;
+        std::cout << "Range: " << vm._range.value() << std::endl;
+        std::cout << "Time: " << vm._timeStamp.value() << std::endl;
     }
 }
