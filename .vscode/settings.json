@@ -78,6 +78,7 @@
     "istream": "cpp",
     "limits": "cpp",
     "mutex": "cpp",
+    "new": "cpp",
     "numbers": "cpp",
     "ostream": "cpp",
     "ranges": "cpp",

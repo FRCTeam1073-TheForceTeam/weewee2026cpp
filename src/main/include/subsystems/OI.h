@@ -13,6 +13,7 @@
 #include <frc/filter/Debouncer.h>
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 class OI : public frc2::SubsystemBase {
     public:

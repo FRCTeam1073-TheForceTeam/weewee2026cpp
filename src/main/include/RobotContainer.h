@@ -56,7 +56,7 @@ class RobotContainer {
   std::shared_ptr<OI> m_OI;
   std::shared_ptr<AprilTagFinder> m_Tags;
 
-  std::shared_ptr<TeleopDrive> cmd_teleopDrive;
+  // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
   bool isRed;
 

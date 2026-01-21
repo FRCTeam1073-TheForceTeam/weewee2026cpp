@@ -22,7 +22,7 @@ double OI::GetDriverLeftY() {
 }
 
 double OI::GetDriverRightX() {
-    return _driverController.GetRightX();
+    return -1 * _driverController.GetRightX();
 }
 
 double OI::GetDriverRightY() {
@@ -30,7 +30,7 @@ double OI::GetDriverRightY() {
 }
 
 double OI::GetOperatorLeftX() {
-    return _operatorController.GetLeftX();
+    return -1 * _operatorController.GetLeftX();
 }
 
 double OI::GetOperatorLeftY() {
@@ -94,19 +94,23 @@ bool OI::GetDriverRightBumper() {
 }
 
 bool OI::GetDriverDPadUp() {
-    return _driverController.GetPOV(0);
+    //return _driverController.GetPOV() == 0;
+    return false;
 }
 
 bool OI::GetDriverDPadRight() {
-    return _driverController.GetPOV(90);
+    //return _driverController.GetPOV() == 90;
+    return false;
 }
 
 bool OI::GetDriverDPadLeft() {
-    return _driverController.GetPOV(270);
+    //return _driverController.GetPOV() == 270;
+    return false;
 }
 
 bool OI::GetDriverDPadDown() {
-    return _driverController.GetPOV(180);
+    //return _driverController.GetPOV(180) == 180;
+    return false;
 }
 
 bool OI::GetOperatorAButton() {
@@ -142,19 +146,23 @@ bool OI::GetOperatorRightBumper() {
 }
 
 bool OI::GetOperatorDPadUp() {
-    return _driverController.GetPOV(0);
+    //return _driverController.GetPOV() == 0;
+    return false;
 }
 
 bool OI::GetOperatorDPadRight() {
-    return _driverController.GetPOV(90);
+    ///return _driverController.GetPOV() == 90;
+    return false;
 }
 
 bool OI::GetOperatorDPadLeft() {
-    return _driverController.GetPOV(270);
+    /////return _driverController.GetPOV() == 270;
+    return false;
 }
 
 bool OI::GetOperatorDPadDown() {
-    return _driverController.GetPOV(180);
+    ////////return _driverController.GetPOV() == 180;
+    return false;
 }
 
 void OI::ZeroDriverController() {
