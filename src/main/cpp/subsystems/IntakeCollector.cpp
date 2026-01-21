@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "subsystems/Collector.h"
+#include "subsystems/IntakeCollector.h"
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 
 using namespace ctre::phoenix6;
@@ -12,7 +12,7 @@ using namespace ctre::phoenix6;
 /**
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
-Subsystem::Subsystem() :
+IntakeCollector::IntakeCollector() :
 _hardwareConfigured(true),
 _Motor(MotorId, CANBus("rio")),
 _PositionSig(_Motor.GetPosition()),
