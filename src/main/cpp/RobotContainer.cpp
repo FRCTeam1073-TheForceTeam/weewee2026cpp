@@ -21,6 +21,7 @@ RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
+  m_Tags = std::make_shared<AprilTagFinder>();
 
   // Configure the button bindings
   ConfigureBindings();
