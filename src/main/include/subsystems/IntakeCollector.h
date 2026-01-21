@@ -27,7 +27,7 @@
  * on other subsystems.
  * 
  */
-class Subsystem : public frc2::SubsystemBase {
+class IntakeCollector : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
@@ -44,7 +44,6 @@ class Subsystem : public frc2::SubsystemBase {
   
   // The feedback for this subsystem provided as a struct.
   struct Feedback {
-      units::length::meter_t position;
       units::velocity::meters_per_second_t velocity; // TODO: Add other stuff to feedback
       units::force::newton_t force;
   };
@@ -57,7 +56,7 @@ class Subsystem : public frc2::SubsystemBase {
 
 
   // Constructor for the subsystem.
-  Subsystem();
+  IntakeCollector();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -88,13 +87,11 @@ class Subsystem : public frc2::SubsystemBase {
 
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _VelocitySig;
-  ctre::phoenix6::StatusSignal<units::angle::turn_t> _PositionSig;
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _CurrentSig;
 
 
   //  velocity and position controls:
   ctre::phoenix6::controls::VelocityVoltage _commandVelocityVoltage;  // Uses Slot0 gains.
-  ctre::phoenix6::controls::PositionVoltage _commandPositionVoltage;  // Uses Slot1 gains.
   
   // Cached feedback:
   Feedback _feedback;

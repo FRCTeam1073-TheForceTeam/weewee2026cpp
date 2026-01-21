@@ -15,44 +15,37 @@ using namespace ctre::phoenix6;
 IntakeCollector::IntakeCollector() :
 _hardwareConfigured(true),
 _Motor(MotorId, CANBus("rio")),
-_PositionSig(_Motor.GetPosition()),
 _VelocitySig(_Motor.GetVelocity()),
 _CurrentSig(_Motor.GetTorqueCurrent()),
-_commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
-_commandPositionVoltage(units::angle::turn_t(0.0)) {
+_commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
 
   // Assign gain slots for the commands to use:
   _commandVelocityVoltage.WithSlot(0);  // Velocity control loop uses these gains.
-  _commandPositionVoltage.WithSlot(1);  // Position control loop uses these gains.
 
   // Do hardware configuration and track if it succeeds:
   _hardwareConfigured = ConfigureHardware();
   if (!_hardwareConfigured) {
-    std::cerr << "Subsystem: Hardware Failed To Configure!" << std::endl;
+    std::cerr << "IntakeCollector: Hardware Failed To Configure!" << std::endl;
   }
 
 }
 
 
   /// Set the command for the system.
-void Subsystem::SetCommand(Command cmd) {
+void IntakeCollector::SetCommand(Command cmd) {
   // Sometimes you need to do something immediate to the hardware.
   // We can just set our target internal value.
   _command = cmd;
 }
 
 
-void Subsystem::Periodic() {
+void IntakeCollector::Periodic() {
   // Sample the hardware:
-  BaseStatusSignal::RefreshAll(_PositionSig, _VelocitySig, _CurrentSig);
-
-  // Latency compensate the feedback when you sample a value and its rate:
-  auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_PositionSig, _VelocitySig);
+  BaseStatusSignal::RefreshAll(_VelocitySig, _CurrentSig);
 
   // Populate feedback cache:
   _feedback.force = _CurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
-  _feedback.position = compensatedPos / TurnsPerMeter; // Convert from hardare units to subsystem units. Divide by conversion to produce feedback.
   _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
 
 
@@ -71,8 +64,6 @@ void Subsystem::Periodic() {
       // Convert to hardware units:
       auto angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
 
-      // Send to hardware:
-      _Motor.SetControl(_commandPositionVoltage.WithPosition(angle));
   } else {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
     _Motor.SetControl(controls::NeutralOut());
@@ -80,7 +71,7 @@ void Subsystem::Periodic() {
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
-bool Subsystem::ConfigureHardware() {
+bool IntakeCollector::ConfigureHardware() {
 configs::TalonFXConfiguration configs{};
 
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 10.0_A; // Set current limits to keep from breaking things.
