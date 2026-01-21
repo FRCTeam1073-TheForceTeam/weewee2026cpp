@@ -3,8 +3,19 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/IntakePivot.h"
+#include <iostream>
 
-IntakePivot::IntakePivot() {}
+using namespace ctre::phoenix6;
+using namespace ctre::phoenix;
+
+const CANBus IntakePivot::canBus(CANBus::RoboRIO());
+
+IntakePivot::IntakePivot() {
+   _intakeCollectorMotor;
+   _intakeCollectorCoder;
+   ffGains;
+   fbGains;
+}
 
 void IntakePivot::Periodic() {
 
