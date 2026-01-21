@@ -83,11 +83,11 @@ class IntakeCollector : public frc2::SubsystemBase {
   bool _hardwareConfigured;
 
   //  TalonFX motor interface.
-  ctre::phoenix6::hardware::TalonFX _Motor;
+  ctre::phoenix6::hardware::TalonFX _intakeMotor;
 
   // CTRE hardware feedback signals:
-  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _VelocitySig;
-  ctre::phoenix6::StatusSignal<units::current::ampere_t> _CurrentSig;
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _IntakeVelocitySig;
+  ctre::phoenix6::StatusSignal<units::current::ampere_t> _IntakeCurrentSig;
 
 
   //  velocity and position controls:

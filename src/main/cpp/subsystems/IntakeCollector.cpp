@@ -14,9 +14,9 @@ using namespace ctre::phoenix6;
  */
 IntakeCollector::IntakeCollector() :
 _hardwareConfigured(true),
-_Motor(MotorId, CANBus("rio")),
-_VelocitySig(_Motor.GetVelocity()),
-_CurrentSig(_Motor.GetTorqueCurrent()),
+_intakeMotor(MotorId, CANBus("rio")),
+_IntakeVelocitySig(_intakeMotor.GetVelocity()),
+_IntakeCurrentSig(_intakeMotor.GetTorqueCurrent()),
 _commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
 
@@ -42,11 +42,11 @@ void IntakeCollector::SetCommand(Command cmd) {
 
 void IntakeCollector::Periodic() {
   // Sample the hardware:
-  BaseStatusSignal::RefreshAll(_VelocitySig, _CurrentSig);
+  BaseStatusSignal::RefreshAll(_IntakeVelocitySig, _IntakeCurrentSig);
 
   // Populate feedback cache:
-  _feedback.force = _CurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
-  _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
+  _feedback.force = _IntakeCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
+  _feedback.velocity = _IntakeVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
 
 
   // // Process command:
@@ -57,7 +57,7 @@ void IntakeCollector::Periodic() {
       // Multiply by conversion to produce commands.
       auto angular_vel = std::get<units::velocity::meters_per_second_t>(_command) * TurnsPerMeter;
       // Send to hardware:
-      _Motor.SetControl(_commandVelocityVoltage.WithVelocity(angular_vel));
+      _intakeMotor.SetControl(_commandVelocityVoltage.WithVelocity(angular_vel));
   } else if (std::holds_alternative<units::length::meter_t>(_command)) {
       // Send position based command:
 
@@ -66,7 +66,7 @@ void IntakeCollector::Periodic() {
 
   } else {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
-    _Motor.SetControl(controls::NeutralOut());
+    _intakeMotor.SetControl(controls::NeutralOut());
   }
 }
 
@@ -98,23 +98,23 @@ configs::TalonFXConfiguration configs{};
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
     // Set the control configuration for the drive motor:
-    auto status = _Motor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+    auto status = _intakeMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "IntakeCollector: Configuration went wrong" << std::endl;
     }
 
     // Set our neutral mode to brake on:
-    status = _Motor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
+    status = _intakeMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "IntakeCollector: Neutral brake went wrong" << std::endl;
     }
-
+    //TODO: change error messages if they are incorrect which they probably are
 
     // Depends on mechanism/subsystem design:
     // Optionally start out at zero after initialization:
-    _Motor.SetPosition(units::angle::turn_t(0));
+    _intakeMotor.SetPosition(units::angle::turn_t(0));
 
     // Log errors.
     return false;
