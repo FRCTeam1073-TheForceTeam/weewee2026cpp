@@ -4,7 +4,7 @@
 ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetDriveControlConfig() {
     ctre::phoenix6::configs::Slot0Configs config;
     config.kV = 0.12;
-    config.kP = 0.2;
+    config.kP = 0.3;
     config.kI = 0.0;
     config.kD = 0.0;
     config.kA = 0.01;
@@ -16,11 +16,11 @@ ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetDriveControlConfig
 ctre::phoenix6::configs::Slot0Configs SwerveControlConfig::GetSteerControlConfig() {
     ctre::phoenix6::configs::Slot0Configs config;
     config.kV = 0.12;
-    config.kP = 0.15;
-    config.kI = 0.05;
+    config.kP = 10.0;
+    config.kI = 0.1;
     config.kD = 0.0;
     config.kA = 0.0;
-    config.kS = 0.0;
+    config.kS = 0.05;
 
     return config;
 }

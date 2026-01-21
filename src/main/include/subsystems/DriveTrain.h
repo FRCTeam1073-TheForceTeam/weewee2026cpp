@@ -11,11 +11,14 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/geometry/Pose2d.h>
-
-
+// "a wrapper around std:array that does compile time size checking"
+#include <wpi/array.h>
 
 // Hardware abstraction
 #include <ctre/phoenix6/Pigeon2.hpp>
+
+//Network tables import
+#include <wpi/sendable/SendableBuilder.h>
 
 #include "subsystems/SwerveModule.h"
 
@@ -23,7 +26,7 @@ class Drivetrain : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the Pigeon2:
-  static constexpr int PigeonId = 16;
+  static constexpr int PigeonId = 5;
   static const ctre::phoenix6::CANBus canBus;
 
   Drivetrain();
@@ -33,7 +36,21 @@ class Drivetrain : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  
+  void InitSendable(wpi::SendableBuilder& builder) override;
+
+    /// Set the debug mode
+  void SetDebugMode(bool removeBug);
+
+  units::angle::degree_t GetGyroHeadingDegrees();
+
+  units::angle::radian_t GetGyroHeadingRadians();
+
+  /// Get the pitch of the chassis:
+  units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
+
+  /// Get the roll of the chassis:
+  units::angle::degree_t GetRoll() const { return _rollSig.GetValue(); }
+
   /// Return the chassis speeds for the drivetrain (in robot coordinates).
   const frc::ChassisSpeeds& GetChassisSpeeds() const { return _speeds; }
 
@@ -46,12 +63,6 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Reset the odometry to a specific pose on the field.
   void ResetOdometry(const frc::Pose2d pose);
 
-  /// Get the pitch of the chassis:
-  units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
-
-  /// Get the roll of the chassis:
-  units::angle::degree_t GetRoll() const { return _rollSig.GetValue(); }
-
   /// Return the state of drivetrain brakes.  
   bool GetParkingBrake() const { return _parkingBrake; }
 
@@ -59,13 +70,16 @@ class Drivetrain : public frc2::SubsystemBase {
   void SetParkingBrake(bool brakeOn);
 
   /// Get average motor loading:
-  double GetAverageLoad() const;
+  units::force::newton_t GetAverageLoad() const;
 
+  void ZeroHeading();
 
  private:
 
   /// Helper function to configure all hardware.
   bool ConfigureHardware();
+
+  bool debug;
 
   // Hardware device for IMU sensor:
   ctre::phoenix6::hardware::Pigeon2 _imu;

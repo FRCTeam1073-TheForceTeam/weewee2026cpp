@@ -8,18 +8,28 @@
 
 #include "commands/Autos.h"
 #include "commands/ExampleCommand.h"
+#include "commands/TeleopDrive.h"
+
+const std::string RobotContainer::noPosition = "No Position";
+const std::string RobotContainer::rightPosition = "Right Auto";
+const std::string RobotContainer::leftPosition = "Left Auto";
+const std::string RobotContainer::centerPosition = "Center Auto";
+const std::string RobotContainer::testAuto = "Test Auto";
+
 
 RobotContainer::RobotContainer() {
-  // Initialize all of your commands and subsystems here
+  m_drivetrain = std::make_shared<Drivetrain>();
+  m_OI = std::make_shared<OI>();
+  m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
 
   // Configure the button bindings
   ConfigureBindings();
 }
 
 void RobotContainer::ConfigureBindings() {
-
- 
 }
+
+
 
 // frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 //  // TODO:

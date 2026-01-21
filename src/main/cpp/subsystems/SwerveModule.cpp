@@ -89,12 +89,12 @@ const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t
     // Now refresh our latest module state based on the latency compensated values:
     _latestFeedback.timeStamp = now;
     _latestFeedback.driveVelocity = _driveVelocitySig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
-    _latestFeedback.drivePosition = _drivePositionSig.GetValue() * SwerveControlConfig::DriveMetersPerMotorTurn;
+    _latestFeedback.drivePosition = compensatedDrivePos * SwerveControlConfig::DriveMetersPerMotorTurn;
     _latestFeedback.driveCurrent = _driveCurrentSig.GetValue();
 
     // Steering Axis incorporates the gear ratio in the control setup:
     _latestFeedback.steeringVelocity = _steerVelocitySig.GetValue();
-    _latestFeedback.steeringAngle = _steerPositionSig.GetValue();
+    _latestFeedback.steeringAngle = compensatedSteeringPos;
 
 
     // Compute two simpler outputs:
@@ -114,7 +114,8 @@ const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t
 
 void SwerveModule::SetCommand(frc::SwerveModuleState cmd) {
 
-    if (!_hardwareConfigured) return; // No controls if configure failed.
+    if (!_hardwareConfigured) return; // No controls if configure failed
+    
 
     // Cache command for reference later.
     _targetState = cmd;
@@ -124,8 +125,9 @@ void SwerveModule::SetCommand(frc::SwerveModuleState cmd) {
     auto steering_angle = units::angle::degree_t(_targetState.angle.Degrees());
 
     // Controller commands.
-    _driveMotor.SetControl(_driveVelocityVoltage.WithVelocity(drive_motor_velocity));
-    _steerMotor.SetControl(_steerPositionVoltage.WithPosition(steering_angle));
+    // std::cerr << "Swerve Module [" << _ids.number << "] command " << drive_motor_velocity.value() << ", " << steering_angle.value() << std::endl;
+    _driveMotor.SetControl(_driveVelocityVoltage.WithSlot(0).WithVelocity(drive_motor_velocity));
+    _steerMotor.SetControl(_steerPositionVoltage.WithSlot(0).WithPosition(steering_angle));
 }
 
   void SwerveModule::SetDriveBrakeMode(bool brake) {
@@ -142,8 +144,8 @@ bool SwerveModule::ConfigureDriveHardware() {
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::DriveCurrentLimit;
     
 
-    configs.Voltage.PeakForwardVoltage = 8_V;
-    configs.Voltage.PeakReverseVoltage = -8_V;
+    configs.Voltage.PeakForwardVoltage = SwerveControlConfig::DriveVoltageLimit;
+    configs.Voltage.PeakReverseVoltage = -SwerveControlConfig::DriveVoltageLimit;
 
     // Slot zero for the normal control loop:
     configs.Slot0 = SwerveControlConfig::GetDriveControlConfig();
@@ -155,14 +157,16 @@ bool SwerveModule::ConfigureDriveHardware() {
     auto status = _driveMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config DriveTrain Hardware Configurator Application Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Set our neutral mode to brake on:
     status = _driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config DriveTrain Hardware Neutral Mode Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
 
@@ -170,21 +174,26 @@ bool SwerveModule::ConfigureDriveHardware() {
     _driveMotor.SetPosition(units::angle::turn_t(0));
 
     // Log errors.
-    return false;
+    return true;
 
 }
 
 bool SwerveModule::ConfigureSteerHardware() {
 
     // Default encoder configuration:
-    configs::CANcoderConfiguration  encoder_configs;
-    _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s); 
+    // configs::CANcoderConfiguration  encoder_configs;
+    // auto status = _steerEncoder.GetConfigurator().Apply(encoder_configs, 1_s);
+    // if (!status.IsOK()) {
+    //     std::cerr << "Config Steer Encoder Error: SwerveModule[" << _ids.number << "]" << std::endl;
+    //     return false;
+    // }
 
     // Read back the magnet sensor config for this module.
     configs::MagnetSensorConfigs magSenseConfig;
     auto status = _steerEncoder.GetConfigurator().Refresh(magSenseConfig, 1_s);
     if (!status.IsOK()) {
-        // Log error.
+        std::cerr << "Config Steer Hardware Refresh Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     std::cout << "SwerveModule [" << _ids.number << "] Encoder offset: " << magSenseConfig.MagnetOffset.value() << std::endl;
@@ -198,8 +207,8 @@ bool SwerveModule::ConfigureSteerHardware() {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = SwerveControlConfig::SteerCurrentLimit;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -SwerveControlConfig::SteerCurrentLimit;
 
-    configs.Voltage.PeakForwardVoltage = 8_V;
-    configs.Voltage.PeakReverseVoltage = -8_V;
+    configs.Voltage.PeakForwardVoltage = SwerveControlConfig::SteerVoltageLimit;
+    configs.Voltage.PeakReverseVoltage = -SwerveControlConfig::SteerVoltageLimit;
 
     // Slot zero for the normal control loop.
     configs.Slot0 = SwerveControlConfig::GetSteerControlConfig();
@@ -214,19 +223,21 @@ bool SwerveModule::ConfigureSteerHardware() {
     configs.ClosedLoopGeneral.WithContinuousWrap(true);  // Wrapping controls on the steering axis.
 
     // Set the control configuration for the drive motor:
-    status = _driveMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+    status = _steerMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config Steer Hardware Configurator Apply Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Set our neutral mode to brake on:
     status = _driveMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        // Log errors.
+        std::cerr << "Config Steer Hardware Neutral Mode Error: SwerveModule[" << _ids.number << "]" << std::endl;
+        return false;
     }
 
     // Log errors.
-    return false;
+    return true;
 }

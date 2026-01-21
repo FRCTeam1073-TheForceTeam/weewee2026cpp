@@ -4,19 +4,21 @@
 
 #include "subsystems/DriveTrain.h"
 #include <iostream>
+#include <frc/kinematics/ChassisSpeeds.h>
 
 using namespace ctre::phoenix6;
 using namespace ctre::phoenix;
 
-const CANBus Drivetrain::canBus("rio");
+const CANBus Drivetrain::canBus(CANBus::RoboRIO());
+bool debug = false;
 
-Drivetrain::Drivetrain() : 
+Drivetrain::Drivetrain() :
     _imu(PigeonId, canBus),
     _swerveModules{
-        SwerveModule({ 0,  14, 15, 10}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 1,  16, 17, 11}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 2,  18, 19, 12}, frc::Translation2d(0.0_m, 0.0_m), canBus), 
-        SwerveModule({ 3,  20, 21, 13}, frc::Translation2d(0.0_m, 0.0_m), canBus)},
+        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(2.54_m, 2.54_m), canBus), 
+        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(2.54_m, -2.54_m), canBus), 
+        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(-2.54_m, 2.54_m), canBus), 
+        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(-2.54_m, -2.54_m), canBus)},
     _kinematics(_swerveModules[0].GetLocation(), 
                  _swerveModules[1].GetLocation(), 
                  _swerveModules[2].GetLocation(), 
@@ -37,14 +39,14 @@ Drivetrain::Drivetrain() :
 
     _hardwareConfigured &= ConfigureHardware();
 
-    for (size_t ii(0); ii < _swerveModules.size(); ++ii) 
+    for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
         _hardwareConfigured &= _swerveModules[ii].HardwareConfigured();
+    }
 
     if (_hardwareConfigured) {
-        std::cerr << "Drivetrain hardware configuration error!!" << std::endl;
+        std::cerr << "!! Drivetrain hardware configuration error !!" << std::endl;
     }    
 }
-
 
 void Drivetrain::Periodic()  {
     // Sample all the hardware:
@@ -60,11 +62,16 @@ void Drivetrain::Periodic()  {
     for (size_t ii(0); ii < _swerveModules.size(); ++ii) {
         _swerveModules[ii].SampleFeedback(now);
         _swerveModulePositions[ii] = _swerveModules[ii].GetPosition();
-        _swerveModuleStates[ii] = _swerveModules[ii].GetState();
+        _swerveModuleStates[ii] = _swerveModules[ii].GetState(); // getState() returns SwerveModuleStates
+        // _swerveModuleStates[ii]
+        // std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].speed.value() << std::endl;
+        // std::cerr << "swervemodulestates index " << ii << " speed: " << _swerveModuleStates[ii].angle.Degrees().value() << std::endl;
     }
 
+
+
     // Update odometry and chassis speeds once we've sampled the hardware:
-    _speeds = _kinematics.ToChassisSpeeds(_swerveModuleStates);
+    _speeds = _kinematics.ToChassisSpeeds(_swerveModuleStates); // this is frc::SwerveDriveKinematics.ToChassisSpeeds, not regular frc::Kinematics
     _odometry.Update(yaw_angle, _swerveModulePositions);
 
     // TODO: Compute extra pushing forces on the chassis based on torque feedback
@@ -86,6 +93,20 @@ void Drivetrain::Periodic()  {
 
 }
 
+void Drivetrain::InitSendable(wpi::SendableBuilder& builder) {
+    // possibly remove this
+    builder.AddDoubleProperty("Parking Break", [this] {return GetParkingBrake(); }, nullptr);
+    builder.AddDoubleProperty("Odo X", [this] {return GetOdometry().X().value(); }, nullptr);
+    builder.AddDoubleProperty("Odo Y", [this] {return GetOdometry().Y().value(); }, nullptr);
+    builder.AddDoubleProperty("Odo Theta (Radians)", [this] {return GetOdometry().Rotation().Radians().value(); }, nullptr);
+    builder.AddDoubleProperty("Odo Gyro Heading (Degrees)", [this] {return GetGyroHeadingDegrees().value(); }, nullptr);
+    builder.AddDoubleProperty("Target Vx", _targetSpeeds.vx, nullptr);
+    builder.AddDoubleProperty("Target Vy", _targetSpeeds.vy, nullptr);
+    builder.AddDoubleProperty("Target Omega", _targetSpeeds.omega, nullptr);
+    builder.AddDoubleProperty("Pitch", [this] {return GetPitch().value(); }, nullptr);
+    builder.AddDoubleProperty("Roll", [this] {return GetRoll().value(); }, nullptr);
+}
+
 /// Reset the odometry to a specific pose on the field.
 void Drivetrain::ResetOdometry(const frc::Pose2d pose) {
     _odometry.ResetPosition(_yawSig.GetValue(), 
@@ -95,7 +116,6 @@ void Drivetrain::ResetOdometry(const frc::Pose2d pose) {
                 _swerveModules[3].GetPosition()}, 
                 pose);
 }
-
 
 void Drivetrain::SetParkingBrake(bool brakeOn) {
 
@@ -115,11 +135,17 @@ void Drivetrain::SetParkingBrake(bool brakeOn) {
     _parkingBrake = brakeOn;
 }
 
-
-double Drivetrain::GetAverageLoad() const {
-    return 0.0;
+units::force::newton_t Drivetrain::GetAverageLoad() const {
+    return 0.0_N;
 }
 
+units::angle::degree_t Drivetrain::GetGyroHeadingDegrees(){
+    return _imu.GetYaw().Refresh().GetValue();
+}
+
+units::angle::radian_t Drivetrain::GetGyroHeadingRadians(){
+    return _imu.GetYaw().Refresh().GetValue();
+}
 
 bool Drivetrain::ConfigureHardware() {
     configs::Pigeon2Configuration configs;
@@ -136,4 +162,12 @@ bool Drivetrain::ConfigureHardware() {
     BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz,_yawRateSig, _yawSig);
 
     return true;
+}
+
+void Drivetrain::SetDebugMode(bool removeBug) {
+    debug = removeBug;
+}
+
+void Drivetrain::ZeroHeading(){
+    _imu.SetYaw(0_deg);
 }
