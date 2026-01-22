@@ -2,42 +2,40 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// #pragma once
+#pragma once
 
-// #include <frc2/command/SubsystemBase.h>
-// #include <frc/filter/LinearFilter.h>
+#include <frc2/command/SubsystemBase.h>
+#include <wpi/sendable/SendableBuilder.h>
 
-// #include <units/velocity.h>
-// #include <units/angle.h>
-// #include <units/length.h>
+#include <units/length.h>
+#include <units/velocity.h>
+#include <units/force.h>
 
-// #include <ctre/phoenix6/TalonFX.hpp>
-// #include <ctre/phoenix6/CANcoder.hpp>
+#include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/CANcoder.hpp>
+#include <ctre/phoenix6/CANBus.hpp>
 
-// class IntakePivot : public frc2::SubsystemBase {
-//  public:
+#include <variant>
 
-//   static const ctre::phoenix6::CANBus canBus;
+class IntakePivot : public frc2::SubsystemBase {
+    public:
 
-//   IntakePivot(const CANBus& canBus);
-  
-//   void SetPosition(units::angle::radian_t angle);
+    static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);
+    static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0);
 
-//   ctre::phoenix6::hardware::TalonFX _intakeCollectorMotor;
-//   ctre::phoenix6::hardware::CANcoder _intakeCollectorCoder;
+    static const ctre::phoenix6::CANBus canBus;
 
-//   void Periodic() override;
+    IntakePivot();
+    
 
-//   private:
+    //void Periodic() override;
 
-//   units::velocity::meters_per_second_t rollerVelocity;
-//   units::velocity::meters_per_second_t commandedVelocity;
+    private:
 
-//   // frc::LinearFilter <double> filter;
-//   // std::span <double, 1> ffGains;
-//   // std::span <double, 1> fbGains;
-//   // frc::LinearFilter<double> _LinearFilter(std::span<double>ffGains, std::span<double>fbGains); 
-//   // ffGains = The "feedforward" or FIR gains. 
-//   // fbGains = The "Feedback" or IIR gains.
+    bool ConfigureHardware();
+    bool _hardwareConfigured;
 
-// };
+    ctre::phoenix6::hardware::TalonFX _IntakePivotMotor;
+    ctre::phoenix6::hardware::CANcoder _IntakePivotEncoder;
+
+};

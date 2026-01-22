@@ -13,13 +13,13 @@ using namespace ctre::phoenix6;
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
 ExampleSubsystem::ExampleSubsystem() :
-_hardwareConfigured(true),
-_exampleMotor(ExampleMotorId, CANBus("rio")),
-_examplePositionSig(_exampleMotor.GetPosition()),
-_exampleVelocitySig(_exampleMotor.GetVelocity()),
-_exampleCurrentSig(_exampleMotor.GetTorqueCurrent()),
-_commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
-_commandPositionVoltage(units::angle::turn_t(0.0)) {
+  _hardwareConfigured(true),
+  _exampleMotor(ExampleMotorId, CANBus("rio")),
+  _examplePositionSig(_exampleMotor.GetPosition()),
+  _exampleVelocitySig(_exampleMotor.GetVelocity()),
+  _exampleCurrentSig(_exampleMotor.GetTorqueCurrent()),
+  _commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
+  _commandPositionVoltage(units::angle::turn_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
 
   // Assign gain slots for the commands to use:
