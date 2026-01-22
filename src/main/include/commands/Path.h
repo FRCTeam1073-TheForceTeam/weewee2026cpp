@@ -67,6 +67,10 @@ class Path
 
   units::length::meter_t DistanceToSegment(Eigen::Vector2d start, Eigen::Vector2d end, Eigen::Vector2d p, Eigen::Vector2d projection, Eigen::Vector2d direction);
 
+  units::length::meter_t DistanceToSegment(Eigen::Vector2d start, Eigen::Vector2d end, Eigen::Vector2d p);
+
+  int ClosestSegment(frc::Pose2d location);
+
   void Initialize() override;
 
   void Execute() override;
