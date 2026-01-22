@@ -23,6 +23,8 @@ _commandVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
   // Assign gain slots for the commands to use:
   _commandVelocityVoltage.WithSlot(0);  // Velocity control loop uses these gains.
 
+  _targetVelocity = 0_tps;
+
   // Do hardware configuration and track if it succeeds:
   _hardwareConfigured = ConfigureHardware();
   if (!_hardwareConfigured) {
@@ -39,6 +41,18 @@ void IntakeCollector::SetCommand(Command cmd) {
   _command = cmd;
 }
 
+void IntakeCollector::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+  _targetVelocity = Velocity;
+}
+
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> IntakeCollector::GetIntakeVelocity() {
+  return _IntakeVelocitySig;
+}
+
+units::angular_velocity::turns_per_second_t IntakeCollector::GetIntakeTargetVelocity() {
+  return _targetVelocity;
+}
+
 
 void IntakeCollector::Periodic() {
   // Sample the hardware:
@@ -48,6 +62,7 @@ void IntakeCollector::Periodic() {
   _feedback.force = _IntakeCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
   _feedback.velocity = _IntakeVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
 
+  _intakeMotor.Set(_targetVelocity.value());
 
   // // Process command:
   if (std::holds_alternative<units::velocity::meters_per_second_t>(_command)) {

@@ -73,6 +73,12 @@ class IntakeCollector : public frc2::SubsystemBase {
   /// Set the command for the system.
   void SetCommand(Command cmd);
 
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetIntakeVelocity();
+
+  units::angular_velocity::turns_per_second_t GetIntakeTargetVelocity();
+
+  void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
+
  private:
 
 
@@ -98,5 +104,8 @@ class IntakeCollector : public frc2::SubsystemBase {
 
   // Cached command: Variant of possible different kinds of commands.
   Command  _command;
+
+  // Set the motors target velocity
+  units::angular_velocity::turns_per_second_t _targetVelocity;
 
 };
