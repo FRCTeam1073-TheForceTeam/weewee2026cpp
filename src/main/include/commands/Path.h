@@ -3,6 +3,7 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include <Eigen/Dense>
 #include <vector>
@@ -69,14 +70,14 @@ class Path
 
   units::length::meter_t DistanceToSegment(Eigen::Vector2d start, Eigen::Vector2d end, Eigen::Vector2d p);
 
+  units::length::meter_t DistanceToSegment(Eigen::Vector2d start, Eigen::Vector2d end, Eigen::Vector2d p, Eigen::Vector2d projection);
+
   int ClosestSegment(frc::Pose2d location);
 
-  void Initialize() override;
+  PathFeedback GetPathFeedback(int segmentIndex, frc::Pose2d location);
 
-  void Execute() override;
+  units::angle::radian_t GetPathOrientation(int segmentIndex, frc::Pose2d location);
 
-  void End(bool interrupted) override;
-
-  bool IsFinished() override;
+  bool AtEndPoint(int segmentIndex, frc::Pose2d location);
 };
 
