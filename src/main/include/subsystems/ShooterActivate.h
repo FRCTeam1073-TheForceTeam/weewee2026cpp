@@ -37,6 +37,21 @@ class ShooterActivate : public frc2::SubsystemBase {
   
   const ShooterActivateFeedback& GetShooterActivateFeedback() const { return _feedback; }
 
+  void SetCommand(Command cmd);
+  void SetShooterVelocity (units::angular_velocity::turns_per_second_t Velocity);
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetShooterVelocity();
+  units::angular_velocity::turns_per_second_t GetShooterTargetVelocity();
+
+
+  
+  // Helper function for configuring hardware from within the constructor of the subsystem.
+  bool ConfigureHardware();
+
+  // Did we successfully configure the hardware?
+  bool _hardwareConfigured;
+
+
+
  private:
   static constexpr int MotorId = 9; // TODO: Get motor id 
 

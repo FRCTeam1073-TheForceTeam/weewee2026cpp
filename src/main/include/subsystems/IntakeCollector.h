@@ -69,6 +69,14 @@ class IntakeCollector : public frc2::SubsystemBase {
 
   void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
+  
+  // Helper function for configuring hardware from within the constructor of the subsystem.
+  bool ConfigureHardware();
+
+  // Did we successfully configure the hardware?
+  bool _hardwareConfigured;
+
+
  private:
 
 
@@ -83,12 +91,6 @@ class IntakeCollector : public frc2::SubsystemBase {
   static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0); // TODO: Get amps per newton
 
   
-
-  // Helper function for configuring hardware from within the constructor of the subsystem.
-  bool ConfigureHardware();
-
-  // Did we successfully configure the hardware?
-  bool _hardwareConfigured;
 
   //  TalonFX motor interface.
   ctre::phoenix6::hardware::TalonFX _intakeMotor;

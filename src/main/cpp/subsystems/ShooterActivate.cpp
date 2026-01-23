@@ -11,4 +11,4 @@ using namespace ctre::phoenix6;
 ShooterActivate::ShooterActivate() = default;
 
 // This method will be called once per scheduler run
-void RotateShooter::Periodic() {}
+void ShooterActivate::Periodic() {}
