@@ -71,7 +71,6 @@ class ExampleSubsystem : public frc2::SubsystemBase {
 
  private:
 
-
   // Helper function for configuring hardware from within the constructor of the subsystem.
   bool ConfigureHardware();
 
