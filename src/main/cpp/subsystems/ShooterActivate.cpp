@@ -8,7 +8,8 @@
 
 using namespace ctre::phoenix6;
 
-ShooterActivate::ShooterActivate() = default;
+ShooterActivate::ShooterActivate(): 
+    _hardwareConfigured = true;
 
 // This method will be called once per scheduler run
 void ShooterActivate::Periodic() {}
