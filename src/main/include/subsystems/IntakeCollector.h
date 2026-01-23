@@ -31,16 +31,6 @@ class IntakeCollector : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int MotorId = 8; // TODO: Get motor id 
-
-  const double GearRatio = 1; // TODO: Get gear ratio from EM
-
-  
-
-  // Mechanism conversion constants for the subsystem:
-  static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0); // TODO: Get turns per meter
-  static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0); // TODO: Get amps per newton
-
   
   // The feedback for this subsystem provided as a struct.
   struct Feedback {
@@ -81,6 +71,18 @@ class IntakeCollector : public frc2::SubsystemBase {
 
  private:
 
+
+  static constexpr int MotorId = 8; // TODO: Get motor id 
+
+  const double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1); // TODO: Get gear ratio from EM
+
+  
+
+  // Mechanism conversion constants for the subsystem:
+  static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0); // TODO: Get turns per meter
+  static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0); // TODO: Get amps per newton
+
+  
 
   // Helper function for configuring hardware from within the constructor of the subsystem.
   bool ConfigureHardware();
