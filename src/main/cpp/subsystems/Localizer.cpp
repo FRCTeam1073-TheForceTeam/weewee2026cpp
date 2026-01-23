@@ -1,5 +1,3 @@
-#pragma once
-
 #include "subsystems/Localizer.h"
 
 Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<FieldMap> fieldMap, std::shared_ptr<AprilTagFinder> finder) : 
