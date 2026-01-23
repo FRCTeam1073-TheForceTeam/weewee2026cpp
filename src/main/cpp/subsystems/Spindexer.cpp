@@ -12,7 +12,7 @@ using namespace ctre::phoenix6;
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
 Spindexer::Spindexer() :
-_hardwareConfigured(true),
+_hardwareConfigured(false),
 _spindexerMotor(SpindexerMotorId, CANBus("rio")),
 _spindexerVelocitySig(_spindexerMotor.GetVelocity()),
 _spindexerCurrentSig(_spindexerMotor.GetTorqueCurrent()),
@@ -56,7 +56,7 @@ units::angular_velocity::turns_per_second_t Spindexer::GetTargetVelocity() {
 void Spindexer::Periodic() {
   // Sample the hardware:
   BaseStatusSignal::RefreshAll(_spindexerVelocitySig, _spindexerCurrentSig);
-
+ 
   // Latency compensate the feedback when you sample a value and its rate:
   // auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_spindexerPositionSig, _spindexerVelocitySig);
 
@@ -105,13 +105,7 @@ configs::TalonFXConfiguration configs{};
     configs.Slot0.kD = 0.01;
     configs.Slot0.kA = 0.0;
 
-    // Slot 1 for position control mode:
-    configs.Slot1.kV = 0.12; // Motor constant.
-    configs.Slot1.kP = 0.1;
-    configs.Slot1.kI = 0.01;
-    configs.Slot1.kD = 0.0;
-    configs.Slot1.kA = 0.0;
-
+    
     // Set whether motor control direction is inverted or not:
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 

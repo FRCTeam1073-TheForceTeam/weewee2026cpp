@@ -100,5 +100,7 @@ class Spindexer : public frc2::SubsystemBase {
   // Cached command: Variant of possible different kinds of commands.
   Command  _command;
 
+  //TODO: get gear ratio because EM doesnt have it yet
+  double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1);
 };
 //hi if your reading this 
