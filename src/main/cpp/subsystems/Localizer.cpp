@@ -1,3 +1,5 @@
+#pragma once
+
 #include "subsystems/Localizer.h"
 #include <cmath> 
 #include <wpi/SymbolExports.h>
@@ -28,8 +30,9 @@ Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<Fie
 {};
 
 void Localizer::InitSendable(wpi::SendableBuilder &builder) {
-    /*
+    
     builder.SetSmartDashboardType("Localizer");
+    /*
     builder.AddDoubleProperty("StdDev X", StdDevX, this::setStdDevX);
     builder.AddDoubleProperty("StdDev Y", this::getStdDevY, this::setStdDevY);
     builder.AddDoubleProperty("StdDev Angle", this::getStdDevA, this::setStdDevA);
