@@ -65,4 +65,6 @@ class RobotContainer {
 
 
   void ConfigureBindings();
+
+  double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1);
 };

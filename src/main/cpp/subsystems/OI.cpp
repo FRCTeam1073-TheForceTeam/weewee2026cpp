@@ -156,12 +156,12 @@ bool OI::GetOperatorDPadRight() {
 }
 
 bool OI::GetOperatorDPadLeft() {
-    /////return _driverController.GetPOV() == 270;
+    //return _driverController.GetPOV() == 270;
     return false;
 }
 
 bool OI::GetOperatorDPadDown() {
-    ////////return _driverController.GetPOV() == 180;
+    //return _driverController.GetPOV() == 180;
     return false;
 }
 
