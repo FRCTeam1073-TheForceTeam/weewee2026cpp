@@ -11,6 +11,23 @@
 #include <frc/Timer.h>
 #include <units/time.h>
 #include <units/length.h>
+#include <cmath> 
+#include <wpi/SymbolExports.h>
+#include <wpi/array.h>
+#include <frc/Timer.h>
+#include <chrono>
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include "frc/estimator/PoseEstimator.h"
+#include "frc/geometry/Pose2d.h"
+#include "frc/geometry/Rotation2d.h"
+#include "frc/geometry/Rotation3d.h"
+#include "frc/geometry/Transform3d.h"
+#include "frc/kinematics/SwerveDriveKinematics.h"
+#include "frc/kinematics/SwerveModulePosition.h"
+#include "frc/kinematics/SwerveDriveOdometry.h"
+
+#include "units/time.h"
 
 class Localizer : public frc2::SubsystemBase {
     public:
@@ -71,6 +88,7 @@ class Localizer : public frc2::SubsystemBase {
     wpi::array<frc::SwerveModulePosition, 4U> _swerveModulePositions;
     //std::array<units::angle::radians, 3,
     wpi::array<double, 3U> measurementStdDev = {0.5,0.5,0.5};
+    //std::array<units::angle::radians, 3, 
     int measurementCounter = 0;
     units::time::millisecond_t timeGap{8};
     units::velocity::meters_per_second_t linearSpeedThreshold{2.5};
