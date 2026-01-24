@@ -15,17 +15,17 @@
 
 #include <variant>
 
-class ShooterActivate : public frc2::SubsystemBase {
+class Flywheel : public frc2::SubsystemBase {
  public:
 
- struct ShooterActivateFeedback {
+ struct FlywheelFeedback {
       units::velocity::meters_per_second_t velocity; // TODO: Add other stuff to feedback
       units::force::newton_t force;
   };
 
   using Command = std::variant<std::monostate, units::velocity::meters_per_second_t, units::length::meter_t>;
 
-  ShooterActivate();
+  Flywheel();
 
   
 
@@ -34,16 +34,16 @@ class ShooterActivate : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  
-  const ShooterActivateFeedback& GetShooterActivateFeedback() const { return _feedback; }
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetFlywheelVelocity();
+
+  units::angular_velocity::turns_per_second_t GetFlywheelTargetVelocity();
+
+  void SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity);
+
+  const FlywheelFeedback& GetFlywheelFeedback() const { return _feedback; }
 
   void SetCommand(Command cmd);
-  void SetShooterVelocity (units::angular_velocity::turns_per_second_t Velocity);
-  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetShooterVelocity();
-  units::angular_velocity::turns_per_second_t GetShooterTargetVelocity();
 
-
-  
   // Helper function for configuring hardware from within the constructor of the subsystem.
   bool ConfigureHardware();
 
@@ -53,7 +53,8 @@ class ShooterActivate : public frc2::SubsystemBase {
 
 
  private:
-  static constexpr int MotorId = 9; // TODO: Get motor id 
+  static constexpr int LeadMotorId = 9; // TODO: Get motor id 
+  static constexpr int FollowMotorId = 67;
 
   const double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1); // TODO: Get gear ratio from EM
 
@@ -65,18 +66,18 @@ class ShooterActivate : public frc2::SubsystemBase {
 
   
   //  TalonFX motor interface.
-  ctre::phoenix6::hardware::TalonFX _intakeMotor;
+  ctre::phoenix6::hardware::TalonFX _leadFlywheelMotor;
+  ctre::phoenix6::hardware::TalonFX _followFlywheelMotor;
 
   // CTRE hardware feedback signals:
-  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _IntakeVelocitySig;
-  ctre::phoenix6::StatusSignal<units::current::ampere_t> _IntakeCurrentSig;
-
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _FlywheelVelocitySig;
+  ctre::phoenix6::StatusSignal<units::current::ampere_t> _FlywheelCurrentSig;
 
   //  velocity and position controls:
-  ctre::phoenix6::controls::VelocityVoltage _commandVelocityVoltage;  // Uses Slot0 gains.
+  ctre::phoenix6::controls::VelocityVoltage _FlywheelVelocityVoltage;  // Uses Slot0 gains.
   
   // Cached feedback:
-  ShooterActivateFeedback _feedback;
+  FlywheelFeedback _feedback;
 
   // Cached command: Variant of possible different kinds of commands.
   Command  _command;
