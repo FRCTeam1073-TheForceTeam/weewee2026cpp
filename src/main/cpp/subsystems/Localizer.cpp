@@ -1,22 +1,5 @@
-#pragma once
-
 #include "subsystems/Localizer.h"
-#include <cmath> 
-#include <wpi/SymbolExports.h>
-#include <wpi/array.h>
-#include <frc/Timer.h>
-#include <chrono>
 
-#include "frc/estimator/PoseEstimator.h"
-#include "frc/geometry/Pose2d.h"
-#include "frc/geometry/Rotation2d.h"
-#include "frc/geometry/Rotation3d.h"
-#include "frc/geometry/Transform3d.h"
-#include "frc/kinematics/SwerveDriveKinematics.h"
-#include "frc/kinematics/SwerveModulePosition.h"
-#include "frc/kinematics/SwerveDriveOdometry.h"
-
-#include "units/time.h"
 
 
 Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<FieldMap> fieldMap, std::shared_ptr<AprilTagFinder> finder) : 
@@ -44,13 +27,25 @@ void Localizer::InitSendable(wpi::SendableBuilder &builder) {
 }
 
 void Localizer::resetPose(frc::Pose2d newPos) {
-    // estimator = new SwerveDrivePoseEstimator(kinematics, driveTrain.getOdometry().getRotation(), swerveModulePositions, newPos);
     frc::SwerveDrivePoseEstimator _estimator(_kinematics, _driveTrain->GetGyroHeadingRadians(), _swerveModulePositions, newPos);
 }
 
 void Localizer::Periodic() {
     units::time::second_t now = frc::Timer::GetFPGATimestamp();	
-    //current issue is that updateWithTime is a method of SwerveDrivePoseEstimator in java but isn't in C++. currently working on it
-    // _estimator.updateWithTime(now, _driveTrain->GetGyroHeadingRadians(), _swerveModulePositions);
+    _estimator.UpdateWithTime(now, _driveTrain->GetGyroHeadingRadians(), _swerveModulePositions);
+    if (now - _lastUpdateTime > timeGap && measurementStable){
+        std::vector<AprilTagFinder::VisionMeasurement> measurements = _finder->getAllMeasurements();
+        for (int index = 0; index < measurements.size(); index++){
+            AprilTagFinder::VisionMeasurement CurrentMeasurement = measurements[index];
 
+            if (CurrentMeasurement._range <= maxRange)
+            {
+                updateStdDevs(CurrentMeasurement);
+                _estimator.AddVisionMeasurement(CurrentMeasurement._pose, CurrentMeasurement._timeStamp, meaurementStdDev);
+                measurementCounter++;
+            }
+        }
+        _lastUpdateTime = now;
+        frc::SmartDashboard::PutNumber("Localize Measurements", measurementCounter);
+    }
 }
