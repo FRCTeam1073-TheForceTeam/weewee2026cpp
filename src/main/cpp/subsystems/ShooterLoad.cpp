@@ -64,25 +64,7 @@ void ShooterLoad::Periodic() {
 
   _loadMotor.Set(_targetVelocity.value());
 
-  // // Process command:
-  if (std::holds_alternative<units::velocity::meters_per_second_t>(_command)) {
-      // Send velocity based command:
 
-      // Convert to hardware units:
-      // Multiply by conversion to produce commands.
-      auto angular_vel = std::get<units::velocity::meters_per_second_t>(_command) * TurnsPerMeter;
-      // Send to hardware:
-      _loadMotor.SetControl(_commandVelocityVoltage.WithVelocity(angular_vel));
-  } else if (std::holds_alternative<units::length::meter_t>(_command)) {
-      // Send position based command:
-
-      // Convert to hardware units:
-      auto angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
-
-  } else {
-      // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
-    _loadMotor.SetControl(controls::NeutralOut());
-  }
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
