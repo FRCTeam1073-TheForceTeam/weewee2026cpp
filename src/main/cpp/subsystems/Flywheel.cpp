@@ -12,11 +12,11 @@ Flywheel::Flywheel():
     _hardwareConfigured(true), 
     _leadFlywheelMotor(LeadMotorId, "rio"),
     _followFlywheelMotor(FollowMotorId, "rio"),
-    _FlywheelCurrentSig(_leadFlywheelMotor.GetTorqueCurrent()),
     _FlywheelVelocitySig(_leadFlywheelMotor.GetVelocity()),
+    _FlywheelCurrentSig(_leadFlywheelMotor.GetTorqueCurrent()),
     _FlywheelVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
         
-        _FlywheelVelocityVoltage.WithSlot(0);
+    _FlywheelVelocityVoltage.WithSlot(0);
 
     _hardwareConfigured = ConfigureHardware();
         if(!_hardwareConfigured) {
@@ -24,9 +24,23 @@ Flywheel::Flywheel():
         }
     }
 
+void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+    _TargetVelocity = Velocity;
+}
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Flywheel::GetFlywheelVelocity() {
+    return _FlywheelVelocitySig;
+}
+units::angular_velocity::turns_per_second_t Flywheel::GetFlywheelTargetVelocity() {
+    return _TargetVelocity;
+}
+
+
 // This method will be called once per scheduler run
 void Flywheel::Periodic() {
     BaseStatusSignal::RefreshAll(_FlywheelVelocitySig, _FlywheelCurrentSig);
+
+    _followFlywheelMotor.Set(_FlywheelVelocitySig.GetValue().value());
+
 }
 
 bool Flywheel::ConfigureHardware() {

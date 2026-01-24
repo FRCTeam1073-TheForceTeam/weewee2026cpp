@@ -83,7 +83,7 @@ class Flywheel : public frc2::SubsystemBase {
   Command  _command;
 
   // Set the motors target velocity
-  units::angular_velocity::turns_per_second_t _targetVelocity;
+  units::angular_velocity::turns_per_second_t _TargetVelocity;
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
