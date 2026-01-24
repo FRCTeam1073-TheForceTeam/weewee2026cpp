@@ -3,13 +3,65 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include <iostream>
-#include "subsystems/ShooterActivate.h"
+#include "subsystems/Flywheel.h"
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 
 using namespace ctre::phoenix6;
 
-ShooterActivate::ShooterActivate(): 
-    _hardwareConfigured = true;
+Flywheel::Flywheel(): 
+    _hardwareConfigured(true), 
+    _leadFlywheelMotor(LeadMotorId, "rio"),
+    _followFlywheelMotor(FollowMotorId, "rio"),
+    _FlywheelCurrentSig(_leadFlywheelMotor.GetTorqueCurrent()),
+    _FlywheelVelocitySig(_leadFlywheelMotor.GetVelocity()),
+    _FlywheelVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
+        
+        _FlywheelVelocityVoltage.WithSlot(0);
+
+    _hardwareConfigured = ConfigureHardware();
+        if(!_hardwareConfigured) {
+            std::cerr << "hardware failed to conifgure in shooter" << std::endl;
+        }
+    }
 
 // This method will be called once per scheduler run
-void ShooterActivate::Periodic() {}
+void Flywheel::Periodic() {
+    BaseStatusSignal::RefreshAll(_FlywheelVelocitySig, _FlywheelCurrentSig);
+}
+
+bool Flywheel::ConfigureHardware() {
+configs::TalonFXConfiguration configs{};
+
+    configs.TorqueCurrent.PeakForwardTorqueCurrent = 10.0_A; // Set current limits to keep from breaking things.
+    configs.TorqueCurrent.PeakReverseTorqueCurrent = -10.0_A; 
+
+    configs.Voltage.PeakForwardVoltage = 8_V; // These are pretty typical values, adjust as needed.
+    configs.Voltage.PeakReverseVoltage = -8_V;
+
+    // Slot 0 for the velocity control loop:
+    configs.Slot0.kV = 0.12;
+    configs.Slot0.kP = 0.15;
+    configs.Slot0.kI = 0.0;
+    configs.Slot0.kD = 0.01;
+    configs.Slot0.kA = 0.0;
+
+    // Slot 1 for position control mode:
+    configs.Slot1.kV = 0.12; // Motor constant.
+    configs.Slot1.kP = 0.1;
+    configs.Slot1.kI = 0.01;
+    configs.Slot1.kD = 0.0;
+    configs.Slot1.kA = 0.0;
+
+    // Set whether motor control direction is inverted or not:
+    configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
+
+    // Set the control configuration for the drive motor:
+    auto status = _leadFlywheelMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+
+    if (!status.IsOK()) {
+        std::cerr << "Flywheel is not working" << std::endl;
+    }
+
+    return true;
+
+}
