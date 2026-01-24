@@ -1,5 +1,3 @@
-#pragma once
-
 #include "subsystems/Localizer.h"
 #include <cmath> 
 #include <wpi/SymbolExports.h>

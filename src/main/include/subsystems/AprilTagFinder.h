@@ -25,6 +25,7 @@
 
 class AprilTagFinder : public frc2::SubsystemBase {
     public:
+    AprilTagFinder();
     class VisionMeasurement
     {
     public:
@@ -48,17 +49,17 @@ class AprilTagFinder : public frc2::SubsystemBase {
 
     std::vector<photon::PhotonTrackedTarget> getCamTargets(std::shared_ptr<photon::PhotonCamera> camera);
 
-    std::vector<VisionMeasurement> getCamMeasurements(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d camTransform3d);
-
     frc::Transform2d toTransform2d(frc::Transform3d t3d);
 
+    std::vector<VisionMeasurement> getCamMeasurements(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d camTransform3d);
+    
     frc::Transform3d getRobotCam(int index);
 
     void Periodic() override;
-
-    const double ambiguityThreshold = 0.28;
+    
     static std::vector<RobotCamera> _cameras;
     
+    const double ambiguityThreshold = 0.28;
     private:
         std::vector<VisionMeasurement> _visionMeasurements;
 
