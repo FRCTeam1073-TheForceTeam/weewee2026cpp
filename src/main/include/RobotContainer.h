@@ -14,6 +14,7 @@
 #include "subsystems/ExampleSubsystem.h"
 #include "subsystems/DriveTrain.h"
 #include "subsystems/OI.h"
+#include "subsystems/Flywheel.h"
 #include "commands/TeleopDrive.h"
 
 /**
@@ -53,6 +54,7 @@ class RobotContainer {
  private:
   std::shared_ptr<Drivetrain> m_drivetrain;
   std::shared_ptr<OI> m_OI;
+  std::shared_ptr<Flywheel> m_flywheel;
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
