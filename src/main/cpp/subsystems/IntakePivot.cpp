@@ -5,35 +5,38 @@
 #include "subsystems/IntakePivot.h"
 #include <iostream>
 
+#include <ctre/phoenix6/signals/SpnEnums.hpp>
+
 using namespace ctre::phoenix6;
 
 IntakePivot::IntakePivot(): 
     _hardwareConfigured(true),
-    _IntakePivotMotor1(_IntakePivotMotorID1, CANBus("rio")), 
-    _IntakePivotMotor2(_IntakePivotMotorID1, CANBus("rio")), 
-    _IntakePivotEncoder(_IntakePivotEncoderID, CANBus("rio")),
-    _IntakePivotPositionSig1(_IntakePivotMotor1.GetPosition()),
-    _IntakePivotPositionSig2(_IntakePivotMotor2.GetPosition()),
-    _IntakePivotVelocitySig1(_IntakePivotMotor1.GetVelocity()),
-    _IntakePivotVelocitySig2(_IntakePivotMotor1.GetVelocity()),
-    _IntakePivotCurrentSig1(_IntakePivotMotor1.GetTorqueCurrent()),
-    _IntakePivotCurrentSig2(_IntakePivotMotor1.GetTorqueCurrent()),
-    _IntakePivotVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)), //TODO: Get Velocity
-    _IntakePivotPositionVoltage(units::angle::turn_t(0.0)) //TODO: Get Velocity
+    _LeadMotor(_LeadMotorID, CANBus("rio")), 
+    _FollowMotor(_FollowMotorID, CANBus("rio")), 
+    _Encoder(_EncoderID, CANBus("rio")),
+    _PositionSig(_LeadMotor.GetPosition()),
+    _VelocitySig(_LeadMotor.GetVelocity()),
+    _CurrentSig(_LeadMotor.GetTorqueCurrent()),
+    _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)), //TODO: Get Velocity
+    _PositionVoltage(units::angle::turn_t(0.0)) //TODO: Get Velocity
 {
-    _IntakePivotVelocityVoltage.WithSlot(0);
-    _IntakePivotPositionVoltage.WithSlot(1);
+    _VelocityVoltage.WithSlot(0);
+    _PositionVoltage.WithSlot(1);
 
     _hardwareConfigured = ConfigureHardware();
     if (!_hardwareConfigured) {
         std::cerr << "IntakePivot: Hardware Failed To Configure! Yell At Cole!" << std::endl;
     }
 
+    _command = std::monostate();
+
 } 
 
 void IntakePivot::Periodic() {
     
-    BaseStatusSignal::RefreshAll(_IntakePivotPositionSig1, _IntakePivotPositionSig2, _IntakePivotVelocitySig1, _IntakePivotVelocitySig2, _IntakePivotCurrentSig1, _IntakePivotCurrentSig2);
+    BaseStatusSignal::RefreshAll(_PositionSig, _VelocitySig, _CurrentSig);
+
+    _FollowMotor.SetControl(controls::StrictFollower{_LeadMotor.GetDeviceID()});
 
 }
 
@@ -46,8 +49,33 @@ bool IntakePivot::ConfigureHardware() {
     configs.Voltage.PeakForwardVoltage = 8_V; //TODO: Get Peak
     configs.Voltage.PeakReverseVoltage = -8_V; //TODO: Geat Peak
 
-    //TODO: Add Slot 0
+    // Slot 0
+    configs.Slot0.kV = 0.12;
+    configs.Slot0.kP = 0.35;
+    configs.Slot0.kI = 0.0;
+    configs.Slot0.kD = 0.03;
+    configs.Slot0.kA = 0.0;
 
-    //TODO: Add Slot 1
+    // Slot 1
+    configs.Slot1.kV = 0.12;
+    configs.Slot1.kP = 0.1;
+    configs.Slot1.kI = 0.01;
+    configs.Slot1.kD = 0.0;
+    configs.Slot1.kA = 0.0;
+
+    auto status = _LeadMotor.GetConfigurator().Apply(configs, 1_s);
+
+    configs::TalonFXConfiguration followerConfigs{};
+    followerConfigs.MotorOutput.WithInverted(signals::InvertedValue::CounterClockwise_Positive);
+
+    _LeadMotor.SetPosition(units::angle::turn_t(0));
+
+    if (!status.IsOK()) {
+        std::cerr << "IntakePivot not working" << std::endl;
+    }
+
+    if (!status.IsOK()) {}
+
+    return true;
 
 }
