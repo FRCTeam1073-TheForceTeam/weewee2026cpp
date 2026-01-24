@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "subsystems/ShooterRotater.h"
+#include "subsystems/ShooterHood.h"
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 
 using namespace ctre::phoenix6;
@@ -12,11 +12,11 @@ using namespace ctre::phoenix6;
 /**
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
-ShooterRotater::ShooterRotater() :
+ShooterHood::ShooterHood() :
 _hardwareConfigured(true),
-_rotaterMotor(RotaterMotorId, CANBus("rio")),
-_rotaterPositionSig(_rotaterMotor.GetPosition()),
-_rotaterCurrentSig(_rotaterMotor.GetTorqueCurrent()),
+_hoodMotor(HoodMotorId, CANBus("rio")),
+_hoodPositionSig(_hoodMotor.GetPosition()),
+_hoodCurrentSig(_hoodMotor.GetTorqueCurrent()),
 _commandPositionVoltage(units::angle::turn_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
 
@@ -33,22 +33,22 @@ _commandPositionVoltage(units::angle::turn_t(0.0)) {
 
 
   /// Set the command for the system.
-void ShooterRotater::SetCommand(Command cmd) {
+void ShooterHood::SetCommand(Command cmd) {
   // Sometimes you need to do something immediate to the hardware.
   // We can just set our target internal value.
   _command = cmd;
 }
 
 
-void ShooterRotater::Periodic() {
+void ShooterHood::Periodic() {
   // Sample the hardware:
-  BaseStatusSignal::RefreshAll(_rotaterPositionSig, _rotaterCurrentSig);
+  BaseStatusSignal::RefreshAll(_hoodPositionSig, _hoodCurrentSig);
 
   // Latency compensate the feedback when you sample a value and its rate:
-  //auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_rotaterPositionSig, _rotaterVelocitySig);
+  //auto compensatedPos = BaseStatusSignal::GetLatencyCompensatedValue(_hoodPositionSig, _hoodVelocitySig);
 
   // Populate feedback cache:
-  _feedback.force = _rotaterCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
+  _feedback.force = _hoodCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
   //_feedback.position = compensatedPos / TurnsPerMeter; // Convert from hardare units to subsystem units. Divide by conversion to produce feedback.
   //_feedback.velocity = _exampleVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
 
@@ -69,15 +69,15 @@ void ShooterRotater::Periodic() {
       auto angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
 
       // Send to hardware:
-      _rotaterMotor.SetControl(_commandPositionVoltage.WithPosition(angle));
+      _hoodMotor.SetControl(_commandPositionVoltage.WithPosition(angle));
   } else {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
-    _rotaterMotor.SetControl(controls::NeutralOut());
+    _hoodMotor.SetControl(controls::NeutralOut());
   }
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
-bool ShooterRotater::ConfigureHardware() {
+bool ShooterHood::ConfigureHardware() {
 configs::TalonFXConfiguration configs{};
 
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 10.0_A; // Set current limits to keep from breaking things.
@@ -86,7 +86,7 @@ configs::TalonFXConfiguration configs{};
     configs.Voltage.PeakForwardVoltage = 8_V; // These are pretty typical values, adjust as needed.
     configs.Voltage.PeakReverseVoltage = -8_V;
 
-  
+    
 
     // Slot 0 for position control mode:
     configs.Slot0.kV = 0.12; // Motor constant.
@@ -99,23 +99,24 @@ configs::TalonFXConfiguration configs{};
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
     // Set the control configuration for the drive motor:
-    auto status = _rotaterMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+    auto status = _hoodMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
 
     if (!status.IsOK()) {
-        std::cerr << "ShooterRotater: Control Failed To Configure!" << std::endl;
+        std::cerr << "ShooterHood: Control Failed To Configure!" << std::endl;
+
     }
 
     // Set our neutral mode to brake on:
-    status = _rotaterMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
+    status = _hoodMotor.SetNeutralMode(signals::NeutralModeValue::Brake, 1_s);
 
     if (!status.IsOK()) {
-        std::cerr << "ShooterRotater: Neutral mode brake Failed To Configure!" << std::endl;
+        std::cerr << "ShooterHood: Neutral mode brake Failed To Configure!" << std::endl;
     }
 
 
     // Depends on mechanism/subsystem design:
     // Optionally start out at zero after initialization:
-    _rotaterMotor.SetPosition(units::angle::turn_t(0));
+    _hoodMotor.SetPosition(units::angle::turn_t(0));
 
     // Log errors.
     return false;
