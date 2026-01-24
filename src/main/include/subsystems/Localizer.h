@@ -36,6 +36,18 @@ class Localizer : public frc2::SubsystemBase {
 
     void setAngularSpeed(units::angular_velocity::radians_per_second_t angularSpeed) { angularSpeedThreshold = angularSpeed; }
 
+    double getStdDevX() {return StdDevX;}
+
+    void setStdDevX(double devX) {StdDevX = devX;}
+
+    double getStdDevY() {return StdDevY;}
+
+    void setStdDevY(double devY) {StdDevX = devY;}
+
+    double getStdDevA() {return StdDevA;}
+
+    void setStdDevA(double devA) {StdDevA = devA;}
+
     void Periodic() override;
 
     frc::Pose2d getPose() { return _estimator.GetEstimatedPosition(); }
@@ -57,8 +69,9 @@ class Localizer : public frc2::SubsystemBase {
     units::time::second_t _lastUpdateTime;
     frc::SwerveDriveKinematics<4> _kinematics;
     wpi::array<frc::SwerveModulePosition, 4U> _swerveModulePositions;
-    //std::array<units::angle::radians, 3, 
-    int measumentCounter = 0;
+    //std::array<units::angle::radians, 3,
+    wpi::array<double, 3U> measurementStdDev = {0.5,0.5,0.5};
+    int measurementCounter = 0;
     units::time::millisecond_t timeGap{8};
     units::velocity::meters_per_second_t linearSpeedThreshold{2.5};
     units::angular_velocity::radians_per_second_t angularSpeedThreshold{2};

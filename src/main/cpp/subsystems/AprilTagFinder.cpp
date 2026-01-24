@@ -3,10 +3,10 @@ std::vector<AprilTagFinder::RobotCamera> AprilTagFinder::_cameras = {};
 AprilTagFinder::AprilTagFinder()
 {
     _cameras = {
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d()),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d()),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d()),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d())
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d(frc::Translation3d(-2.39_m,2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,4.16_rad))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d(frc::Translation3d(-2.39_m,-2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,2.125_rad))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d(frc::Translation3d(2.39_m, 2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,-1.017_rad))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d(frc::Translation3d(2.39_m,-2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,1.017_rad)))
     };
 }
 
@@ -60,13 +60,13 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurement
         for (auto& target : result.GetTargets()) {
             if (FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).has_value()){
                 if (target.GetPoseAmbiguity() != -1 && target.GetPoseAmbiguity() < ambiguityThreshold){
-                frc::Transform3d best = target.GetBestCameraToTarget();
-                frc::Pose3d robotPose = estimateFieldToRobotAprilTag(best,
-                    FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
-                    camTransform3d.Inverse());
-                range = target.bestCameraToTarget.Translation().Norm();
-                frc::Transform2d relativePose = toTransform2d(camTransform3d+best);
-                measurements.push_back(VisionMeasurement(robotPose.ToPose2d(), relativePose, responseTimestamp, target.GetFiducialId(), range));
+                    frc::Transform3d best = target.GetBestCameraToTarget();
+                    frc::Pose3d robotPose = estimateFieldToRobotAprilTag(best,
+                        FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
+                        camTransform3d.Inverse());
+                    range = target.bestCameraToTarget.Translation().Norm();
+                    frc::Transform2d relativePose = toTransform2d(camTransform3d+best);
+                    measurements.push_back(VisionMeasurement(robotPose.ToPose2d(), relativePose, responseTimestamp, target.GetFiducialId(), range));
                 }
             }
         }
