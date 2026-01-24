@@ -32,6 +32,18 @@ IntakePivot::IntakePivot():
 
 } 
 
+void IntakePivot::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+  _TargetVelocity = Velocity;
+}
+
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> IntakePivot::GetIntakeVelocity() {
+  return _VelocitySig;
+}
+
+units::angular_velocity::turns_per_second_t IntakePivot::GetIntakeTargetVelocity() {
+  return _TargetVelocity;
+}
+
 void IntakePivot::Periodic() {
     
     BaseStatusSignal::RefreshAll(_PositionSig, _VelocitySig, _CurrentSig);
@@ -73,8 +85,6 @@ bool IntakePivot::ConfigureHardware() {
     if (!status.IsOK()) {
         std::cerr << "IntakePivot not working" << std::endl;
     }
-
-    if (!status.IsOK()) {}
 
     return true;
 

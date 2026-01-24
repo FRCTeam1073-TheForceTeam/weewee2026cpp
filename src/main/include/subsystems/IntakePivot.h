@@ -41,6 +41,12 @@ class IntakePivot : public frc2::SubsystemBase {
     const Feedback& GetFeedback() const { return _feedback; }
 
     void Periodic() override;
+    
+    ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetIntakeVelocity();
+
+    units::angular_velocity::turns_per_second_t GetIntakeTargetVelocity();
+
+    void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
     private:
 
@@ -57,6 +63,8 @@ class IntakePivot : public frc2::SubsystemBase {
 
     ctre::phoenix6::controls::VelocityVoltage _VelocityVoltage; //Slot 0
     ctre::phoenix6::controls::PositionVoltage _PositionVoltage; //Slot 1
+
+    units::angular_velocity::turns_per_second_t _TargetVelocity;
 
     Feedback _feedback;
 
