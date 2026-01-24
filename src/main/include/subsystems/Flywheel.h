@@ -27,8 +27,6 @@ class Flywheel : public frc2::SubsystemBase {
 
   Flywheel();
 
-  
-
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
