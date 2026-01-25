@@ -32,7 +32,7 @@
 class Localizer : public frc2::SubsystemBase {
     public:
 
-    Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<FieldMap> fieldMap, std::shared_ptr<AprilTagFinder> finder);
+    Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<AprilTagFinder> finder);
     
     void InitSendable(wpi::SendableBuilder &builder) override;
 
@@ -67,7 +67,7 @@ class Localizer : public frc2::SubsystemBase {
 
     void Periodic() override;
 
-    frc::Pose2d getPose() { return _estimator.GetEstimatedPosition(); }
+    frc::Pose2d getPose() { return _estimator->GetEstimatedPosition(); }
 
     void additionalSensorMeasurement(int id, FieldMap fieldMap);
 
@@ -78,17 +78,13 @@ class Localizer : public frc2::SubsystemBase {
 
     private:
 
-    std::shared_ptr<Drivetrain> _driveTrain;
-    frc::SwerveDrivePoseEstimator<4U> _estimator;
-    std::shared_ptr<FieldMap> _fieldMap;
+    std::shared_ptr<Drivetrain> _driveTrain;    
     std::shared_ptr<AprilTagFinder> _finder;
+    std::shared_ptr<frc::SwerveDrivePoseEstimator<4U>> _estimator;
+
     //apriltag finder here when made
     units::time::second_t _lastUpdateTime;
-    frc::SwerveDriveKinematics<4> _kinematics;
-    wpi::array<frc::SwerveModulePosition, 4U> _swerveModulePositions;
-    //std::array<units::angle::radians, 3,
     wpi::array<double, 3U> measurementStdDev = {0.5,0.5,0.5};
-    //std::array<units::angle::radians, 3, 
     int measurementCounter = 0;
     units::time::millisecond_t timeGap{8};
     units::velocity::meters_per_second_t linearSpeedThreshold{2.5};

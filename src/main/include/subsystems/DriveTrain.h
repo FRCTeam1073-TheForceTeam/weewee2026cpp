@@ -45,6 +45,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
   units::angle::radian_t GetGyroHeadingRadians();
 
+  frc::Rotation2d GetGyroHeading();
+
   /// Get the pitch of the chassis:
   units::angle::degree_t GetPitch() const { return _pitchSig.GetValue(); }
 
@@ -63,9 +65,9 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Reset the odometry to a specific pose on the field.
   void ResetOdometry(const frc::Pose2d pose);
 
-  frc::SwerveDriveKinematics<4U> GetKinematics() const { return _kinematics;}
+  frc::SwerveDriveKinematics<4U>& GetKinematics() { return _kinematics;}
 
-  std::array<frc::SwerveModulePosition, 4U> GetSwerveModulePositions() const {return _swerveModulePositions;}
+  const wpi::array<frc::SwerveModulePosition, 4U>& GetSwerveModulePositions() const {return _swerveModulePositions;}
   /// Return the state of drivetrain brakes.  
   bool GetParkingBrake() const { return _parkingBrake; }
 

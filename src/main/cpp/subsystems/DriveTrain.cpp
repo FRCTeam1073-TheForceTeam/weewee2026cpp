@@ -171,3 +171,7 @@ void Drivetrain::SetDebugMode(bool removeBug) {
 void Drivetrain::ZeroHeading(){
     _imu.SetYaw(0_deg);
 }
+
+frc::Rotation2d Drivetrain::GetGyroHeading(){
+    return _imu.GetRotation2d();
+}

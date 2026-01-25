@@ -2,15 +2,12 @@
 
 
 
-Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<FieldMap> fieldMap, std::shared_ptr<AprilTagFinder> finder) : 
+Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<AprilTagFinder> finder) : 
     _driveTrain(driveTrain),
-    _fieldMap(fieldMap),
     _finder(finder),
-    _kinematics(driveTrain->GetKinematics()),
-    _swerveModulePositions(driveTrain->GetSwerveModulePositions()),
-    _estimator(frc::SwerveDrivePoseEstimator(_kinematics, driveTrain->GetOdometry().Rotation(), _swerveModulePositions, frc::Pose2d())),
+    _estimator(std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_driveTrain->GetKinematics(), driveTrain->GetOdometry().Rotation(), _driveTrain->GetSwerveModulePositions(), frc::Pose2d())),
     _lastUpdateTime(frc::Timer::GetFPGATimestamp())
-{};
+{}
 
 void Localizer::InitSendable(wpi::SendableBuilder &builder) {
     
@@ -25,13 +22,14 @@ void Localizer::InitSendable(wpi::SendableBuilder &builder) {
 }
 
 void Localizer::resetPose(frc::Pose2d newPos) {
-    frc::SwerveDrivePoseEstimator _estimator(_kinematics, _driveTrain->GetGyroHeadingRadians(), _swerveModulePositions, newPos);
+    _estimator = std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_driveTrain->GetKinematics(), _driveTrain->GetGyroHeading(), _driveTrain->GetSwerveModulePositions(), newPos);
 }
 
 void Localizer::Periodic() {
     units::time::second_t now = frc::Timer::GetFPGATimestamp();	
-    _estimator.UpdateWithTime(now, _driveTrain->GetGyroHeadingRadians(), _swerveModulePositions);
-    if (now - _lastUpdateTime > timeGap && measurementStable()){
+    _estimator->UpdateWithTime(now, _driveTrain->GetGyroHeading(), _driveTrain->GetSwerveModulePositions());
+
+    /*if (now - _lastUpdateTime > timeGap && measurementStable()) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = _finder->getAllMeasurements();
         for (int index = 0; index < measurements.size(); index++){
             AprilTagFinder::VisionMeasurement CurrentMeasurement = measurements[index];
@@ -45,7 +43,7 @@ void Localizer::Periodic() {
         }
         _lastUpdateTime = now;
         frc::SmartDashboard::PutNumber("Localize Measurements", measurementCounter);
-    }
+    }*/
 }
 
 void Localizer::updateStdDevs(AprilTagFinder::VisionMeasurement measurement){

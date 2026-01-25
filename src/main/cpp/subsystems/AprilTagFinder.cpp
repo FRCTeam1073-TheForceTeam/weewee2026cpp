@@ -84,12 +84,12 @@ void AprilTagFinder::Periodic() {
     int i = 0;
     for (auto& cam : _cameras) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam._camera, cam._transform);
-        for(auto& vm : measurements){
+        /*for(auto& vm : measurements){
             std::cout << "Cam: " << i << std::endl;
             std::cout << "ID: " << vm._tagID << std::endl;
             std::cout << "Range: " << vm._range.value() << std::endl;
             std::cout << "Time: " << vm._timeStamp.value() << std::endl;
-        }
+        }*/
         _visionMeasurements.insert(
             _visionMeasurements.end(),
             measurements.begin(),
