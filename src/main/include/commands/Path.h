@@ -60,9 +60,9 @@ class Path
 
   std::vector<Segment> segments;
   units::angle::radian_t finalOrientation;
-  units::velocity::meters_per_second_t transverseVelcoity;
+  units::velocity::meters_per_second_t transverseVelocity;
 
-  Path(std::vector<Segment> segments, units::angle::radian_t finalOrientation, units::velocity::meters_per_second_t transverseVelcoity);
+  Path(std::vector<Segment> segments, units::angle::radian_t finalOrientation, units::velocity::meters_per_second_t transverseVelocity);
   
   Eigen::Vector2d PositionToVector(frc::Pose2d pose);
 

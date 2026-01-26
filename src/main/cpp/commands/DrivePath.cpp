@@ -5,7 +5,7 @@
 #include "commands/DrivePath.h"
 
 DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, Path path) :
-  m_drivetrain{drivetrain},
+  m_drivetrain(drivetrain),
   path(path),
   distanceTolerance(0.1_m),
   angleTolerance(0.1_rad),

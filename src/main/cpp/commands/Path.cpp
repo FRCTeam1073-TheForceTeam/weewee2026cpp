@@ -13,6 +13,12 @@ start(start),
 end(end)
 {UpdateDirection();}
 
+Path::Path(std::vector<Segment> segments, units::angle::radian_t finalOrientation, units::velocity::meters_per_second_t transverseVelocity) :
+  segments(segments),
+  finalOrientation(finalOrientation),
+  transverseVelocity(transverseVelocity)
+{}
+
 void Path::Segment::UpdateDirection() {
   length = units::meter_t((end.position - start.position).norm());
 
