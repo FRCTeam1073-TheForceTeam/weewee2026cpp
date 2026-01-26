@@ -34,6 +34,7 @@ Eigen::Vector2d Path::PositionToVector(frc::Pose2d pose) {
   return v;
 }
 
+// overloaded DistanceToSegmentMethods
 units::meter_t Path::DistanceToSegment(Eigen::Vector2d begin, Eigen::Vector2d finish, Eigen::Vector2d p, Eigen::Vector2d projection, Eigen::Vector2d direction) { // original
   units::meter_t local_length = units::meter_t((finish - begin).norm());
 
