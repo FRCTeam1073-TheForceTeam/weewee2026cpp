@@ -3,25 +3,27 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/Shoot.h"
-#include "subsystems/Flywheel.h"
 
-Flywheel::Flywheel(): 
-    _hardwareConfigured(true), 
-    _leadFlywheelMotor(LeadMotorId, "rio"),
-    _followFlywheelMotor(FollowMotorId, "rio"),
-    _FlywheelVelocitySig(_leadFlywheelMotor.GetVelocity()),
-    _FlywheelCurrentSig(_leadFlywheelMotor.GetTorqueCurrent()),
-    _FlywheelVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
-        
-    _FlywheelVelocityVoltage.WithSlot(0);
+Shoot::Shoot(std::shared_ptr<Flywheel> flywheel) :
+  m_flywheel{flywheel} {
 
-    }
-void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
-    _TargetVelocity = Velocity;
+  AddRequirements({m_flywheel.get()});
 }
-Shoot::Shoot(Flywheel* flywheel)
-    : m_flywheel{flywheel} {
-      SetFlywheelVelocity(1.0); //TODO: make this number correct
-  // Register that this command requires the subsystem.
-  AddRequirements(m_flywheel);
+
+// Called wh(std::shared_ptr<Drivetrain> drivetrainen the command is initially scheduled.
+void Shoot::Initialize() {
+  m_flywheel->SetVelocity(1.0_tps);//TODO: change number into one that catually makes sense
+}
+
+// Called repeatedly when this Command is scheduled to run
+void Shoot::Execute() {}
+
+// Called once the command ends or is interrupted.
+void Shoot::End(bool interrupted) {
+  m_flywheel->SetVelocity(0.0_tps);//TODO: change number into one that catually makes sense
+}
+
+// Returns true when the command should end.
+bool Shoot::IsFinished() {
+  return false;
 }

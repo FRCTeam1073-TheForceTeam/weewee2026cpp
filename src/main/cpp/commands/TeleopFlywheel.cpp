@@ -2,26 +2,26 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/Shoot.h"
-#include "subsystems/Flywheel.h"
+#include "commands/TeleopFlywheel.h"
 
-Flywheel::Flywheel(): 
-    _hardwareConfigured(true), 
-    _leadFlywheelMotor(LeadMotorId, "rio"),
-    _followFlywheelMotor(FollowMotorId, "rio"),
-    _FlywheelVelocitySig(_leadFlywheelMotor.GetVelocity()),
-    _FlywheelCurrentSig(_leadFlywheelMotor.GetTorqueCurrent()),
-    _FlywheelVelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
-        
-    _FlywheelVelocityVoltage.WithSlot(0);
+TeleopFlywheel::TeleopFlywheel(std::shared_ptr<Flywheel> flywheel) :
+  m_flywheel{flywheel} {
 
-    }
-void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
-    _TargetVelocity = Velocity;
+  AddRequirements({m_flywheel.get()});
 }
-Shoot::Shoot(Flywheel* flywheel)
-    : m_flywheel{flywheel} {
-      SetFlywheelVelocity(1.0); //TODO: make this number correct
-  // Register that this command requires the subsystem.
-  AddRequirements(m_flywheel);
+
+// Called wh(std::shared_ptr<Drivetrain> drivetrainen the command is initially scheduled.
+void TeleopFlywheel::Initialize() {
+  m_flywheel->SetVelocity(0.0_tps);
+}
+
+// Called repeatedly when this Command is scheduled to run
+void TeleopFlywheel::Execute() {}
+
+// Called once the command ends or is interrupted.
+void TeleopFlywheel::End(bool interrupted) {}
+
+// Returns true when the command should end.
+bool TeleopFlywheel::IsFinished() {
+  return false;
 }

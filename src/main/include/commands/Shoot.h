@@ -8,9 +8,8 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/Flywheel.h"
-
 /**
- * An example command that uses an example subsystem.
+ * An example command.
  *
  * <p>Note that this extends CommandHelper, rather extending Command
  * directly; this is crucially important, or else the decorator functions in
@@ -24,8 +23,19 @@ class Shoot
    *
    * @param flywheel The subsystem used by this command.
    */
-  explicit Shoot(Flywheel* flywheel);
+  explicit Shoot(std::shared_ptr<Flywheel> flywheel);
 
+  void Initialize() override;
+
+  void Execute() override;
+
+  void End(bool interrupted) override;
+
+  bool IsFinished() override;
+
+
+  
+  
  private:
-  Flywheel* m_flywheel;
+  std::shared_ptr<Flywheel> m_flywheel;
 };
