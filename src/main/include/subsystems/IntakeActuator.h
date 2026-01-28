@@ -17,7 +17,7 @@
 
 #include <variant>
 
-class IntakePivot : public frc2::SubsystemBase {
+class IntakeActuator : public frc2::SubsystemBase {
     public:
 
     static constexpr int _LeadMotorID = 1; //TODO: ID 
@@ -36,7 +36,7 @@ class IntakePivot : public frc2::SubsystemBase {
 
     using Command = std::variant<std::monostate, units::velocity::meters_per_second_t, units::length::meter_t>;
 
-    IntakePivot();
+    IntakeActuator();
 
     const Feedback& GetFeedback() const { return _feedback; }
 
