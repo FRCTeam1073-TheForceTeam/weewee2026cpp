@@ -6,8 +6,10 @@
 #include <iostream>
 
 #include <ctre/phoenix6/signals/SpnEnums.hpp>
+#include <ctre/phoenix6/controls/NeutralOut.hpp>
 
 using namespace ctre::phoenix6;
+using namespace units;
 
 IntakeActuator::IntakeActuator(): 
     _hardwareConfigured(true),
@@ -25,7 +27,7 @@ IntakeActuator::IntakeActuator():
 
     _hardwareConfigured = ConfigureHardware();
     if (!_hardwareConfigured) {
-        std::cerr << "IntakeaActuator: Hardware Failed To Configure! Yell At Cole!" << std::endl;
+        std::cerr << "IntakeActuator: Hardware Failed To Configure!" << std::endl;
     }
 
     _command = std::monostate();
@@ -61,14 +63,14 @@ bool IntakeActuator::ConfigureHardware() {
     configs.Voltage.PeakForwardVoltage = 8_V; //TODO: Get Peak
     configs.Voltage.PeakReverseVoltage = -8_V; //TODO: Geat Peak
 
-    // Slot 0
+    // Slot 0, TODO: Get Numbers
     configs.Slot0.kV = 0.12;
     configs.Slot0.kP = 0.35;
     configs.Slot0.kI = 0.0;
     configs.Slot0.kD = 0.03;
     configs.Slot0.kA = 0.0;
 
-    // Slot 1
+    // Slot 1, TODO: Get Numbers
     configs.Slot1.kV = 0.12;
     configs.Slot1.kP = 0.1;
     configs.Slot1.kI = 0.01;
@@ -80,10 +82,13 @@ bool IntakeActuator::ConfigureHardware() {
     configs::TalonFXConfiguration followerConfigs{};
     followerConfigs.MotorOutput.WithInverted(signals::InvertedValue::CounterClockwise_Positive);
 
-    _LeadMotor.SetPosition(units::angle::turn_t(0));
+    _LeadMotor.SetVoltage(volt_t(0));
 
+    //TODO: Add stopper for voltage spike
+    //if voltage goes over 5 then set position 0
+    
     if (!status.IsOK()) {
-        std::cerr << "IntakeActuator not working" << std::endl;
+        std::cerr << "IntakeActuator is not working" << std::endl;
     }
 
     return true;
