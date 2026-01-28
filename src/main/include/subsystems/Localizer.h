@@ -80,6 +80,7 @@ class Localizer : public frc2::SubsystemBase {
 
     std::shared_ptr<Drivetrain> _driveTrain;    
     std::shared_ptr<AprilTagFinder> _finder;
+    frc::SwerveDriveKinematics<4U> _kinematics;
     std::shared_ptr<frc::SwerveDrivePoseEstimator<4U>> _estimator;
 
     //apriltag finder here when made

@@ -65,7 +65,7 @@ class Drivetrain : public frc2::SubsystemBase {
   /// Reset the odometry to a specific pose on the field.
   void ResetOdometry(const frc::Pose2d pose);
 
-  frc::SwerveDriveKinematics<4U>& GetKinematics() { return _kinematics;}
+  const frc::SwerveDriveKinematics<4U>& GetKinematics() { return _kinematics;}
 
   const wpi::array<frc::SwerveModulePosition, 4U>& GetSwerveModulePositions() const {return _swerveModulePositions;}
   /// Return the state of drivetrain brakes.  
@@ -92,6 +92,10 @@ class Drivetrain : public frc2::SubsystemBase {
   // Swerve module hardware:
   std::array<SwerveModule, 4> _swerveModules;
 
+  // Module positions and states for feedback:
+  wpi::array<frc::SwerveModulePosition, 4> _swerveModulePositions;
+  wpi::array<frc::SwerveModuleState, 4> _swerveModuleStates;
+
   // Swerve drive kinematics.
   frc::SwerveDriveKinematics<4> _kinematics;
 
@@ -103,10 +107,6 @@ class Drivetrain : public frc2::SubsystemBase {
   ctre::phoenix6::StatusSignal<units::angle::degree_t> _rollSig;
   ctre::phoenix6::StatusSignal<units::angular_velocity::degrees_per_second_t> _yawRateSig;
 
-
-  // Module positions and states for feedback:
-  std::array<frc::SwerveModulePosition, 4> _swerveModulePositions;
-  std::array<frc::SwerveModuleState, 4> _swerveModuleStates;
 
   // Most recent chassis speeds: Computed in periodic.
   frc::ChassisSpeeds _speeds;

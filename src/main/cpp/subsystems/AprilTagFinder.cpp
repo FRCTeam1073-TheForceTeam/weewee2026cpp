@@ -2,6 +2,7 @@
 std::vector<AprilTagFinder::RobotCamera> AprilTagFinder::_cameras = {};
 AprilTagFinder::AprilTagFinder()
 {
+    std::cout << "Creating April Tag Object" << std::endl;
     _cameras = {
         RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d(frc::Translation3d(-2.39_m,2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,4.16_rad))),
         RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d(frc::Translation3d(-2.39_m,-2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,2.125_rad))),
@@ -28,7 +29,7 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getAllMeasurement
 
 std::vector<photon::PhotonTrackedTarget> AprilTagFinder::getCamTargets(std::shared_ptr<photon::PhotonCamera> camera) {
     std::vector<photon::PhotonPipelineResult> results = camera->GetAllUnreadResults();
-    std::vector<photon::PhotonTrackedTarget> targets = std::vector<photon::PhotonTrackedTarget>();
+    std::vector<photon::PhotonTrackedTarget> targets;
 
     for(auto& result : results){
         if(result.HasTargets()){

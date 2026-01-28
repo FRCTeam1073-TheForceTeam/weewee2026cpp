@@ -5,7 +5,8 @@
 Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<AprilTagFinder> finder) : 
     _driveTrain(driveTrain),
     _finder(finder),
-    _estimator(std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_driveTrain->GetKinematics(), driveTrain->GetOdometry().Rotation(), _driveTrain->GetSwerveModulePositions(), frc::Pose2d())),
+    _kinematics(_driveTrain->GetKinematics()),
+    _estimator(std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_kinematics, driveTrain->GetOdometry().Rotation(), _driveTrain->GetSwerveModulePositions(), frc::Pose2d())),
     _lastUpdateTime(frc::Timer::GetFPGATimestamp())
 {}
 
@@ -22,7 +23,7 @@ void Localizer::InitSendable(wpi::SendableBuilder &builder) {
 }
 
 void Localizer::resetPose(frc::Pose2d newPos) {
-    _estimator = std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_driveTrain->GetKinematics(), _driveTrain->GetGyroHeading(), _driveTrain->GetSwerveModulePositions(), newPos);
+    _estimator = std::make_shared<frc::SwerveDrivePoseEstimator<4U>>(_kinematics, _driveTrain->GetGyroHeading(), _driveTrain->GetSwerveModulePositions(), newPos);
 }
 
 void Localizer::Periodic() {
@@ -55,12 +56,5 @@ void Localizer::updateStdDevs(AprilTagFinder::VisionMeasurement measurement){
 bool Localizer::measurementStable(){
         units::meters_per_second_t linearSpeed = units::math::sqrt((_driveTrain->GetChassisSpeeds().vx)*(_driveTrain->GetChassisSpeeds().vx) + (_driveTrain->GetChassisSpeeds().vy)*(_driveTrain->GetChassisSpeeds().vy));
         units::radians_per_second_t angularSpeed = units::math::abs(_driveTrain->GetChassisSpeeds().omega);
-        if (linearSpeed <= linearSpeedThreshold && angularSpeed <= angularSpeedThreshold)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (linearSpeed <= linearSpeedThreshold && angularSpeed <= angularSpeedThreshold);
 }
