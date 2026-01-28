@@ -22,7 +22,7 @@ RobotContainer::RobotContainer() {
   m_OI = std::make_shared<OI>();
   m_flywheel = std::make_shared<Flywheel>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
-  m_intakePivot = std::make_shared<IntakePivot>();
+  m_intakeActuator = std::make_shared<IntakeActuator>();
 
   // Configure the button bindings
   ConfigureBindings();

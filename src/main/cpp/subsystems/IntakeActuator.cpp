@@ -2,14 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "subsystems/IntakePivot.h"
+#include "subsystems/IntakeActuator.h"
 #include <iostream>
 
 #include <ctre/phoenix6/signals/SpnEnums.hpp>
 
 using namespace ctre::phoenix6;
 
-IntakePivot::IntakePivot(): 
+IntakeActuator::IntakeActuator(): 
     _hardwareConfigured(true),
     _LeadMotor(_LeadMotorID, CANBus("rio")), 
     _FollowMotor(_FollowMotorID, CANBus("rio")), 
@@ -25,26 +25,26 @@ IntakePivot::IntakePivot():
 
     _hardwareConfigured = ConfigureHardware();
     if (!_hardwareConfigured) {
-        std::cerr << "IntakePivot: Hardware Failed To Configure! Yell At Cole!" << std::endl;
+        std::cerr << "IntakeaActuator: Hardware Failed To Configure! Yell At Cole!" << std::endl;
     }
 
     _command = std::monostate();
 
 } 
 
-void IntakePivot::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+void IntakeActuator::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
   _TargetVelocity = Velocity;
 }
 
-ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> IntakePivot::GetIntakeVelocity() {
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> IntakeActuator::GetIntakeVelocity() {
   return _VelocitySig;
 }
 
-units::angular_velocity::turns_per_second_t IntakePivot::GetIntakeTargetVelocity() {
+units::angular_velocity::turns_per_second_t IntakeActuator::GetIntakeTargetVelocity() {
   return _TargetVelocity;
 }
 
-void IntakePivot::Periodic() {
+void IntakeActuator::Periodic() {
     
     BaseStatusSignal::RefreshAll(_PositionSig, _VelocitySig, _CurrentSig);
 
@@ -52,7 +52,7 @@ void IntakePivot::Periodic() {
 
 }
 
-bool IntakePivot::ConfigureHardware() {
+bool IntakeActuator::ConfigureHardware() {
     configs::TalonFXConfiguration configs{};
 
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 10.0_A; //TODO: Get Peak
@@ -83,7 +83,7 @@ bool IntakePivot::ConfigureHardware() {
     _LeadMotor.SetPosition(units::angle::turn_t(0));
 
     if (!status.IsOK()) {
-        std::cerr << "IntakePivot not working" << std::endl;
+        std::cerr << "IntakeActuator not working" << std::endl;
     }
 
     return true;
