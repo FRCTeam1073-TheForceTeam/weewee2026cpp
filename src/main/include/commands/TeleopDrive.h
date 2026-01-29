@@ -24,7 +24,7 @@ public:
     void Initialize() override;
     void Execute() override;
     bool IsFinished() override;
-    void End(bool interupted) override;
+    void End(bool interrupted) override;
 
 private:
     std::shared_ptr<Drivetrain> m_drivetrain;

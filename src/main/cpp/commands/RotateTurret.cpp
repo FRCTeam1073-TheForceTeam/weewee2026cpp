@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/RotateTurret.h"
+#include <iostream>
+#include <frc/DriverStation.h>
 
 //TODO: finish the command; it is not complete yet
 
@@ -15,19 +17,28 @@ RotateTurret::RotateTurret(std::shared_ptr<ShooterRotater> shooterRotater, std::
   position = 0_rad,//zeroed position is touching the hard stop
   AddRequirements({m_shooterRotater.get(), m_OI.get()});
 }
-  // Use addRequirements() here to declare subsystem dependencies.
 
-
-// Called when the command is initially scheduled.
-void RotateTurret::Initialize() {}
+void RotateTurret::Initialize() {
+    std::cerr << "RotateTurret Init" << std::endl;
+    Command::Initialize();
+  }
 
 // Called repeatedly when this Command is scheduled to run
-void RotateTurret::Execute() {}
+void RotateTurret::Execute() {
+  //TODO: determine direction that robot must be facing in
+  
+
+}
 
 // Called once the command ends or is interrupted.
-void RotateTurret::End(bool interrupted) {}
+void RotateTurret::End(bool interrupted) {
+  if(interrupted) {
+        std::cerr << "RotateTurret: Interrupted!" << std::endl;
+    }
+    Command::End(interrupted);
+  }
 
 // Returns true when the command should end.
 bool RotateTurret::IsFinished() {
-  return false;
+  return false;//TODO: return true if it finishes
 }
