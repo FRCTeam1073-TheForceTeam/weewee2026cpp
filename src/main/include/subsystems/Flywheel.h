@@ -15,6 +15,8 @@
 
 #include <variant>
 
+#include <frc/filter/SlewRateLimiter.h>
+
 class Flywheel : public frc2::SubsystemBase {
  public:
 
@@ -82,6 +84,8 @@ class Flywheel : public frc2::SubsystemBase {
 
   // Set the motors target velocity
   units::angular_velocity::turns_per_second_t _TargetVelocity;
+
+  frc::SlewRateLimiter<units::turns_per_second> limiter{0.5_tps / 1_s};
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.

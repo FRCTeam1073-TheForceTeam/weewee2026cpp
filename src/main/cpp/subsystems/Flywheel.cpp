@@ -39,8 +39,8 @@ units::angular_velocity::turns_per_second_t Flywheel::GetTargetVelocity() {
 void Flywheel::Periodic() {
     BaseStatusSignal::RefreshAll(_FlywheelVelocitySig, _FlywheelCurrentSig);
 
-    _followFlywheelMotor.Set(_FlywheelVelocitySig.GetValue().value());
-
+    _leadFlywheelMotor.Set(limiter.Calculate(_TargetVelocity).value());
+    _followFlywheelMotor.SetControl(controls::StrictFollower(_leadFlywheelMotor.GetDeviceID()));
 }
 
 bool Flywheel::ConfigureHardware() {
@@ -71,6 +71,9 @@ configs::TalonFXConfiguration configs{};
 
     // Set the control configuration for the drive motor:
     auto status = _leadFlywheelMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+   
+    configs::TalonFXConfiguration FollowerConfigs{};
+    FollowerConfigs.MotorOutput.WithInverted(signals::InvertedValue::CounterClockwise_Positive); //change this if directions are the same.
 
     if (!status.IsOK()) {
         std::cerr << "Flywheel is not working" << std::endl;

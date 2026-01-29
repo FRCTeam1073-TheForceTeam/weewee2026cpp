@@ -9,8 +9,6 @@
 
 #include "subsystems/Flywheel.h"
 
-#include <frc/Timer.h>
-
 /**
  * An example command.
  *
@@ -36,9 +34,6 @@ class Shoot
 
   bool IsFinished() override;
 
-
-  
-  
  private:
   std::shared_ptr<Flywheel> m_flywheel;
 };
