@@ -8,6 +8,9 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/Flywheel.h"
+
+#include <frc/Timer.h>
+
 /**
  * An example command.
  *

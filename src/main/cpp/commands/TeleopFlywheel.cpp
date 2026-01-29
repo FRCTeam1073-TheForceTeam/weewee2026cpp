@@ -11,12 +11,12 @@ TeleopFlywheel::TeleopFlywheel(std::shared_ptr<Flywheel> flywheel) :
 }
 
 // Called wh(std::shared_ptr<Drivetrain> drivetrainen the command is initially scheduled.
-void TeleopFlywheel::Initialize() {
-  m_flywheel->SetVelocity(0.0_tps);
-}
+void TeleopFlywheel::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void TeleopFlywheel::Execute() {}
+void TeleopFlywheel::Execute() {
+  m_flywheel->SetVelocity(0.0_tps);
+}
 
 // Called once the command ends or is interrupted.
 void TeleopFlywheel::End(bool interrupted) {}
