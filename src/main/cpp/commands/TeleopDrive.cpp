@@ -26,7 +26,7 @@ void TeleopDrive::Initialize() {
     std::cerr << "TeleopDrive Init" << std::endl;
     Command::Initialize();
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
-        allianceSign = -1;
+        allianceSign = -1;//TODO: one of the alliance signs (red or blue) must be positive. Determine which one must be changed
     }
     else {
         allianceSign = -1;
@@ -108,11 +108,11 @@ void TeleopDrive::Execute() {
     }
 }
 
-void TeleopDrive::End(bool interuppted) {
-    if(interuppted) {
+void TeleopDrive::End(bool interrupted) {
+    if(interrupted) {
         std::cerr << "TeleopDrive: Interrupted!" << std::endl;
     }
-    Command::End(interuppted);
+    Command::End(interrupted);
 }
 
 bool TeleopDrive::IsFinished() {

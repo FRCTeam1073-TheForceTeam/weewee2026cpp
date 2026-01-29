@@ -17,6 +17,10 @@
 #include "subsystems/Flywheel.h"
 #include "subsystems/IntakeActuator.h"
 #include "commands/TeleopDrive.h"
+#include "commands/Collect.h"
+#include "commands/Load.h"
+#include "subsystems/ShooterLoad.h"
+#include "subsystems/IntakeCollector.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -55,8 +59,9 @@ class RobotContainer {
  private:
   std::shared_ptr<Drivetrain> m_drivetrain;
   std::shared_ptr<OI> m_OI;
+  std::shared_ptr<IntakeCollector> m_intakecollector;
+  std::shared_ptr<ShooterLoad> m_shooterLoad;
   std::shared_ptr<Flywheel> m_flywheel;
-  // std::shared_ptr<IntakeActuator> m_intakeActuator;
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 

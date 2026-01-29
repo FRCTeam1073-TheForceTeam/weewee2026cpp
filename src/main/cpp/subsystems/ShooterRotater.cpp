@@ -13,6 +13,8 @@ using namespace ctre::phoenix6;
  * You have to use initializer lists to build up the elements of the subsystem in the right order.
  */
 ShooterRotater::ShooterRotater() :
+targetAngle(0_rad),
+angle(0_rad),
 _hardwareConfigured(true),
 _rotaterMotor(RotaterMotorId, CANBus("rio")),
 _rotaterPositionSig(_rotaterMotor.GetPosition()),
@@ -31,12 +33,19 @@ _commandPositionVoltage(units::angle::turn_t(0.0)) {
 
 }
 
-
   /// Set the command for the system.
 void ShooterRotater::SetCommand(Command cmd) {
   // Sometimes you need to do something immediate to the hardware.
   // We can just set our target internal value.
   _command = cmd;
+}
+
+void ShooterRotater::SetTargetAngle(units::angle::radian_t newAngle){
+  targetAngle = newAngle;
+}
+
+units::angle::radian_t ShooterRotater::GetAngle(){
+  return angle;
 }
 
 
@@ -66,7 +75,7 @@ void ShooterRotater::Periodic() {
       // Send position based command:
 
       // Convert to hardware units:
-      auto angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
+      angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
 
       // Send to hardware:
       _rotaterMotor.SetControl(_commandPositionVoltage.WithPosition(angle));

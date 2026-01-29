@@ -9,6 +9,7 @@
 #include "commands/Autos.h"
 #include "commands/ExampleCommand.h"
 #include "commands/TeleopDrive.h"
+#include "commands/Collect.h"
 
 const std::string RobotContainer::noPosition = "No Position";
 const std::string RobotContainer::rightPosition = "Right Auto";
@@ -22,7 +23,8 @@ RobotContainer::RobotContainer() {
   m_OI = std::make_shared<OI>();
   m_flywheel = std::make_shared<Flywheel>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
-  // m_intakeActuator = std::make_shared<IntakeActuator>();
+  m_intakecollector = std::make_shared<IntakeCollector>();
+  m_shooterLoad = std::make_shared<ShooterLoad>();
 
   // Configure the button bindings
   ConfigureBindings();
