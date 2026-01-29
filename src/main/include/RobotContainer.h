@@ -16,6 +16,8 @@
 #include "subsystems/OI.h"
 #include "commands/TeleopDrive.h"
 
+#include <choreo/Choreo.h>
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -39,7 +41,10 @@ class RobotContainer {
 
   void autonomousInit();
 
-  frc2::Command GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
+
+  void AutonomousPeriodic();
+
   frc2::Command GetTeleopCommand();
   frc2::Command GetDisbaledCommand();
 
@@ -60,8 +65,9 @@ class RobotContainer {
 
   const frc::SendableChooser<std::string> m_positionChooser;
 
-
   const frc::SendableChooser<std::string> m_levelChooser;
+
+  std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
 
 
   void ConfigureBindings();

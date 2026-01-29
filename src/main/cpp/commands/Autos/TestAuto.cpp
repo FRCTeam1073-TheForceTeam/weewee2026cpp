@@ -13,35 +13,8 @@ TestAuto::TestAuto(std::shared_ptr<Drivetrain> drivetrain)
 }
 
 std::unique_ptr<frc2::Command> TestAuto::Create() {
-  // load the choreo file from deploy folder
-  auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
 
-
-  // follow based on points in path
-
-  auto pathPoses = trajectory.value().GetPoses();
-
-  // TODO: while not have localizer should set odometry to be where first pose is
-
-  // turn the optional Pose2ds into points
-  std::vector<Path::Point> pathPoints;
-  for(int p = 0; p < pathPoses.size(); p++) {
-    pathPoints.push_back(Path::Point(pathPoses[p].X(), pathPoses[p].Y()));
-  }
-
-  std::vector<Path::Segment> segments;
-  units::angle::radian_t o = 0_rad; // TODO: figure out how to access trajectory orientation
-  units::velocity::meters_per_second_t v = 1_mps; // TODO: figure out how to access trajectory velocity
-  for(int s = 0; s < pathPoints.size() - 1; s++) {
-    segments.push_back(Path::Segment(pathPoints[s], pathPoints[s+1], o, v));
-  }
-
-  Path path = Path(segments, o, v);
+  Path path = Path(std::vector<Path::Segment>(), std::numbers::pi * 1_rad, 2_mps); // TODO: path should be a segment of the trajectory
 
   return std::make_unique<frc2::SequentialCommandGroup>(DrivePath(TestAuto::m_drivetrain, path));
-
-  // units::time::second_t currentTime = timer.GetFPGATimestamp();
-  // frc::ChassisSpeeds speeds = trajectory.value().SampleAt(currentTime).value().GetChassisSpeeds();
-
-  // m_drivetrain->SetChassisSpeeds(speeds);
 }

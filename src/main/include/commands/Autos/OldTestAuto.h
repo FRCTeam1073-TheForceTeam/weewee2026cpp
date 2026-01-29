@@ -23,18 +23,19 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class TestAuto
-    : public frc2::CommandHelper<frc2::Command, TestAuto> {
+class OldTestAuto
+    : public frc2::CommandHelper<frc2::Command, OldTestAuto> {
  public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
 
-  TestAuto(std::shared_ptr<Drivetrain> drivetrain); //TODO:: add localizer
+  OldTestAuto(std::shared_ptr<Drivetrain> drivetrain); //TODO:: add localizer
   
   static std::unique_ptr<frc2::Command> Create(); 
 
   private:
   
   static std::shared_ptr<Drivetrain> m_drivetrain;
+  static frc::Timer timer;
 };

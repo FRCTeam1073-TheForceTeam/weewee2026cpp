@@ -41,7 +41,9 @@ void Robot::AutonomousInit() {
   // }
 }
 
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousPeriodic() {
+  m_container.AutonomousPeriodic();
+}
 
 void Robot::TeleopInit() {
   // This makes sure that the autonomous stops running when
