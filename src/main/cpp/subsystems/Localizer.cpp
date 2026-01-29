@@ -30,7 +30,7 @@ void Localizer::Periodic() {
     units::time::second_t now = frc::Timer::GetFPGATimestamp();	
     _estimator->UpdateWithTime(now, _driveTrain->GetGyroHeading(), _driveTrain->GetSwerveModulePositions());
 
-    /*if (now - _lastUpdateTime > timeGap && measurementStable()) {
+    if (now - _lastUpdateTime > timeGap && measurementStable()) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = _finder->getAllMeasurements();
         for (int index = 0; index < measurements.size(); index++){
             AprilTagFinder::VisionMeasurement CurrentMeasurement = measurements[index];
@@ -38,13 +38,13 @@ void Localizer::Periodic() {
             if (CurrentMeasurement._range <= maxRange)
             {
                 updateStdDevs(CurrentMeasurement);
-                _estimator.AddVisionMeasurement(CurrentMeasurement._pose, CurrentMeasurement._timeStamp, measurementStdDev);
+                _estimator->AddVisionMeasurement(CurrentMeasurement._pose, CurrentMeasurement._timeStamp, measurementStdDev);
                 measurementCounter++;
             }
         }
         _lastUpdateTime = now;
         frc::SmartDashboard::PutNumber("Localize Measurements", measurementCounter);
-    }*/
+    }
 }
 
 void Localizer::updateStdDevs(AprilTagFinder::VisionMeasurement measurement){

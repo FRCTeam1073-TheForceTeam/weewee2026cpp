@@ -4,10 +4,10 @@ AprilTagFinder::AprilTagFinder()
 {
     std::cout << "Creating April Tag Object" << std::endl;
     _cameras = {
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d(frc::Translation3d(-2.39_m,2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,4.16_rad))),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d(frc::Translation3d(-2.39_m,-2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,2.125_rad))),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d(frc::Translation3d(2.39_m, 2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,-1.017_rad))),
-        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d(frc::Translation3d(2.39_m,-2.54_m,0_m),frc::Rotation3d(0_rad,0_rad,1.017_rad)))
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d(frc::Translation3d(-0.2_m, 0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, -150_deg))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d(frc::Translation3d(-0.2_m, -0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, 150_deg))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d(frc::Translation3d(0.2_m, 0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, -30_deg))),
+        RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d(frc::Translation3d(0.2_m, -0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, 30_deg)))
     };
 }
 
@@ -85,12 +85,12 @@ void AprilTagFinder::Periodic() {
     int i = 0;
     for (auto& cam : _cameras) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = getCamMeasurements(cam._camera, cam._transform);
-        /*for(auto& vm : measurements){
-            std::cout << "Cam: " << i << std::endl;
-            std::cout << "ID: " << vm._tagID << std::endl;
-            std::cout << "Range: " << vm._range.value() << std::endl;
-            std::cout << "Time: " << vm._timeStamp.value() << std::endl;
-        }*/
+        // for(auto& vm : measurements){
+        //     std::cout << "Cam: " << i << std::endl;
+        //     std::cout << "ID: " << vm._tagID << std::endl;
+        //     std::cout << "Range: " << vm._range.value() << std::endl;
+        //     std::cout << "Time: " << vm._timeStamp.value() << std::endl;
+        // }
         _visionMeasurements.insert(
             _visionMeasurements.end(),
             measurements.begin(),
