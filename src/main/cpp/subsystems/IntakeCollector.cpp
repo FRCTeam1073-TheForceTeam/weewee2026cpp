@@ -44,7 +44,7 @@ void IntakeCollector::SetCommand(Command cmd) {
 void IntakeCollector::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
   _targetVelocity = Velocity;
 }
-
+//s=r 2pir
 ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> IntakeCollector::GetIntakeVelocity() {
   return _IntakeVelocitySig;
 }
