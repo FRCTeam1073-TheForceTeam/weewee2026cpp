@@ -5,11 +5,10 @@
 #include "subsystems/IntakeActuator.h"
 #include <iostream>
 
-#include <ctre/phoenix6/signals/SpnEnums.hpp>
-#include <ctre/phoenix6/controls/NeutralOut.hpp>
-
+using namespace ctre::phoenix6::hardware;
 using namespace ctre::phoenix6;
 using namespace units;
+
 
 IntakeActuator::IntakeActuator(): 
     _hardwareConfigured(true),
@@ -53,8 +52,9 @@ void IntakeActuator::Periodic() {
     _FollowMotor.SetControl(controls::StrictFollower{_LeadMotor.GetDeviceID()});
 
     if (_voltageSignal.GetValue() > volt_t(5)) { //TODO: Get Value
-      _LeadMotor.SetPosition(units::angle::turn_t(0)),
+      // _LeadMotor.SetPosition(units::angle::turn_t(0)),
       _LeadMotor.SetVoltage(volt_t(0));
+      _LeadMotor.StopMotor();
     } 
 
 }

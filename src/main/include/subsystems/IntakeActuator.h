@@ -20,6 +20,7 @@
 #include <variant>
 
 class IntakeActuator : public frc2::SubsystemBase {
+    
     public:
 
     static constexpr int _LeadMotorID = 1; //TODO: ID 
@@ -42,18 +43,17 @@ class IntakeActuator : public frc2::SubsystemBase {
 
     const Feedback& GetFeedback() const { return _feedback; }
 
-    units::length::meter_t position;
+    // units::length::meter_t position;
 
-    void setZero(){
-        position = meter_t(0);
-    }
+    // void setZero(){
+    //     position = units::length::meter_t(0);
+    // }
 
     void Periodic() override;
     
     ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetIntakeVelocity();
 
     units::angular_velocity::turns_per_second_t GetIntakeTargetVelocity();
-
 
     void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
