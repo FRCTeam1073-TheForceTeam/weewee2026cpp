@@ -21,6 +21,7 @@ const std::string RobotContainer::testAuto = "Test Auto";
 RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
+  m_flywheel = std::make_shared<Flywheel>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
   m_intakecollector = std::make_shared<IntakeCollector>();
   m_shooterLoad = std::make_shared<ShooterLoad>();

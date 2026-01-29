@@ -14,6 +14,8 @@
 #include "subsystems/ExampleSubsystem.h"
 #include "subsystems/DriveTrain.h"
 #include "subsystems/OI.h"
+#include "subsystems/Flywheel.h"
+#include "subsystems/IntakeActuator.h"
 #include "commands/TeleopDrive.h"
 #include "commands/Collect.h"
 #include "commands/Load.h"
