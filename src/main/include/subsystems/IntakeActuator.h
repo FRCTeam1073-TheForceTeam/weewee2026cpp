@@ -14,6 +14,8 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/CANcoder.hpp>
 #include <ctre/phoenix6/CANBus.hpp>
+#include <frc/AnalogOutput.h>
+#include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 
 #include <variant>
 
@@ -40,11 +42,18 @@ class IntakeActuator : public frc2::SubsystemBase {
 
     const Feedback& GetFeedback() const { return _feedback; }
 
+    units::length::meter_t position;
+
+    void setZero(){
+        position = meter_t(0);
+    }
+
     void Periodic() override;
     
     ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetIntakeVelocity();
 
     units::angular_velocity::turns_per_second_t GetIntakeTargetVelocity();
+
 
     void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
@@ -60,6 +69,8 @@ class IntakeActuator : public frc2::SubsystemBase {
     ctre::phoenix6::StatusSignal<units::angle::turn_t> _PositionSig;
     ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _VelocitySig;
     ctre::phoenix6::StatusSignal<units::current::ampere_t> _CurrentSig;
+
+    ctre::phoenix6::StatusSignal<units::volt_t> _voltageSignal = _LeadMotor.GetMotorVoltage();
 
     ctre::phoenix6::controls::VelocityVoltage _VelocityVoltage; //Slot 0
     ctre::phoenix6::controls::PositionVoltage _PositionVoltage; //Slot 1

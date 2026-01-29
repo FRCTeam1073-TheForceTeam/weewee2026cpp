@@ -52,6 +52,11 @@ void IntakeActuator::Periodic() {
 
     _FollowMotor.SetControl(controls::StrictFollower{_LeadMotor.GetDeviceID()});
 
+    if (_voltageSignal.GetValue() > volt_t(5)) { //TODO: Get Value
+      _LeadMotor.SetPosition(units::angle::turn_t(0)),
+      _LeadMotor.SetVoltage(volt_t(0));
+    } 
+
 }
 
 bool IntakeActuator::ConfigureHardware() {
@@ -83,9 +88,6 @@ bool IntakeActuator::ConfigureHardware() {
     followerConfigs.MotorOutput.WithInverted(signals::InvertedValue::CounterClockwise_Positive);
 
     _LeadMotor.SetVoltage(volt_t(0));
-
-    //TODO: Add stopper for voltage spike
-    //if voltage goes over 5 then set position 0
     
     if (!status.IsOK()) {
         std::cerr << "IntakeActuator is not working" << std::endl;
