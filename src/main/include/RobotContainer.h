@@ -61,6 +61,7 @@ class RobotContainer {
   std::shared_ptr<OI> m_OI;
   std::shared_ptr<IntakeCollector> m_intakecollector;
   std::shared_ptr<ShooterLoad> m_shooterLoad;
+  std::shared_ptr<Flywheel> m_flywheel;
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
