@@ -15,12 +15,13 @@ frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d camera
     return fieldRelativeTagPose.TransformBy(cameraToTarget.Inverse()).TransformBy(cameraToRobot);
 }
 
-AprilTagFinder::VisionMeasurement::VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID, units::meter_t range) :
+AprilTagFinder::VisionMeasurement::VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID,
+     const wpi::array<double, 3U>& stddevs) :
+    _tagID(tagID),
     _pose(pose),
     _relativePose(relativePose),
     _timeStamp(timeStamp),
-    _tagID(tagID),
-    _range(range)
+    _stddevs(stddevs)
 {}
 
 std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getAllMeasurements() {
@@ -54,20 +55,29 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurement
 
     for (auto& result : results){
         if (result.HasTargets()){
-          //targets.addAll(result.getTargets());
-        
-        units::time::second_t responseTimestamp = frc::Timer::GetFPGATimestamp();//- result.metadata.getLatencyMillis() / 1000.0;
-        units::meter_t range = 0_m;
+        // targets.addAll(result.getTargets());
+        units::time::second_t result_timestamp = result.GetTimestamp(); // Adjusted for each result for time compensation.
+
         for (auto& target : result.GetTargets()) {
+            
             if (FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).has_value()){
                 if (target.GetPoseAmbiguity() != -1 && target.GetPoseAmbiguity() < ambiguityThreshold){
                     frc::Transform3d best = target.GetBestCameraToTarget();
                     frc::Pose3d robotPose = estimateFieldToRobotAprilTag(best,
                         FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
                         camTransform3d.Inverse());
-                    range = target.bestCameraToTarget.Translation().Norm();
+
                     frc::Transform2d relativePose = toTransform2d(camTransform3d+best);
-                    measurements.push_back(VisionMeasurement(robotPose.ToPose2d(), relativePose, responseTimestamp, target.GetFiducialId(), range));
+                    units::length::meter_t range = relativePose.Translation().Norm();
+                    
+                    // Ignore things that are too far away:
+                    if (range < max_range) {
+                        // TODO: Estimated STD Deviations from Photon vision:
+                        auto std_devs = estimate_stddevs(range);
+
+                        measurements.push_back(VisionMeasurement(robotPose.ToPose2d(), relativePose, result_timestamp, 
+                                                                target.GetFiducialId(), std_devs));
+                    }
                 }
             }
         }
@@ -98,4 +108,13 @@ void AprilTagFinder::Periodic() {
         );
         i++;
     }
+}
+
+wpi::array<double, 3U> AprilTagFinder::estimate_stddevs(units::length::meter_t range) {
+    wpi::array<double, 3U> result(base_stddevs);
+
+    result[0] += 0.2 * range.value();
+    result[1] += 0.2 * range.value();
+    result[2] += 0.15 * range.value();
+    return result;
 }

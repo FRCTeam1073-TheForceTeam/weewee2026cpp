@@ -29,12 +29,13 @@ class AprilTagFinder : public frc2::SubsystemBase {
     class VisionMeasurement
     {
     public:
-        frc::Pose2d _pose; // this is in field coordinates
-        frc::Transform2d _relativePose; // this is in robot coordinates.
-        units::second_t _timeStamp; //this might not be in seconds I'm not sure yet
         int _tagID;
-        units::meter_t _range;
-        VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID, units::meter_t range);
+        frc::Pose2d _pose;              // this is in field coordinates
+        frc::Transform2d _relativePose; // this is in robot coordinates.
+        units::second_t _timeStamp;     // In seconds I'm not sure yet
+        wpi::array<double, 3U> _stddevs; // Error in this measurement (standard deviations)
+        
+        VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID, const wpi::array<double, 3U> &stddevs);
     };
     struct RobotCamera{
     public: 
@@ -59,8 +60,17 @@ class AprilTagFinder : public frc2::SubsystemBase {
     
     static std::vector<RobotCamera> _cameras;
     
-    const double ambiguityThreshold = 0.28;
     private:
+
+        const double ambiguityThreshold = 0.28;
+        // Base stddevs for measurements:
+        wpi::array<double, 3U> base_stddevs = {0.5, 0.5, 0.5};
+        // Use tag range to estimate measurement errors:
+        wpi::array<double, 3U> estimate_stddevs(units::length::meter_t range);
+
+        // Ignore things farther away than this.
+        units::meter_t max_range{3.5};
+
         std::vector<VisionMeasurement> _visionMeasurements;
 
 };

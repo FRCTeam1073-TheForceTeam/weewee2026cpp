@@ -13,9 +13,6 @@ Localizer::Localizer(std::shared_ptr<Drivetrain> driveTrain, std::shared_ptr<Apr
 void Localizer::InitSendable(wpi::SendableBuilder &builder) {
     
     builder.SetSmartDashboardType("Localizer");
-    builder.AddDoubleProperty("StdDev X", [this] { return getStdDevX(); }, [this] (double stdX) { setStdDevX(stdX); });
-    builder.AddDoubleProperty("StdDev Y", [this] { return getStdDevY(); }, [this] (double stdY) { setStdDevX(stdY); });
-    builder.AddDoubleProperty("StdDev Angle", [this] { return getStdDevA(); }, [this] (double stdA) { setStdDevX(stdA); });
     builder.AddDoubleProperty("Time between updates", [this] { return getTime().value(); },   [this] (double timeGap) { setTime(units::time::millisecond_t(timeGap)); });
     builder.AddDoubleProperty("Linear Speed Thres", [this] { return getLinearSpeed().value(); }, [this] (double linearSpeed) { setTime(units::time::millisecond_t(timeGap));} );
     builder.AddDoubleProperty("Angular Speed Thres", [this] { return getAngularSpeed().value(); }, [this] (double angularSpeed) { setTime(units::time::millisecond_t(timeGap));} );
@@ -33,24 +30,14 @@ void Localizer::Periodic() {
     if (now - _lastUpdateTime > timeGap && measurementStable()) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = _finder->getAllMeasurements();
         for (int index = 0; index < measurements.size(); index++){
-            AprilTagFinder::VisionMeasurement CurrentMeasurement = measurements[index];
+            AprilTagFinder::VisionMeasurement current_measurement = measurements[index];
 
-            if (CurrentMeasurement._range <= maxRange)
-            {
-                updateStdDevs(CurrentMeasurement);
-                _estimator->AddVisionMeasurement(CurrentMeasurement._pose, CurrentMeasurement._timeStamp, measurementStdDev);
-                measurementCounter++;
-            }
+            _estimator->AddVisionMeasurement(current_measurement._pose, current_measurement._timeStamp, current_measurement._stddevs);
+            measurementCounter++;
         }
         _lastUpdateTime = now;
         frc::SmartDashboard::PutNumber("Localize Measurements", measurementCounter);
     }
-}
-
-void Localizer::updateStdDevs(AprilTagFinder::VisionMeasurement measurement){
-    measurementStdDev[0] = StdDevX + 0.2 * measurement._range.value();
-    measurementStdDev[1] = StdDevY + 0.2 * measurement._range.value();
-    measurementStdDev[2] = StdDevA + 0.2 * measurement._range.value();
 }
 
 bool Localizer::measurementStable(){

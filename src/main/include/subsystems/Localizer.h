@@ -53,18 +53,6 @@ class Localizer : public frc2::SubsystemBase {
 
     void setAngularSpeed(units::angular_velocity::radians_per_second_t angularSpeed) { angularSpeedThreshold = angularSpeed; }
 
-    double getStdDevX() {return StdDevX;}
-
-    void setStdDevX(double devX) {StdDevX = devX;}
-
-    double getStdDevY() {return StdDevY;}
-
-    void setStdDevY(double devY) {StdDevX = devY;}
-
-    double getStdDevA() {return StdDevA;}
-
-    void setStdDevA(double devA) {StdDevA = devA;}
-
     void Periodic() override;
 
     frc::Pose2d getPose() { return _estimator->GetEstimatedPosition(); }
@@ -72,9 +60,6 @@ class Localizer : public frc2::SubsystemBase {
     void additionalSensorMeasurement(int id, FieldMap fieldMap);
 
     bool measurementStable();
-
-    void updateStdDevs(AprilTagFinder::VisionMeasurement measurement);
-
 
     private:
 
@@ -85,13 +70,8 @@ class Localizer : public frc2::SubsystemBase {
 
     //apriltag finder here when made
     units::time::second_t _lastUpdateTime;
-    wpi::array<double, 3U> measurementStdDev = {0.5,0.5,0.5};
     int measurementCounter = 0;
-    units::time::millisecond_t timeGap{8};
+    units::time::millisecond_t timeGap{30};
     units::velocity::meters_per_second_t linearSpeedThreshold{2.5};
     units::angular_velocity::radians_per_second_t angularSpeedThreshold{2};
-    units::meter_t maxRange{3.25};
-    double StdDevX = 0.5;
-    double StdDevY = 0.5;
-    double StdDevA = 0.5;
 };
