@@ -15,6 +15,9 @@
 
 #include <variant>
 
+#include <frc/filter/SlewRateLimiter.h>
+
+
 
 
 /**
@@ -111,5 +114,8 @@ class IntakeCollector : public frc2::SubsystemBase {
 
   // Set the motors target velocity
   units::angular_velocity::turns_per_second_t _targetVelocity;
+
+  frc::SlewRateLimiter<units::turns_per_second> limiter{0.5_tps / 1_s};
+
 
 };
