@@ -8,9 +8,6 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/Flywheel.h"
-
-#include <frc/Timer.h>
-
 /**
  * An example command.
  *
@@ -18,15 +15,15 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Shoot
-    : public frc2::CommandHelper<frc2::Command, Shoot> {
+class TeleopFlywheel
+    : public frc2::CommandHelper<frc2::Command, TeleopFlywheel> {
  public:
   /**
    * Creates a new ExampleCommand.
    *
    * @param flywheel The subsystem used by this command.
    */
-  explicit Shoot(std::shared_ptr<Flywheel> flywheel);
+  explicit TeleopFlywheel(std::shared_ptr<Flywheel> flywheel);
 
   void Initialize() override;
 

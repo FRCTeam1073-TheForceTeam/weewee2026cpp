@@ -67,6 +67,8 @@ class ShooterRotater : public frc2::SubsystemBase {
 
   /// Set the command for the system.
   void SetCommand(Command cmd);
+  units::angle::radian_t GetAngle();
+  void SetTargetAngle(units::angle::radian_t newAngle);
 
  private:
 
@@ -79,6 +81,9 @@ class ShooterRotater : public frc2::SubsystemBase {
 
   // Example TalonFX motor interface.
   ctre::phoenix6::hardware::TalonFX _rotaterMotor;
+
+  units::angle::radian_t targetAngle;
+  units::angle::radian_t angle;
 
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angle::turn_t> _rotaterPositionSig;

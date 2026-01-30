@@ -24,13 +24,13 @@ Flywheel::Flywheel():
         }
     }
 
-void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+void Flywheel::SetVelocity(units::angular_velocity::turns_per_second_t Velocity) {
     _TargetVelocity = Velocity;
 }
-ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Flywheel::GetFlywheelVelocity() {
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Flywheel::GetVelocity() {
     return _FlywheelVelocitySig;
 }
-units::angular_velocity::turns_per_second_t Flywheel::GetFlywheelTargetVelocity() {
+units::angular_velocity::turns_per_second_t Flywheel::GetTargetVelocity() {
     return _TargetVelocity;
 }
 

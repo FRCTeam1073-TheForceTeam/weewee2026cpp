@@ -27,18 +27,16 @@ class Flywheel : public frc2::SubsystemBase {
 
   Flywheel();
 
-  
-
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
 
-  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetFlywheelVelocity();
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetVelocity();
 
-  units::angular_velocity::turns_per_second_t GetFlywheelTargetVelocity();
+  units::angular_velocity::turns_per_second_t GetTargetVelocity();
 
-  void SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity);
+  void SetVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
   const FlywheelFeedback& GetFlywheelFeedback() const { return _feedback; }
 
