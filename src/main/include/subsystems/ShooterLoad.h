@@ -17,9 +17,6 @@
 
 #include <frc/filter/SlewRateLimiter.h>
 
-
-
-
 /**
  * This  subsystem shows the basic pattern of any mechanism subsystem.
  * 
@@ -34,8 +31,9 @@ class ShooterLoad : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int LoadMotorId = 8; // TODO: Get motor id 
-
+  static constexpr int LoadMotorId = 27; // TODO: Get motor id 
+  static constexpr int laserCANId = 28;
+  
   const double GearRatio = 1; // TODO: Get gear ratio from EM
 
   
@@ -93,6 +91,7 @@ class ShooterLoad : public frc2::SubsystemBase {
 
   //  TalonFX motor interface.
   ctre::phoenix6::hardware::TalonFX _loadMotor;
+  //TODO: put in lasercan
 
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _loadVelocitySig;

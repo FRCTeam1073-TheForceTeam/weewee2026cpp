@@ -14,7 +14,6 @@ IntakeActuator::IntakeActuator():
     _hardwareConfigured(true),
     _LeadMotor(_LeadMotorID, CANBus("rio")), 
     _FollowMotor(_FollowMotorID, CANBus("rio")), 
-    _Encoder(_EncoderID, CANBus("rio")),
     _PositionSig(_LeadMotor.GetPosition()),
     _VelocitySig(_LeadMotor.GetVelocity()),
     _CurrentSig(_LeadMotor.GetTorqueCurrent()),

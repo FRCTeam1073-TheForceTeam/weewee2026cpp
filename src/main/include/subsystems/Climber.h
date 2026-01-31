@@ -18,7 +18,7 @@ class Climber : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int MotorId = 8;
+  static constexpr int MotorId = 29;
 
   // Mechanism conversion constants for the subsystem:
   static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);

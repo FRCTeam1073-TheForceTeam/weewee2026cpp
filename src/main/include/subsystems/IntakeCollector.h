@@ -83,7 +83,7 @@ class IntakeCollector : public frc2::SubsystemBase {
  private:
 
 
-  static constexpr int MotorId = 8; // TODO: Get motor id 
+  static constexpr int MotorId = 20; // TODO: Get motor id 
 
   const double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1); // TODO: Get gear ratio from EM
 
