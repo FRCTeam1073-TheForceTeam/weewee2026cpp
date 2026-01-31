@@ -4,9 +4,9 @@
 
 #include "commands/DrivePath.h"
 
-DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, Path path) :
+DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory) :
   m_drivetrain(drivetrain),
-  path(path),
+  trajectory(trajectory),
   distanceTolerance(0.1_m),
   angleTolerance(0.1_rad),
   currentSegmentIndex(1),
@@ -27,19 +27,12 @@ void DrivePath::Initialize() {
 
   xController.Reset();
   yController.Reset();
-  thetaController.Reset();
-  frc::SmartDashboard::PutString("DrivePath/Status", std::string("Starting Segment: %d", currentSegmentIndex));
-}
+  thetaController.Reset();}
 
 // Called repeatedly when this Command is scheduled to run
 void DrivePath::Execute() {
-  if(currentSegmentIndex < 0) {
-    frc::SmartDashboard::PutString("DrivePath/status", "Invalide segment index.");
-    return;
-  }
-
   currentTime = frc::Timer::GetFPGATimestamp() - startTime;
-  robotPose = m_drivetrain->GetOdometry();
+  robotPose = m_drivetrain->GetOdometry(); //TODO: put in localizer
 
   Path::PathFeedback pathFeedback = path.GetPathFeedback(currentSegmentIndex, robotPose);
   maxVelocity = units::velocity::meters_per_second_t(pathFeedback.velocity.norm());

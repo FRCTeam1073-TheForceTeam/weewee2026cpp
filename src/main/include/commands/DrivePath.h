@@ -14,6 +14,8 @@
 #include <units/length.h>
 #include <units/angle.h>
 
+#include <choreo/Choreo.h>
+
 /**
  * An example command.
  *
@@ -27,7 +29,7 @@ class DrivePath
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  DrivePath(std::shared_ptr<Drivetrain> drivetrain, Path path);
+  DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory);
 
   void Initialize() override;
 
@@ -42,7 +44,7 @@ class DrivePath
     units::radian_t angleTolerance;
 
     std::shared_ptr<Drivetrain> m_drivetrain;
-    Path path;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
 
     frc::Pose2d robotPose;
     int currentSegmentIndex;
