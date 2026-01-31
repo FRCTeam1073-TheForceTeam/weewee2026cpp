@@ -28,27 +28,27 @@ components and start CANBus IDs for subsystem hardware at ID 5.
 
 # OI (Driver Controller)
 
-| Button/Joystick  | Command Name          |
-| ---------------- | --------------------- |
-| Left Joystick X  | GetDriverLeftX        |
-| Left Joystick Y  | GetDriverLeftY        |
-| Right Joystick X | GetDriverRightX       |
-| Right Joystick Y | GetDriverRightY       |
-| Left Trigger     | GetDriverLeftTrigger  |
-| Right Trigger    | GetDriverRightTrigger |
-| A Button         | GetDriverAButton      |
-| B Button         | GetDriverBButton      |
-| X Button         | GetDriverXButton      |
-| Y Button         | GetDriverYButton      |
-| Menu Button      | GetDriverMenuButton   |
-| View Button      | GetDriverViewButton   |
-| Left Bumper      | GetDriverLeftBumper   |
-| Right Bumper     | GetDriverRightBumper  |
-| D-Pad Up         | GetDriverDPadUp       |
-| D-Pad Right      | GetDriverDPadRight    |
-| D-Pad Left       | GetDriverDPadLeft     |
-| D-Pad Down       | GetDriverDPadDown     |
-| Zero Controller  | ZeroDriverController  |
+| Button/Joystick  | Command Name          | Function                      |
+| ---------------- | --------------------- | ----------------------------- |
+| Left Joystick X  | GetDriverLeftX        | Drivetrain                    |
+| Left Joystick Y  | GetDriverLeftY        | Drivetrain                    |
+| Right Joystick X | GetDriverRightX       | Drivetrain                    |
+| Right Joystick Y | GetDriverRightY       |                               |
+| Left Trigger     | GetDriverLeftTrigger  |                               |
+| Right Trigger    | GetDriverRightTrigger |                               |
+| A Button         | GetDriverAButton      |                               |
+| B Button         | GetDriverBButton      |                               |
+| X Button         | GetDriverXButton      |                               |
+| Y Button         | GetDriverYButton      |                               |
+| Menu Button      | GetDriverMenuButton   |                               |
+| View Button      | GetDriverViewButton   |                               |
+| Left Bumper      | GetDriverLeftBumper   |                               |
+| Right Bumper     | GetDriverRightBumper  |                               |
+| D-Pad Up         | GetDriverDPadUp       |                               |
+| D-Pad Right      | GetDriverDPadRight    |                               |
+| D-Pad Left       | GetDriverDPadLeft     |                               |
+| D-Pad Down       | GetDriverDPadDown     |                               |
+| Zero Controller  | ZeroDriverController  |                               |
 
 
 
@@ -56,27 +56,27 @@ components and start CANBus IDs for subsystem hardware at ID 5.
 
 # OI (Operator Controller)
 
-| Button/Joystick  | Command Name            |
-| ---------------- | ----------------------- |
-| Left Joystick X  | GetOperatorLeftX        |
-| Left Joystick Y  | GetOperatorLeftY        |
-| Right Joystick X | GetOperatorRightX       |
-| Right Joystick Y | GetOperatorRightY       |
-| Left Trigger     | GetOperatorLeftTrigger  |
-| Right Trigger    | GetOperatorRightTrigger |
-| A Button         | GetOperatorAButton      |
-| B Button         | GetOperatorBButton      |
-| X Button         | GetOperatorXButton      |
-| Y Button         | GetOperatorYButton      |
-| Menu Button      | GetOperatorMenuButton   |
-| View Button      | GetOperatorViewButton   |
-| Left Bumper      | GetOperatorLeftBumper   |
-| Right Bumper     | GetOperatorRightBumper  |
-| D-Pad Up         | GetOperatorDPadUp       |
-| D-Pad Right      | GetOperatorDPadRight    |
-| D-Pad Left       | GetOperatorDPadLeft     |
-| D-Pad Down       | GetOperatorDPadDown     |
-| Zero Controller  | ZeroOperatorController  |
+| Button/Joystick  | Command Name            | Function                      |
+| ---------------- | ----------------------- | ----------------------------- |
+| Left Joystick X  | GetOperatorLeftX        |                               |
+| Left Joystick Y  | GetOperatorLeftY        | Move Turret Left/Right        |
+| Right Joystick X | GetOperatorRightX       |                               |
+| Right Joystick Y | GetOperatorRightY       |                               |
+| Left Trigger     | GetOperatorLeftTrigger  |                               |
+| Right Trigger    | GetOperatorRightTrigger |                               |
+| A Button         | GetOperatorAButton      |                               |
+| B Button         | GetOperatorBButton      |                               |
+| X Button         | GetOperatorXButton      |                               |
+| Y Button         | GetOperatorYButton      |                               |
+| Menu Button      | GetOperatorMenuButton   |                               |
+| View Button      | GetOperatorViewButton   |                               |
+| Left Bumper      | GetOperatorLeftBumper   |                               |
+| Right Bumper     | GetOperatorRightBumper  |                               |
+| D-Pad Up         | GetOperatorDPadUp       |                               |
+| D-Pad Right      | GetOperatorDPadRight    |                               |
+| D-Pad Left       | GetOperatorDPadLeft     |                               |
+| D-Pad Down       | GetOperatorDPadDown     |                               |
+| Zero Controller  | ZeroOperatorController  |                               |
 
 
 
