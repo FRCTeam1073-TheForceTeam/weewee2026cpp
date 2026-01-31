@@ -83,6 +83,10 @@ void IntakeCollector::Periodic() {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
     _intakeMotor.SetControl(controls::NeutralOut());
   }
+
+
+
+  _intakeMotor.Set(limiter.Calculate(_targetVelocity).value());
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
@@ -113,6 +117,8 @@ configs::TalonFXConfiguration configs{};
 
     // Set the control configuration for the drive motor:
     auto status = _intakeMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+
+  
 
     if (!status.IsOK()) {
         std::cerr << "IntakeCollector: Configuration went wrong" << std::endl;
