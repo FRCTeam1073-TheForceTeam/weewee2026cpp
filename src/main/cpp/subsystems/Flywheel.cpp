@@ -59,13 +59,6 @@ configs::TalonFXConfiguration configs{};
     configs.Slot0.kD = 0.01;
     configs.Slot0.kA = 0.0;
 
-    // Slot 1 for position control mode:
-    configs.Slot1.kV = 0.12; // Motor constant.
-    configs.Slot1.kP = 0.1;
-    configs.Slot1.kI = 0.01;
-    configs.Slot1.kD = 0.0;
-    configs.Slot1.kA = 0.0;
-
     // Set whether motor control direction is inverted or not:
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
