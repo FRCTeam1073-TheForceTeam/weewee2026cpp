@@ -46,7 +46,7 @@ void Climber::Periodic() {
     _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter;
 
     if (m_ClimberOnInput.Get()) {
-      _climberOn = true;
+      _climberOn = true; // these may be swapped depending on the digitalinput default is
     } else {
       _climberOn = false;
     }
