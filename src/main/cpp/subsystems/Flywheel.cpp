@@ -34,13 +34,35 @@ units::angular_velocity::turns_per_second_t Flywheel::GetTargetVelocity() {
     return _TargetVelocity;
 }
 
+void Flywheel::SetCommand(Command cmd){
+    _command = cmd;
+}
+
 
 // This method will be called once per scheduler run
 void Flywheel::Periodic() {
     BaseStatusSignal::RefreshAll(_FlywheelVelocitySig, _FlywheelCurrentSig);
 
-    _leadFlywheelMotor.Set(limiter.Calculate(_TargetVelocity).value());
-    _followFlywheelMotor.SetControl(controls::StrictFollower(_leadFlywheelMotor.GetDeviceID()));
+    _feedback.velocity = _FlywheelVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
+    _feedback.force = _FlywheelCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
+
+    //_followFlywheelMotor.Set(_FlywheelVelocitySig.GetValue().value());
+
+  if (std::holds_alternative<units::velocity::meters_per_second_t>(_command)) {
+      // Send velocity based command:
+
+      // Convert to hardware units:
+      // Multiply by conversion to produce commands.
+      auto angular_vel = std::get<units::velocity::meters_per_second_t>(_command) * TurnsPerMeter;
+      // Send to hardware:
+      _leadFlywheelMotor.SetControl(_FlywheelVelocityVoltage.WithVelocity(angular_vel));
+  } else {
+      // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
+    _leadFlywheelMotor.SetControl(controls::NeutralOut());
+  }
+
+     _followFlywheelMotor.SetControl(controls::StrictFollower{_leadFlywheelMotor.GetDeviceID()});
+
 }
 
 bool Flywheel::ConfigureHardware() {
@@ -58,13 +80,6 @@ configs::TalonFXConfiguration configs{};
     configs.Slot0.kI = 0.0;
     configs.Slot0.kD = 0.01;
     configs.Slot0.kA = 0.0;
-
-    // Slot 1 for position control mode:
-    configs.Slot1.kV = 0.12; // Motor constant.
-    configs.Slot1.kP = 0.1;
-    configs.Slot1.kI = 0.01;
-    configs.Slot1.kD = 0.0;
-    configs.Slot1.kA = 0.0;
 
     // Set whether motor control direction is inverted or not:
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
