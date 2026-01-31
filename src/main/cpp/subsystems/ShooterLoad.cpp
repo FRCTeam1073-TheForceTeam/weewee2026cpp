@@ -65,6 +65,7 @@ void ShooterLoad::Periodic() {
   _loadMotor.Set(_targetVelocity.value());
 
 
+  _loadMotor.Set(limiter.Calculate(_targetVelocity).value());
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
