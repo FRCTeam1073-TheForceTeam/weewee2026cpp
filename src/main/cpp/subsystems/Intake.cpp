@@ -15,7 +15,6 @@ Intake::Intake():
     _ActuatorLeadMotor(_ActuatorLeadMotorID, CANBus("rio")),
     _CollectorMotor(_CollectorMotorID, CANBus("rio)")), 
     _ActuatorFollowMotor(_ActuatorFollowMotorID, CANBus("rio")), 
-    _ActuatorEncoder(_ActuatorEncoderID, CANBus("rio")),
     _PositionSig(_ActuatorLeadMotor.GetPosition()),
     _ActuatorVelocitySig(_ActuatorLeadMotor.GetVelocity()),
     _CollectorVelocitySig(_CollectorMotor.GetVelocity()),

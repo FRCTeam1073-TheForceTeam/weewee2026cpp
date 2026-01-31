@@ -42,10 +42,9 @@ class Intake : public frc2::SubsystemBase {
 
     private:
 
-    static constexpr int _ActuatorLeadMotorID = 18; //TODO: ID 
-    static constexpr int _CollectorMotorID = 19; //TODO: ID
-    static constexpr int _ActuatorFollowMotorID = 3; //TODO: ID 
-    static constexpr int _ActuatorEncoderID = 4; //TODO: ID
+    static constexpr int _ActuatorLeadMotorID = 18; 
+    static constexpr int _CollectorMotorID = 20; 
+    static constexpr int _ActuatorFollowMotorID = 19;
 
     static constexpr auto ActuatorTurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0); //TODO: Ratio
     static constexpr auto CollectorTurnPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0); //TODO: Ratio
@@ -59,7 +58,6 @@ class Intake : public frc2::SubsystemBase {
     ctre::phoenix6::hardware::TalonFX _ActuatorLeadMotor;
     ctre::phoenix6::hardware::TalonFX _ActuatorFollowMotor;
     ctre::phoenix6::hardware::TalonFX _CollectorMotor;
-    ctre::phoenix6::hardware::CANcoder _ActuatorEncoder;
 
     ctre::phoenix6::StatusSignal<units::angle::turn_t> _PositionSig;
     ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _ActuatorVelocitySig;
