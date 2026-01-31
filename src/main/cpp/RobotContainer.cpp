@@ -22,8 +22,9 @@ RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
   m_flywheel = std::make_shared<Flywheel>();
+  m_intake = std::make_shared<Intake>();
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
-  m_intakecollector = std::make_shared<IntakeCollector>();
+  cmd_collect = std::make_shared<Collect>(m_intake);
   m_shooterLoad = std::make_shared<ShooterLoad>();
 
   // Configure the button bindings
