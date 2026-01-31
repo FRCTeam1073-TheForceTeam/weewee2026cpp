@@ -112,21 +112,21 @@ const SwerveModule::Feedback& SwerveModule::SampleFeedback(units::time::second_t
 }
 
 
-void SwerveModule::SetCommand(frc::SwerveModuleState cmd) {
+void SwerveModule::SetCommand(frc::SwerveModuleState cmd, units::force::newton_t feedForward) {
 
     if (!_hardwareConfigured) return; // No controls if configure failed
     
-
     // Cache command for reference later.
     _targetState = cmd;
 
     // Convert and send this command to the hardware.
     auto drive_motor_velocity = _targetState.speed / SwerveControlConfig::DriveMetersPerMotorTurn;
     auto steering_angle = units::angle::degree_t(_targetState.angle.Degrees());
-
+    
     // Controller commands.
     // std::cerr << "Swerve Module [" << _ids.number << "] command " << drive_motor_velocity.value() << ", " << steering_angle.value() << std::endl;
-    _driveMotor.SetControl(_driveVelocityVoltage.WithSlot(0).WithVelocity(drive_motor_velocity));
+    //TODO: figure out feedForward conversion
+    _driveMotor.SetControl(_driveVelocityVoltage.WithSlot(0).WithVelocity(drive_motor_velocity).WithFeedForward(0_V));
     _steerMotor.SetControl(_steerPositionVoltage.WithSlot(0).WithPosition(steering_angle));
 }
 

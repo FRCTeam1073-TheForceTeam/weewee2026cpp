@@ -20,11 +20,11 @@ const std::string RobotContainer::testAuto = "Test Auto";
 RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
   m_OI = std::make_shared<OI>();
-  m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
   m_Tags = std::make_shared<AprilTagFinder>();
   m_FieldMap = std::make_shared<FieldMap>();
   m_Localizer = std::make_shared<Localizer>(m_drivetrain, m_Tags);
   m_FieldDisplay = std::make_shared<FieldMapDisplay>(m_drivetrain, m_Localizer, m_FieldMap);
+  m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI, m_Localizer));
 
   // Configure the button bindings
   ConfigureBindings();

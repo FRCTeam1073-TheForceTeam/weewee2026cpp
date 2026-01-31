@@ -85,7 +85,7 @@ class SwerveModule {
   const frc::SwerveModulePosition& GetPosition() const { return _latestSwerveModulePosition; }
 
   /// Send the command to the hardware and cache them.
-  void SetCommand(frc::SwerveModuleState cmd);
+  void SetCommand(frc::SwerveModuleState cmd, units::force::newton_t feedForward = 0_N);
 
   /// Set the drive brake mode:
   void SetDriveBrakeMode(bool brakes = true);

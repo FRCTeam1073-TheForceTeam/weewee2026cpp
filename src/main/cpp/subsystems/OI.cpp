@@ -93,6 +93,10 @@ bool OI::GetDriverRightBumper() {
     return _driverController.GetRightBumperButton();
 }
 
+int OI::GetDriverDPadAngle() {
+    return _driverController.GetPOV();
+}
+
 bool OI::GetDriverDPadUp() {
     //return _driverController.GetPOV() == 0;
     return false;
