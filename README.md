@@ -58,8 +58,8 @@ components and start CANBus IDs for subsystem hardware at ID 5.
 
 | Button/Joystick  | Command Name            | Function                      |
 | ---------------- | ----------------------- | ----------------------------- |
-| Left Joystick X  | GetOperatorLeftX        |                               |
-| Left Joystick Y  | GetOperatorLeftY        | Move Turret Left/Right        |
+| Left Joystick X  | GetOperatorLeftX        | Move Turret Left/Right        |
+| Left Joystick Y  | GetOperatorLeftY        |                               |
 | Right Joystick X | GetOperatorRightX       |                               |
 | Right Joystick Y | GetOperatorRightY       |                               |
 | Left Trigger     | GetOperatorLeftTrigger  |                               |
