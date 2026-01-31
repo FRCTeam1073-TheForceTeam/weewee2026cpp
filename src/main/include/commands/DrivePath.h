@@ -57,6 +57,8 @@ class DrivePath
     units::time::second_t startTime;
     units::time::second_t endTime;
 
+    units::angle::radian_t finalOrientation;
+
     units::velocity::meters_per_second_t maxVelocity;
     units::angular_velocity::radians_per_second_t maxAngularVelocity;
     units::acceleration::meters_per_second_squared_t maxAcceleration;
