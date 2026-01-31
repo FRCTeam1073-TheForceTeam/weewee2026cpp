@@ -14,7 +14,9 @@ using namespace ctre::phoenix6;
  */
 ShooterRotater::ShooterRotater() :
 targetAngle(0_rad),
-angle(0_rad),
+positionAngle(0_rad),
+targetVelocity(0_rad_per_s),
+velocity(0_rad_per_s),
 _hardwareConfigured(true),
 _rotaterMotor(RotaterMotorId, CANBus("rio")),
 _rotaterPositionSig(_rotaterMotor.GetPosition()),
@@ -45,9 +47,16 @@ void ShooterRotater::SetTargetAngle(units::angle::radian_t newAngle){
 }
 
 units::angle::radian_t ShooterRotater::GetAngle(){
-  return angle;
+  return positionAngle;
 }
 
+void ShooterRotater::SetTargetVelocity(units::angular_velocity::radians_per_second_t vel){
+  targetVelocity = vel;
+}
+
+units::angular_velocity::radians_per_second_t ShooterRotater::GetVelocity(){
+  return velocity;
+}
 
 void ShooterRotater::Periodic() {
   // Sample the hardware:
@@ -75,10 +84,10 @@ void ShooterRotater::Periodic() {
       // Send position based command:
 
       // Convert to hardware units:
-      angle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
+      positionAngle = std::get<units::length::meter_t>(_command) * TurnsPerMeter;
 
       // Send to hardware:
-      _rotaterMotor.SetControl(_commandPositionVoltage.WithPosition(angle));
+      _rotaterMotor.SetControl(_commandPositionVoltage.WithPosition(positionAngle));
   } else {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
     _rotaterMotor.SetControl(controls::NeutralOut());

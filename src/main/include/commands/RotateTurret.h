@@ -47,12 +47,17 @@ class RotateTurret
 
     double lastError;
 
+    double leftX;
+
     static constexpr units::angular_velocity::radians_per_second_t maximumRotationVelocity = 1.0_rad_per_s;//TODO: get maximum rotation velocity
     
     units::angular_velocity::radians_per_second_t angularVel;
     units::angular_velocity::radians_per_second_t targetAngularVel;
 
+    units::angle::radian_t targetPosition;
     units::angle::radian_t position;//zeroed position is up against the hard stop
+    units::angle::radian_t maxPosition;
+    units::angle::radian_t minPosition;
 
     units::force::newton_t torque;
 

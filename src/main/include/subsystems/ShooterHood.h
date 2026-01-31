@@ -30,7 +30,7 @@ class ShooterHood : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int HoodMotorId = 8;
+  static constexpr int HoodMotorId = 24;
 
   // Mechanism conversion constants for the subsystem:
   static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);
@@ -68,6 +68,8 @@ class ShooterHood : public frc2::SubsystemBase {
   /// Set the command for the system.
   void SetCommand(Command cmd);
 
+  void SetTargetPosition(units::angle::radian_t position);
+
  private:
 
 
@@ -76,6 +78,9 @@ class ShooterHood : public frc2::SubsystemBase {
 
   // Did we successfully configure the hardware?
   bool _hardwareConfigured;
+  
+  units::angle::radian_t TargetPosition;
+  units::angle::radian_t Position;
 
   // Example TalonFX motor interface.
   ctre::phoenix6::hardware::TalonFX _hoodMotor;

@@ -30,7 +30,8 @@ class ShooterRotater : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int RotaterMotorId = 8;
+  static constexpr int RotaterMotorId = 25;
+  static constexpr int encoderMotorId = 26;
 
   // Mechanism conversion constants for the subsystem:
   static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);
@@ -69,6 +70,8 @@ class ShooterRotater : public frc2::SubsystemBase {
   void SetCommand(Command cmd);
   units::angle::radian_t GetAngle();
   void SetTargetAngle(units::angle::radian_t newAngle);
+  units::angular_velocity::radians_per_second_t GetVelocity();
+  void SetTargetVelocity(units::angular_velocity::radians_per_second_t vel);
 
  private:
 
@@ -83,7 +86,10 @@ class ShooterRotater : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _rotaterMotor;
 
   units::angle::radian_t targetAngle;
-  units::angle::radian_t angle;
+  units::angle::radian_t positionAngle;
+
+  units::angular_velocity::radians_per_second_t velocity;
+  units::angular_velocity::radians_per_second_t targetVelocity;
 
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angle::turn_t> _rotaterPositionSig;
