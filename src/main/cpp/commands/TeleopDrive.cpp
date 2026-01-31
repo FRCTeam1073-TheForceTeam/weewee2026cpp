@@ -18,6 +18,8 @@ TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr
     last_snap_time = 0,
     angle_tolerance = 0.05_rad,
     torqueGate = 65_N,
+    // TODO: chassisspeeds and speeds appear in the java drivetrain; determine if these are necessary for the c++ file
+    // TODO: pointAtTarget boolean, localizer, lidar and aprilTagFinder appears in the java drivetrain, but it might be a better idea to put these in the localize file
     // Register that this command requires the subsystem.
     AddRequirements({m_drivetrain.get(), m_OI.get()});
 }
