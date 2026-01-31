@@ -30,11 +30,12 @@ class TestAuto
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
 
-  TestAuto(std::shared_ptr<Drivetrain> drivetrain); //TODO:: add localizer
+  TestAuto(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory); //TODO:: add localizer
   
   static std::unique_ptr<frc2::Command> Create(); 
 
   private:
   
   static std::shared_ptr<Drivetrain> m_drivetrain;
+  static std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
 };

@@ -69,6 +69,5 @@ class RobotContainer {
 
   std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
 
-
   void ConfigureBindings();
 };
