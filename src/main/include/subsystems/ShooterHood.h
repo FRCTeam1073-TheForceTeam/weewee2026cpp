@@ -68,6 +68,8 @@ class ShooterHood : public frc2::SubsystemBase {
   /// Set the command for the system.
   void SetCommand(Command cmd);
 
+  void SetTargetPosition(units::angle::radian_t position);
+
  private:
 
 
@@ -76,6 +78,9 @@ class ShooterHood : public frc2::SubsystemBase {
 
   // Did we successfully configure the hardware?
   bool _hardwareConfigured;
+  
+  units::angle::radian_t TargetPosition;
+  units::angle::radian_t Position;
 
   // Example TalonFX motor interface.
   ctre::phoenix6::hardware::TalonFX _hoodMotor;

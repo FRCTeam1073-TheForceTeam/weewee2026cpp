@@ -39,6 +39,9 @@ void ShooterHood::SetCommand(Command cmd) {
   _command = cmd;
 }
 
+void ShooterHood::SetTargetPosition(units::angle::radian_t position) {
+  TargetPosition = position;
+}
 
 void ShooterHood::Periodic() {
   // Sample the hardware:
@@ -74,6 +77,7 @@ void ShooterHood::Periodic() {
       // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
     _hoodMotor.SetControl(controls::NeutralOut());
   }
+
 }
 
 // Helper function for configuring hardware from within the constructor of the subsystem.
