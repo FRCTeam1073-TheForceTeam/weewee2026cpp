@@ -47,6 +47,8 @@ void LaserCan::Periodic() {
   else {
     std::cout << "Error: LaserCAN target is out of range or the measurment has an error" << std::endl;
   }
+
+  frc::SmartDashboard::PutNumber("LaserCan/measurementData", measurementData.value().distance_mm);
   
 }
 
