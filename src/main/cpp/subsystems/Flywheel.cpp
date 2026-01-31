@@ -24,6 +24,7 @@ Flywheel::Flywheel():
         }
     }
 
+
 void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
     _TargetVelocity = Velocity;
 }
@@ -34,12 +35,34 @@ units::angular_velocity::turns_per_second_t Flywheel::GetFlywheelTargetVelocity(
     return _TargetVelocity;
 }
 
+void Flywheel::SetCommand(Command cmd){
+    _command = cmd;
+}
+
 
 // This method will be called once per scheduler run
 void Flywheel::Periodic() {
     BaseStatusSignal::RefreshAll(_FlywheelVelocitySig, _FlywheelCurrentSig);
 
-    _followFlywheelMotor.Set(_FlywheelVelocitySig.GetValue().value());
+    _feedback.velocity = _FlywheelVelocitySig.GetValue() / TurnsPerMeter; // Convert from hardare units to subsystem units.
+    _feedback.force = _FlywheelCurrentSig.GetValue() / AmpsPerNewton; // Convert from hardware units to subsystem units.
+
+    //_followFlywheelMotor.Set(_FlywheelVelocitySig.GetValue().value());
+
+  if (std::holds_alternative<units::velocity::meters_per_second_t>(_command)) {
+      // Send velocity based command:
+
+      // Convert to hardware units:
+      // Multiply by conversion to produce commands.
+      auto angular_vel = std::get<units::velocity::meters_per_second_t>(_command) * TurnsPerMeter;
+      // Send to hardware:
+      _leadFlywheelMotor.SetControl(_FlywheelVelocityVoltage.WithVelocity(angular_vel));
+  } else {
+      // No command, so send a "null" neutral output command if there is no position or velocity provided as a command:
+    _leadFlywheelMotor.SetControl(controls::NeutralOut());
+  }
+
+     _followFlywheelMotor.SetControl(controls::StrictFollower{_leadFlywheelMotor.GetDeviceID()});
 
 }
 
