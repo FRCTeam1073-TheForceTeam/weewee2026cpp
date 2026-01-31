@@ -24,14 +24,13 @@ Flywheel::Flywheel():
         }
     }
 
-
-void Flywheel::SetFlywheelVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+void Flywheel::SetVelocity(units::angular_velocity::turns_per_second_t Velocity) {
     _TargetVelocity = Velocity;
 }
-ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Flywheel::GetFlywheelVelocity() {
+ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Flywheel::GetVelocity() {
     return _FlywheelVelocitySig;
 }
-units::angular_velocity::turns_per_second_t Flywheel::GetFlywheelTargetVelocity() {
+units::angular_velocity::turns_per_second_t Flywheel::GetTargetVelocity() {
     return _TargetVelocity;
 }
 
@@ -82,18 +81,14 @@ configs::TalonFXConfiguration configs{};
     configs.Slot0.kD = 0.01;
     configs.Slot0.kA = 0.0;
 
-    // Slot 1 for position control mode:
-    configs.Slot1.kV = 0.12; // Motor constant.
-    configs.Slot1.kP = 0.1;
-    configs.Slot1.kI = 0.01;
-    configs.Slot1.kD = 0.0;
-    configs.Slot1.kA = 0.0;
-
     // Set whether motor control direction is inverted or not:
     configs.MotorOutput.WithInverted(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
     // Set the control configuration for the drive motor:
     auto status = _leadFlywheelMotor.GetConfigurator().Apply(configs, 1_s ); // 1 Second configuration timeout.
+   
+    configs::TalonFXConfiguration FollowerConfigs{};
+    FollowerConfigs.MotorOutput.WithInverted(signals::InvertedValue::CounterClockwise_Positive); //change this if directions are the same.
 
     if (!status.IsOK()) {
         std::cerr << "Flywheel is not working" << std::endl;
