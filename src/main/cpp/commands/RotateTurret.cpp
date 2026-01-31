@@ -13,7 +13,8 @@ RotateTurret::RotateTurret(std::shared_ptr<ShooterRotater> shooterRotater, std::
   m_OI{oi} {
   lastError = 0,
   isAlignedToHub = false,
-  angularVel = 0_rad_per_s,
+  angle = 0_rad,
+  targetAngle = 0_rad,
   position = 0_rad,//zeroed position is touching the hard stop
   AddRequirements({m_shooterRotater.get(), m_OI.get()});
 }
@@ -26,7 +27,7 @@ void RotateTurret::Initialize() {
 // Called repeatedly when this Command is scheduled to run
 void RotateTurret::Execute() {
   //TODO: determine direction that robot must be facing in
-  
+  m_shooterRotater->SetTargetAngle(targetAngle);
 
 }
 
