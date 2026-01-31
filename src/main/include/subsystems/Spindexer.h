@@ -26,11 +26,11 @@
  * on other subsystems.
  * 
  */
-class ShooterHood : public frc2::SubsystemBase {
+class Spindexer : public frc2::SubsystemBase {
  public:
 
   // CANBusID for the motor.
-  static constexpr int HoodMotorId = 8;
+  static constexpr int SpindexerMotorId = 8;
 
   // Mechanism conversion constants for the subsystem:
   static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);
@@ -40,6 +40,7 @@ class ShooterHood : public frc2::SubsystemBase {
   // The feedback for this subsystem provided as a struct.
   struct Feedback {
       units::length::meter_t position;
+      units::velocity::meters_per_second_t velocity;
       units::force::newton_t force;
   };
 
@@ -51,7 +52,7 @@ class ShooterHood : public frc2::SubsystemBase {
 
 
   // Constructor for the subsystem.
-  ShooterHood();
+  Spindexer();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -67,8 +68,9 @@ class ShooterHood : public frc2::SubsystemBase {
 
   /// Set the command for the system.
   void SetCommand(Command cmd);
-
-  void SetTargetPosition(units::angle::radian_t position);
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetVelocity();
+  void SetTargetVelocity(units::angular_velocity::turns_per_second_t TargetVelocity);
+  units::angular_velocity::turns_per_second_t GetTargetVelocity();
 
  private:
 
@@ -78,20 +80,19 @@ class ShooterHood : public frc2::SubsystemBase {
 
   // Did we successfully configure the hardware?
   bool _hardwareConfigured;
-  
-  units::angle::radian_t TargetPosition;
-  units::angle::radian_t Position;
 
+  units::angular_velocity::turns_per_second_t _targetVelocity;
   // Example TalonFX motor interface.
-  ctre::phoenix6::hardware::TalonFX _hoodMotor;
+  ctre::phoenix6::hardware::TalonFX _spindexerMotor;
 
   // CTRE hardware feedback signals:
-  ctre::phoenix6::StatusSignal<units::angle::turn_t> _hoodPositionSig;
-  ctre::phoenix6::StatusSignal<units::current::ampere_t> _hoodCurrentSig;
+
+  ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _spindexerVelocitySig;
+  ctre::phoenix6::StatusSignal<units::current::ampere_t> _spindexerCurrentSig;
 
 
   // Example velocity and position controls:
-  ctre::phoenix6::controls::PositionVoltage _commandPositionVoltage;  // Uses Slot0 gains.
+  ctre::phoenix6::controls::VelocityVoltage _commandVelocityVoltage;  // Uses Slot0 gains.
   
   // Cached feedback:
   Feedback _feedback;
@@ -99,4 +100,7 @@ class ShooterHood : public frc2::SubsystemBase {
   // Cached command: Variant of possible different kinds of commands.
   Command  _command;
 
+  //TODO: get gear ratio because EM doesnt have it yet
+  double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1);
 };
+//hi if your reading this 

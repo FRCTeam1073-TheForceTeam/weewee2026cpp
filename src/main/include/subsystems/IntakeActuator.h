@@ -5,17 +5,11 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <wpi/sendable/SendableBuilder.h>
-
 #include <units/length.h>
 #include <units/velocity.h>
-#include <units/force.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/CANcoder.hpp>
-#include <ctre/phoenix6/CANBus.hpp>
-#include <frc/AnalogOutput.h>
-#include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 
 #include <variant>
 
