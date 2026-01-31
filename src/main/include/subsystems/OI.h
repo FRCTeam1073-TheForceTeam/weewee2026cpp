@@ -78,6 +78,7 @@ class OI : public frc2::SubsystemBase {
         bool GetDriverViewButton();
         bool GetDriverLeftBumper();
         bool GetDriverRightBumper();
+        int GetDriverDPadAngle();
         bool GetDriverDPadUp();
         bool GetDriverDPadRight();
         bool GetDriverDPadLeft();
