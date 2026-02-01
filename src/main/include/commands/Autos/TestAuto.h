@@ -11,7 +11,6 @@
 
 #include <subsystems/DriveTrain.h>
 #include <commands/DrivePath.h>
-#include <commands/Path.h>
 
 #include <choreo/Choreo.h>
 #include <Eigen/Dense>

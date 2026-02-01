@@ -9,7 +9,7 @@
 #include <frc/controller/ProfiledPIDController.h>
 
 #include <subsystems/DriveTrain.h>
-#include <commands/Path.h>
+#include <subsystems/Localizer.h>
 
 #include <units/length.h>
 #include <units/angle.h>
@@ -30,7 +30,7 @@ class DrivePath
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory);
+  DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Localizer> localizer, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory);
 
   void Initialize() override;
 
@@ -41,15 +41,18 @@ class DrivePath
   bool IsFinished() override;
 
   private:
+    bool quit;
+
     units::meter_t distanceTolerance;
     units::radian_t angleTolerance;
 
     std::shared_ptr<Drivetrain> m_drivetrain;
+    std::shared_ptr<Localizer> m_localizer;
+
     std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
     std::optional<choreo::SwerveSample> currentSample;
 
     frc::Pose2d robotPose;
-    int currentSegmentIndex;
 
     frc::PIDController xController;
     frc::PIDController yController;
@@ -58,8 +61,6 @@ class DrivePath
     units::time::second_t currentTime;
     units::time::second_t startTime;
     units::time::second_t endTime;
-
-    units::angle::radian_t finalOrientation;
 
     units::velocity::meters_per_second_t maxVelocity;
     units::angular_velocity::radians_per_second_t maxAngularVelocity;

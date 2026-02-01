@@ -68,7 +68,4 @@ private:
     units::force::newton_t backRightTorque;
     units::force::newton_t avgTorque;
     units::force::newton_t torqueGate;
-
-    //TODO: aprilTagFinde, Localizer, and Lidar stuff
-
 };
