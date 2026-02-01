@@ -15,6 +15,10 @@
 #include "subsystems/DriveTrain.h"
 #include "subsystems/OI.h"
 #include "commands/TeleopDrive.h"
+#include "subsystems/AprilTagFinder.h"
+#include "subsystems/FieldMapDisplay.h"
+#include "subsystems/Localizer.h"
+#include "subsystems/FieldMap.h"
 
 #include <choreo/Choreo.h>
 
@@ -58,6 +62,11 @@ class RobotContainer {
  private:
   std::shared_ptr<Drivetrain> m_drivetrain;
   std::shared_ptr<OI> m_OI;
+  std::shared_ptr<AprilTagFinder> m_Tags;
+  std::shared_ptr<FieldMapDisplay> m_FieldDisplay;
+  std::shared_ptr<Localizer> m_Localizer;
+  std::shared_ptr<FieldMap> m_FieldMap;
+
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 

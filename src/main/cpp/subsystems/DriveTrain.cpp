@@ -15,10 +15,18 @@ bool debug = false;
 Drivetrain::Drivetrain() :
     _imu(PigeonId, canBus),
     _swerveModules{
-        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(2.54_m, 2.54_m), canBus), 
-        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(2.54_m, -2.54_m), canBus), 
-        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(-2.54_m, 2.54_m), canBus), 
-        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(-2.54_m, -2.54_m), canBus)},
+        SwerveModule({ 0,  7, 8, 6}, frc::Translation2d(0.254_m, 0.254_m), canBus), 
+        SwerveModule({ 1,  10, 11, 9}, frc::Translation2d(0.254_m, -0.254_m), canBus), 
+        SwerveModule({ 2,  13, 14, 12}, frc::Translation2d(-0.254_m, 0.254_m), canBus), 
+        SwerveModule({ 3,  16, 17, 15}, frc::Translation2d(-0.254_m, -0.254_m), canBus)},
+    _swerveModulePositions{_swerveModules[0].GetPosition(),
+                _swerveModules[1].GetPosition(),
+                _swerveModules[2].GetPosition(),
+                _swerveModules[3].GetPosition()},
+    _swerveModuleStates{_swerveModules[0].GetState(),
+        _swerveModules[1].GetState(),
+        _swerveModules[2].GetState(),
+        _swerveModules[3].GetState()},
     _kinematics(_swerveModules[0].GetLocation(), 
                  _swerveModules[1].GetLocation(), 
                  _swerveModules[2].GetLocation(), 
@@ -170,4 +178,8 @@ void Drivetrain::SetDebugMode(bool removeBug) {
 
 void Drivetrain::ZeroHeading(){
     _imu.SetYaw(0_deg);
+}
+
+frc::Rotation2d Drivetrain::GetGyroHeading(){
+    return _imu.GetRotation2d();
 }
