@@ -23,6 +23,7 @@ DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::optional<chore
 // Called when the command is initially scheduled.
 void DrivePath::Initialize() {
   startTime = frc::Timer::GetFPGATimestamp();
+  endTime = trajectory.value().GetTotalTime();
   currentTime = 0.01_s;
   currentSegmentIndex = 0; //TODO: figure out what to set segment to
 
@@ -35,47 +36,59 @@ void DrivePath::Execute() {
   currentTime = frc::Timer::GetFPGATimestamp() - startTime;
   robotPose = m_drivetrain->GetOdometry(); //TODO: put in localizer
 
-  // Path::PathFeedback pathFeedback = path.GetPathFeedback(currentSegmentIndex, robotPose);
-  auto sample = trajectory.value().SampleAt(0_s); //TODO: Use current Segment Index
-  frc::ChassisSpeeds sample_speed = sample.value().GetChassisSpeeds();
-  maxVelocity = 1_mps * std::sqrt(std::pow(sample_speed.vx.value(), 2) + std::sqrt(std::pow(sample_speed.vy.value(), 2))); 
-  maxAngularVelocity = std::sqrt(std::pow(sample_speed.vx.value(), 2) + std::sqrt(std::pow(sample_speed.vy.value(), 2))) * 2_rad_per_s;
+  if(trajectory.has_value()) {
+    const auto &traj = trajectory.value();
+    currentSample = traj.SampleAt(currentTime);
+    if(currentSample.has_value()) {
+      const auto &cur = currentSample.value();
+      frc::ChassisSpeeds sample_speed = cur.GetChassisSpeeds();
+      maxVelocity = 1_mps * std::sqrt(std::pow(sample_speed.vx.value(), 2) + std::sqrt(std::pow(sample_speed.vy.value(), 2))); 
+      maxAngularVelocity = std::sqrt(std::pow(sample_speed.vx.value(), 2) + std::sqrt(std::pow(sample_speed.vy.value(), 2))) * 2_rad_per_s;
 
-  if(currentSegmentIndex >= trajectory.value().events.size() - 2) {
-    xVelocity = xController.Calculate(robotPose.X().value(), sample_speed.vx.value()) * 1_mps;
-    yVelocity = yController.Calculate(robotPose.Y().value(), sample_speed.vy.value()) * 1_mps;
-    thetaVelocity = thetaController.Calculate(robotPose.Rotation().Radians().value(), finalOrientation.value()) * 1_rad_per_s;
+      if(currentSegmentIndex >= traj.events.size() - 2) {
+        xVelocity = xController.Calculate(robotPose.X().value(), sample_speed.vx.value()) * 1_mps;
+        yVelocity = yController.Calculate(robotPose.Y().value(), sample_speed.vy.value()) * 1_mps;
+        thetaVelocity = thetaController.Calculate(robotPose.Rotation().Radians().value(), finalOrientation.value()) * 1_rad_per_s;
+      }
+      else {
+        xVelocity = xController.Calculate(robotPose.X().value(), sample_speed.vx.value()) * 1_mps;
+        yVelocity = yController.Calculate(robotPose.Y().value(), sample_speed.vy.value()) * 1_mps;
+        thetaVelocity = thetaController.Calculate(robotPose.Rotation().Radians().value(), cur.GetPose().Rotation().Radians().value()) * 1_rad_per_s;
+      }
+
+      xVelocity = std::clamp(xVelocity, -maxVelocity, maxVelocity);
+      yVelocity = std::clamp(yVelocity, -maxVelocity, maxVelocity);
+      thetaVelocity = units::angular_velocity::radians_per_second_t(std::clamp(thetaVelocity.value(), -maxAngularVelocity.value(), maxAngularVelocity.value()));
+
+      frc::SmartDashboard::PutNumber("DrivePath/TargetX", sample_speed.vx.value());
+      frc::SmartDashboard::PutNumber("DrivePath/TargetY", sample_speed.vy.value());
+      frc::SmartDashboard::PutNumber("DrivePath/TargetTheta", cur.GetPose().Rotation().Radians().value());
+
+      frc::SmartDashboard::PutNumber("DrivePath/MaxVelocity", maxVelocity.value());
+
+      frc::SmartDashboard::PutNumber("DrivePath/CommandedVx", xVelocity.value());
+      frc::SmartDashboard::PutNumber("DrivePath/CommandedVy", yVelocity.value());
+      frc::SmartDashboard::PutNumber("DrivePath/CommandedVw", thetaVelocity.value());
+      frc::SmartDashboard::PutString("DrivePath/SegmentIndex", std::string("Segment Index: %d", currentSegmentIndex));
+      frc::SmartDashboard::PutNumber("DrivePath/SegmentSize", traj.events.size() - 1);
+      
+      m_drivetrain->SetChassisSpeeds(
+        frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+          xVelocity,
+          yVelocity,
+          thetaVelocity,
+          frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
+        )
+      );
+    }
+    else {
+      std::cerr << "DrivePath No Sample Found" << std::endl;
+      m_drivetrain->SetChassisSpeeds(frc::ChassisSpeeds(0_mps, 0_mps, 0_rad_per_s));
+    }
   }
   else {
-    xVelocity = xController.Calculate(robotPose.X().value(), sample_speed.vx.value()) * 1_mps;
-    yVelocity = yController.Calculate(robotPose.Y().value(), sample_speed.vy.value()) * 1_mps;
-    thetaVelocity = thetaController.Calculate(robotPose.Rotation().Radians().value(), sample.value().GetPose().Rotation().Radians().value()) * 1_rad_per_s;
+    std::cerr << "DrivePath No Trajectory Found" << std::endl;
   }
-
-  xVelocity = std::clamp(xVelocity, -maxVelocity, maxVelocity);
-  yVelocity = std::clamp(yVelocity, -maxVelocity, maxVelocity);
-  thetaVelocity = units::angular_velocity::radians_per_second_t(std::clamp(thetaVelocity.value(), -maxAngularVelocity.value(), maxAngularVelocity.value()));
-
-  frc::SmartDashboard::PutNumber("DrivePath/TargetX", sample_speed.vx.value());
-  frc::SmartDashboard::PutNumber("DrivePath/TargetY", sample_speed.vy.value());
-  frc::SmartDashboard::PutNumber("DrivePath/TargetTheta", sample.value().GetPose().Rotation().Radians().value());
-
-  frc::SmartDashboard::PutNumber("DrivePath/MaxVelocity", maxVelocity.value());
-
-  frc::SmartDashboard::PutNumber("DrivePath/CommandedVx", xVelocity.value());
-  frc::SmartDashboard::PutNumber("DrivePath/CommandedVy", yVelocity.value());
-  frc::SmartDashboard::PutNumber("DrivePath/CommandedVw", thetaVelocity.value());
-  frc::SmartDashboard::PutString("DrivePath/SegmentIndex", std::string("Segment Index: %d", currentSegmentIndex));
-  frc::SmartDashboard::PutNumber("DrivePath/SegmentSize", trajectory.value().events.size() - 1);
-  
-  m_drivetrain->SetChassisSpeeds(
-    frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-      xVelocity,
-      yVelocity,
-      thetaVelocity,
-      frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()} // TODO: replace this angle with localizer one once implemented
-    )
-  );
 }
 
 // Called once the command ends or is interrupted.
@@ -85,7 +98,7 @@ void DrivePath::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool DrivePath::IsFinished() {
-  if(sample == trajectory.value().GetFinalSample() && currentSegmentIndex + 1 >= trajectory.value().events.size() - 1) { //TODO: need sample to be accessible here (just in execute now)
+  if(currentTime >= endTime) {
     frc::SmartDashboard::PutString("DrivePath/Status", "Finished");
     return true;
   }

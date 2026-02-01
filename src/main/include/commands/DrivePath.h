@@ -15,6 +15,7 @@
 #include <units/angle.h>
 
 #include <choreo/Choreo.h>
+#include <iostream>
 
 /**
  * An example command.
@@ -45,6 +46,7 @@ class DrivePath
 
     std::shared_ptr<Drivetrain> m_drivetrain;
     std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
+    std::optional<choreo::SwerveSample> currentSample;
 
     frc::Pose2d robotPose;
     int currentSegmentIndex;
