@@ -67,7 +67,6 @@ void DrivePath::Execute() {
       frc::SmartDashboard::PutNumber("DrivePath/CommandedVx", xVelocity.value());
       frc::SmartDashboard::PutNumber("DrivePath/CommandedVy", yVelocity.value());
       frc::SmartDashboard::PutNumber("DrivePath/CommandedVw", thetaVelocity.value());
-      frc::SmartDashboard::PutNumber("DrivePath/SegmentSize", traj.events.size() - 1);
       
       m_drivetrain->SetChassisSpeeds(
         frc::ChassisSpeeds::FromFieldRelativeSpeeds(
