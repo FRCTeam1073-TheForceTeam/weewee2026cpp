@@ -6,7 +6,11 @@
 
 #include <frc2/command/CommandScheduler.h>
 
-Robot::Robot() {}
+#include "grpl/CanBridge.h"
+
+Robot::Robot() {
+  grpl::start_can_bridge();
+}
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
