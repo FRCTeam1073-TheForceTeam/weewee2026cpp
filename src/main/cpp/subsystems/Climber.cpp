@@ -7,13 +7,14 @@
 
  Climber::Climber() :
     _hardwareConfigured(true),
+    _climberOn(false),
     _Motor(MotorId, CANBus("rio")),
     _VelocitySig(_Motor.GetVelocity()),
     _CurrentSig(_Motor.GetTorqueCurrent()),
     _PositionSig(_Motor.GetPosition()),
     _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
     _PositionVoltage(units::angle::turn_t(0.0)) {
-    _climberOn(false),
+
     _VelocityVoltage.WithSlot(0);
 
     _hardwareConfigured = ConfigureHardware();

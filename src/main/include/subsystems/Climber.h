@@ -31,6 +31,7 @@ class Climber : public frc2::SubsystemBase {
   struct Feedback {
       units::velocity::meters_per_second_t velocity;
       units::force::newton_t force;
+      units::length::meter_t position;
   };
 
   using Command = std::variant<std::monostate, units::velocity::meters_per_second_t, units::length::meter_t>;
