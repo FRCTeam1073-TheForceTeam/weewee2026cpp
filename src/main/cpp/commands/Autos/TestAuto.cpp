@@ -4,16 +4,14 @@
 
 #include "commands/Autos/TestAuto.h"
 
-std::shared_ptr<Drivetrain> TestAuto::m_drivetrain = nullptr;
+// TestAuto::TestAuto(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Localizer> localizer, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory)
+// {
+//   TestAuto::path_trajectory = trajectory;
+//   TestAuto::m_drivetrain = drivetrain;
+//   TestAuto::m_localizer = localizer;
+//   AddRequirements({m_drivetrain.get(), m_localizer.get()});
+// }
 
-TestAuto::TestAuto(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory) :
-trajectory(trajectory)
-{
-  TestAuto::m_drivetrain = drivetrain;
-  AddRequirements(m_drivetrain.get());
-}
-
-std::unique_ptr<frc2::Command> TestAuto::Create() {
-
-  return std::make_unique<frc2::SequentialCommandGroup>();
+frc2::CommandPtr TestAuto::Create(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Localizer> localizer, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory) {
+  return frc2::CommandPtr(frc2::SequentialCommandGroup(DrivePath(drivetrain, localizer, trajectory)));
 }

@@ -19,6 +19,7 @@
 #include "subsystems/FieldMapDisplay.h"
 #include "subsystems/Localizer.h"
 #include "subsystems/FieldMap.h"
+#include "commands/Autos/TestAuto.h"
 
 #include <choreo/Choreo.h>
 
@@ -37,7 +38,6 @@ class RobotContainer {
   static const std::string leftPosition;
   static const std::string centerPosition;
   static const std::string testAuto;
-
   
   RobotContainer();
   // frc2::CommandPtr GetAutonomousCommand();
@@ -66,6 +66,8 @@ class RobotContainer {
   std::shared_ptr<FieldMapDisplay> m_FieldDisplay;
   std::shared_ptr<Localizer> m_Localizer;
   std::shared_ptr<FieldMap> m_FieldMap;
+
+  std::shared_ptr<TestAuto> cmd_testAuto;
 
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;

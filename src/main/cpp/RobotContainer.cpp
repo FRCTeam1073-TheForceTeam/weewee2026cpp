@@ -26,33 +26,21 @@ RobotContainer::RobotContainer() {
   m_FieldDisplay = std::make_shared<FieldMapDisplay>(m_drivetrain, m_Localizer, m_FieldMap);
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI, m_Localizer));
 
+  trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
+
   // Configure the button bindings
   ConfigureBindings();
 }
 
-// frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-//   return TestAuto::Create();
-// }
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+  return TestAuto::Create(m_drivetrain, m_Localizer, trajectory);
+}
 
 void RobotContainer::autonomousInit() {
-  trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
 }
 
 void RobotContainer::AutonomousPeriodic() {
-  auto sample = trajectory.value().SampleAt(frc::Timer::GetMatchTime());
-  frc::ChassisSpeeds speeds = sample.value().GetChassisSpeeds();
-
-  frc::SmartDashboard::PutNumber("Trajectory/Vx", speeds.vx());
-  frc::SmartDashboard::PutNumber("Trajectory/Vy", speeds.vy());
-  frc::SmartDashboard::PutNumber("Trajectory/Vw", speeds.omega());
-  m_drivetrain->SetChassisSpeeds(speeds);
 }
 
 void RobotContainer::ConfigureBindings() {
 }
-
-
-
-// frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-//  // TODO:
-// }

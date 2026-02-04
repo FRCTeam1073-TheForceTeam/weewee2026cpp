@@ -10,10 +10,10 @@
 #include <frc2/command/SequentialCommandGroup.h>
 
 #include <subsystems/DriveTrain.h>
+#include <subsystems/Localizer.h>
 #include <commands/DrivePath.h>
 
 #include <choreo/Choreo.h>
-#include <Eigen/Dense>
 
 /**
  * An example command.
@@ -28,13 +28,6 @@ class TestAuto
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-
-  TestAuto(std::shared_ptr<Drivetrain> drivetrain, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory); //TODO:: add localizer
   
-  static std::unique_ptr<frc2::Command> Create(); 
-
-  private:
-  
-  static std::shared_ptr<Drivetrain> m_drivetrain;
-  std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
+  static frc2::CommandPtr Create(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Localizer> localizer, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory); 
 };
