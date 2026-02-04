@@ -13,7 +13,7 @@
     _PositionSig(_Motor.GetPosition()),
     _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
     _PositionVoltage(units::angle::turn_t(0.0)) {
-
+    _climberOn(false),
     _VelocityVoltage.WithSlot(0);
 
     _hardwareConfigured = ConfigureHardware();
@@ -47,7 +47,26 @@ units::length::meter_t Climber::GetPosition() {
 units::length::meter_t Climber::GetTargetPosition() {
   return TargetPosition;
 }
+void Climber::SetVoltage(units::volt_t Voltage) {
+    _Motor.SetVoltage(Voltage);
+}
+units::volt_t Climber::GetVoltage() {
+    return _voltageSignal.GetValue();
+}
+void Climber::StopMotor() {
+    _Motor.StopMotor();
+}
+  
 
+
+bool Climber::IsHooked() {
+  if (m_ClimberOnInput.Get()) {
+      _climberOn = true; // these may be swapped depending on the digitalinput default is
+    } else {
+      _climberOn = false;
+    }
+  return _climberOn;
+}
 
 
 void Climber::Periodic() {
