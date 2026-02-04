@@ -14,9 +14,8 @@
     _PositionSig(_Motor.GetPosition()),
     _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
     _PositionVoltage(units::angle::turn_t(0.0)) {
-
     _VelocityVoltage.WithSlot(0);
-
+ 
     _hardwareConfigured = ConfigureHardware();
 
     if (!_hardwareConfigured) {

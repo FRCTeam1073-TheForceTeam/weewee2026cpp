@@ -58,8 +58,8 @@ class RobotContainer {
 
   bool DisabledPeriodic();
 
-
  private:
+
   std::shared_ptr<Drivetrain> m_drivetrain;
   std::shared_ptr<OI> m_OI;
   std::shared_ptr<Intake> m_intake;
