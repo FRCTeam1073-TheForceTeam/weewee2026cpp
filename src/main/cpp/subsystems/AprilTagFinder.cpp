@@ -11,8 +11,8 @@ AprilTagFinder::AprilTagFinder()
     };
 }
 
-frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d cameraToRobot) {
-    return fieldRelativeTagPose.TransformBy(cameraToTarget.Inverse()).TransformBy(cameraToRobot);
+frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d robotToCamera) {
+    return fieldRelativeTagPose+(cameraToTarget.Inverse())+(robotToCamera.Inverse());
 }
 
 AprilTagFinder::VisionMeasurement::VisionMeasurement(frc::Pose2d pose, frc::Transform2d relativePose, units::second_t timeStamp, int tagID,
@@ -65,8 +65,8 @@ std::vector<AprilTagFinder::VisionMeasurement> AprilTagFinder::getCamMeasurement
                     frc::Transform3d best = target.GetBestCameraToTarget();
                     frc::Pose3d robotPose = estimateFieldToRobotAprilTag(best,
                         FieldMap::fieldMap.GetTagPose(target.GetFiducialId()).value(), 
-                        camTransform3d.Inverse());
-
+                        camTransform3d);
+                    // In robot coordinates:
                     frc::Transform2d relativePose = toTransform2d(camTransform3d+best);
                     units::length::meter_t range = relativePose.Translation().Norm();
                     

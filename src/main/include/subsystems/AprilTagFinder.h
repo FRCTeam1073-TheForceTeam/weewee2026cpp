@@ -44,7 +44,7 @@ class AprilTagFinder : public frc2::SubsystemBase {
         RobotCamera(std::shared_ptr<photon::PhotonCamera> camera, frc::Transform3d transform) : _camera(camera), _transform(transform) {};
     };
     
-    static frc::Pose3d estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d cameraToRobot);
+    static frc::Pose3d estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d robotToCamera);
 
     std::vector<VisionMeasurement> getAllMeasurements();
 

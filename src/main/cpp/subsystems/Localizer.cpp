@@ -29,7 +29,7 @@ void Localizer::Periodic() {
 
     if (now - _lastUpdateTime > timeGap && measurementStable()) {
         std::vector<AprilTagFinder::VisionMeasurement> measurements = _finder->getAllMeasurements();
-        for (int index = 0; index < measurements.size(); index++){
+        for (uint index = 0; index < measurements.size(); index++){
             AprilTagFinder::VisionMeasurement current_measurement = measurements[index];
 
             _estimator->AddVisionMeasurement(current_measurement._pose, current_measurement._timeStamp, current_measurement._stddevs);
