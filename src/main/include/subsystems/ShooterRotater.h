@@ -73,6 +73,7 @@ class ShooterRotater : public frc2::SubsystemBase {
   units::angular_velocity::radians_per_second_t GetVelocity();
   void SetTargetVelocity(units::angular_velocity::radians_per_second_t vel);
 
+
  private:
 
 

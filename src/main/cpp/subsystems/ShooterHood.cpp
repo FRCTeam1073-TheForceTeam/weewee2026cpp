@@ -19,6 +19,8 @@ _hoodPositionSig(_hoodMotor.GetPosition()),
 _hoodCurrentSig(_hoodMotor.GetTorqueCurrent()),
 _commandPositionVoltage(units::angle::turn_t(0.0)) {
   // Extra implementation of subsystem constructor goes here.
+  TargetPosition = 0_rad;
+  Position = 0_rad;
 
   // Assign gain slots for the commands to use:
   _commandPositionVoltage.WithSlot(0);  // Position control loop uses these gains.
@@ -41,6 +43,10 @@ void ShooterHood::SetCommand(Command cmd) {
 
 void ShooterHood::SetTargetPosition(units::angle::radian_t position) {
   TargetPosition = position;
+}
+
+units::angle::radian_t ShooterHood::GetPosition() {
+  return Position;
 }
 
 void ShooterHood::Periodic() {

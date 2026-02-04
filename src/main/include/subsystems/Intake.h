@@ -40,6 +40,8 @@ class Intake : public frc2::SubsystemBase {
 
     void SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
+    void SetCommand(Command cmd);
+
     private:
 
     static constexpr int _ActuatorLeadMotorID = 18; 

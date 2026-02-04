@@ -36,6 +36,12 @@ Intake::Intake():
 
 } 
 
+void Intake::SetCommand(Command cmd) {
+  // Sometimes you need to do something immediate to the hardware.
+  // We can just set our target internal value.
+  _command = cmd;
+}
+
 void Intake::SetIntakeVelocity(units::angular_velocity::turns_per_second_t Velocity) {
   _TargetVelocity = Velocity;
 }

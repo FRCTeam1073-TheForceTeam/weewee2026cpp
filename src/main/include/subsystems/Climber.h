@@ -21,8 +21,8 @@ class Climber : public frc2::SubsystemBase {
   static constexpr int MotorId = 29;
 
   // Mechanism conversion constants for the subsystem:
-  static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);
-  static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0);
+  static constexpr auto TurnsPerMeter = units::angle::turn_t(32.0) / units::length::meter_t(1.0);//TODO: get values for this from EM
+  static constexpr auto AmpsPerNewton = units::current::ampere_t(10.0) / units::force::newton_t(1.0);//TODO: get values for this from EM
 
   
   // The feedback for this subsystem provided as a struct.
@@ -48,6 +48,12 @@ class Climber : public frc2::SubsystemBase {
 
   void SetVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
+  void SetPosition(units::length::meter_t pos);
+
+  units::length::meter_t GetPosition();
+
+  units::length::meter_t GetTargetPosition();
+
 
   /// Set the command for the system.
   void SetCommand(Command cmd);
@@ -70,10 +76,13 @@ class Climber : public frc2::SubsystemBase {
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _VelocitySig;
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _CurrentSig;
+  ctre::phoenix6::StatusSignal<units::angle::turn_t> _PositionSig;
 
 
   // Example velocity and position controls:
   ctre::phoenix6::controls::VelocityVoltage _VelocityVoltage;  // Uses Slot0 gains.
+
+   ctre::phoenix6::controls::PositionVoltage _PositionVoltage;
   
   // Cached feedback:
   Feedback _feedback;
@@ -82,6 +91,12 @@ class Climber : public frc2::SubsystemBase {
   Command  _command;
 
   units::angular_velocity::turns_per_second_t _TargetVelocity;
+
+  units::length::meter_t TargetPosition;
+  units::length::meter_t Position;
+
+  units::angle::turn_t RotationPosition;
+  units::angle::turn_t TargetRotationPosition;
 
   frc::SlewRateLimiter<units::turns_per_second> limiter{0.5_tps / 1_s};
 

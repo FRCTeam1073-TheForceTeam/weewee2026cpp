@@ -15,18 +15,18 @@ AddRequirements({m_shooterload.get()});
 
 // Called when the command is initially scheduled.
 void Load::Initialize() {
-  m_shooterload->SetLoadVelocity(1.0_tps);
+  m_shooterload->SetTargetLoadVelocity(1.0_tps);
 }
 
 // Called repeatedly when this Command is scheduled to run
 void Load::Execute() {
-  m_shooterload->SetLoadVelocity(1.0_tps);
+  m_shooterload->SetTargetLoadVelocity(1.0_tps);
 
 }
 
 // Called once the command ends or is interrupted.
 void Load::End(bool interrupted) {
-    m_shooterload->SetLoadVelocity(0.0_tps);
+    m_shooterload->SetTargetLoadVelocity(0.0_tps);
 
 }
 

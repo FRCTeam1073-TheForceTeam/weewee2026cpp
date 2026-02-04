@@ -78,7 +78,7 @@ class ShooterLoad : public frc2::SubsystemBase {
 
   units::angular_velocity::turns_per_second_t GetLoadTargetVelocity();
 
-  void SetLoadVelocity(units::angular_velocity::turns_per_second_t Velocity);
+  void SetTargetLoadVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
  private:
 

@@ -41,7 +41,7 @@ void ShooterLoad::SetCommand(Command cmd) {
   _command = cmd;
 }
 
-void ShooterLoad::SetLoadVelocity(units::angular_velocity::turns_per_second_t Velocity) {
+void ShooterLoad::SetTargetLoadVelocity(units::angular_velocity::turns_per_second_t Velocity) {
   _targetVelocity = Velocity;
 }
 

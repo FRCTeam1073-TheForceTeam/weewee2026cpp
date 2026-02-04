@@ -70,6 +70,8 @@ class ShooterHood : public frc2::SubsystemBase {
 
   void SetTargetPosition(units::angle::radian_t position);
 
+  units::angle::radian_t GetPosition();
+
  private:
 
 

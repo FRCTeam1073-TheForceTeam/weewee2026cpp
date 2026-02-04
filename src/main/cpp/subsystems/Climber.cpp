@@ -10,7 +10,9 @@
     _Motor(MotorId, CANBus("rio")),
     _VelocitySig(_Motor.GetVelocity()),
     _CurrentSig(_Motor.GetTorqueCurrent()),
-    _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
+    _PositionSig(_Motor.GetPosition()),
+    _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)),
+    _PositionVoltage(units::angle::turn_t(0.0)) {
 
     _VelocityVoltage.WithSlot(0);
 
@@ -30,11 +32,20 @@ void Climber::SetCommand(Command cmd) {
 void Climber::SetVelocity(units::angular_velocity::turns_per_second_t Velocity) {
     _TargetVelocity = Velocity;
 }
+void Climber::SetPosition(units::length::meter_t pos){
+  TargetPosition = pos;
+}
 ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Climber::GetVelocity() {
     return _VelocitySig;
 }
 units::angular_velocity::turns_per_second_t Climber::GetTargetVelocity() {
     return _TargetVelocity;
+}
+units::length::meter_t Climber::GetPosition() {
+  return Position;
+}
+units::length::meter_t Climber::GetTargetPosition() {
+  return TargetPosition;
 }
 
 
@@ -44,6 +55,11 @@ void Climber::Periodic() {
 
     _feedback.force = _CurrentSig.GetValue() / AmpsPerNewton;
     _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter;
+
+    RotationPosition = _PositionSig.GetValue();
+    Position = RotationPosition / TurnsPerMeter;
+    _feedback.position = Position;
+
 
     if (m_ClimberOnInput.Get()) {
       _climberOn = true; // these may be swapped depending on the digitalinput default is

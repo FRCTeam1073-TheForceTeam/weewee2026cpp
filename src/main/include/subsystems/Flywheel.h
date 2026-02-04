@@ -32,6 +32,11 @@ class Flywheel : public frc2::SubsystemBase {
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
+
+
+  static constexpr int LeadMotorId = 21; // TODO: Get motor id 
+  static constexpr int FollowMotorId = 22;
+
   void Periodic() override;
 
   ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> GetVelocity();
@@ -53,8 +58,6 @@ class Flywheel : public frc2::SubsystemBase {
 
 
  private:
-  static constexpr int LeadMotorId = 21; // TODO: Get motor id 
-  static constexpr int FollowMotorId = 22;
 
   const double GearRatio = units::angle::turn_t(1)/units::angle::turn_t(1); // TODO: Get gear ratio from EM
 

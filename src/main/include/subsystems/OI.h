@@ -38,7 +38,7 @@ class OI : public frc2::SubsystemBase {
             LeftTrigger = 2,
             RightTrigger = 3,
             ViewButton = 6,
-            MenuButton = 7,
+            MenuButton = 7
         };
 
         //TODO: do we want a stick double value to radians
