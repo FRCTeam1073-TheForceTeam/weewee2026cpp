@@ -21,6 +21,9 @@
 #include "commands/Load.h"
 #include "subsystems/ShooterLoad.h"
 #include "subsystems/Intake.h"
+#include "subsystems/Climber.h"
+#include "commands/Climb.h"
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -63,6 +66,7 @@ class RobotContainer {
   std::shared_ptr<Collect> cmd_collect;
   std::shared_ptr<ShooterLoad> m_shooterLoad;
   std::shared_ptr<Flywheel> m_flywheel;
+  std::shared_ptr<Climber> m_climber;
 
   bool isRed;
 

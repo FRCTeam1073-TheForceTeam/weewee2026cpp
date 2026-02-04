@@ -10,6 +10,7 @@
     _Motor(MotorId, CANBus("rio")),
     _VelocitySig(_Motor.GetVelocity()),
     _CurrentSig(_Motor.GetTorqueCurrent()),
+    _climberOn(false),
     _VelocityVoltage(units::angular_velocity::turns_per_second_t(0.0)) {
 
     _VelocityVoltage.WithSlot(0);
@@ -36,7 +37,26 @@ ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> Climbe
 units::angular_velocity::turns_per_second_t Climber::GetTargetVelocity() {
     return _TargetVelocity;
 }
+void Climber::SetVoltage(units::volt_t Voltage) {
+    _Motor.SetVoltage(Voltage);
+}
+units::volt_t Climber::GetVoltage() {
+    return _voltageSignal.GetValue();
+}
+void Climber::StopMotor() {
+    _Motor.StopMotor();
+}
+  
 
+
+bool Climber::IsHooked() {
+  if (m_ClimberOnInput.Get()) {
+      _climberOn = true; // these may be swapped depending on the digitalinput default is
+    } else {
+      _climberOn = false;
+    }
+  return _climberOn;
+}
 
 
 void Climber::Periodic() {
@@ -44,12 +64,6 @@ void Climber::Periodic() {
 
     _feedback.force = _CurrentSig.GetValue() / AmpsPerNewton;
     _feedback.velocity = _VelocitySig.GetValue() / TurnsPerMeter;
-
-    if (m_ClimberOnInput.Get()) {
-      _climberOn = true; // these may be swapped depending on the digitalinput default is
-    } else {
-      _climberOn = false;
-    }
     
     if (std::holds_alternative<units::velocity::meters_per_second_t>(_command)) {
       // Send velocity based command:

@@ -6,8 +6,10 @@
 #include <units/length.h>
 #include <units/velocity.h>
 #include <units/force.h>
+#include <units/voltage.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/CANcoder.hpp>
 
 #include <variant>
 
@@ -27,7 +29,6 @@ class Climber : public frc2::SubsystemBase {
   
   // The feedback for this subsystem provided as a struct.
   struct Feedback {
-      units::length::meter_t position;
       units::velocity::meters_per_second_t velocity;
       units::force::newton_t force;
   };
@@ -48,12 +49,20 @@ class Climber : public frc2::SubsystemBase {
 
   void SetVelocity(units::angular_velocity::turns_per_second_t Velocity);
 
+  bool IsHooked();
+
+  void SetVoltage(units::volt_t Voltage);
+
+  units::volt_t GetVoltage();
+
+  void StopMotor();
+
 
   /// Set the command for the system.
   void SetCommand(Command cmd);
 
  private:
-
+ 
   // Helper function for configuring hardware from within the constructor of the subsystem.
   bool ConfigureHardware();
 
@@ -70,6 +79,7 @@ class Climber : public frc2::SubsystemBase {
   // CTRE hardware feedback signals:
   ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _VelocitySig;
   ctre::phoenix6::StatusSignal<units::current::ampere_t> _CurrentSig;
+  ctre::phoenix6::StatusSignal<units::volt_t> _voltageSignal = _Motor.GetMotorVoltage();
 
 
   // Example velocity and position controls:
@@ -86,4 +96,5 @@ class Climber : public frc2::SubsystemBase {
   frc::SlewRateLimiter<units::turns_per_second> limiter{0.5_tps / 1_s};
 
   frc::DigitalInput m_ClimberOnInput{0};
+
 };

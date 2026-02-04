@@ -26,6 +26,7 @@ RobotContainer::RobotContainer() {
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI));
   cmd_collect = std::make_shared<Collect>(m_intake);
   m_shooterLoad = std::make_shared<ShooterLoad>();
+  m_climber = std::make_shared<Climber>();
 
   // Configure the button bindings
   ConfigureBindings();
