@@ -61,7 +61,7 @@ void Climber::StopMotor() {
 
 bool Climber::IsHooked() {
   if (m_ClimberOnInput.Get()) {
-      _climberOn = true; // these may be swapped depending on the digitalinput default is
+      _climberOn = true; // these may be swapped depending on the digitalinput default is //
     } else {
       _climberOn = false;
     }
