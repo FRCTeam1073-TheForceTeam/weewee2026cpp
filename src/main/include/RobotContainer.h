@@ -23,6 +23,8 @@
 #include "subsystems/Intake.h"
 #include "subsystems/Climber.h"
 #include "commands/Climb.h"
+#include "commands/Laser.h"
+#include "subsystems/LaserCan.h"
 
 
 /**
@@ -67,7 +69,7 @@ class RobotContainer {
   std::shared_ptr<ShooterLoad> m_shooterLoad;
   std::shared_ptr<Flywheel> m_flywheel;
   std::shared_ptr<Climber> m_climber;
-  //std::shared_ptr<LaserCan> m_laser;
+  std::shared_ptr<LaserCan> m_laser;
 
   bool isRed;
 
