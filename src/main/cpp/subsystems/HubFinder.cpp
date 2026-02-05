@@ -1,5 +1,24 @@
-#include "subsystems/HubFinder.h";
+#include "subsystems/HubFinder.h"
 
 
-auto _Alliance = frc::DriverStation::GetAlliance;
+const frc::Pose2d HubFinder::REDHUB = frc::Pose2d(486.57_in, 90_in, frc::Rotation2d());
+const frc::Pose2d HubFinder::BLUEHUB = frc::Pose2d(223.67_in, 90_in, frc::Rotation2d());
 
+HubFinder::HubFinder(std::shared_ptr<Localizer> localizer):_localizer(localizer){
+    frc::Pose2d RoboPos = _localizer->getPose();
+    std::optional<frc::DriverStation::Alliance> _alliance = frc::DriverStation::GetAlliance();
+    if (_alliance.value() == frc::DriverStation::Alliance::kRed){
+        frc::Pose2d OurHub = REDHUB;
+    }
+    else if (_alliance.value() == frc::DriverStation::Alliance::kBlue){
+        frc::Pose2d OurHub = BLUEHUB;
+    }
+    else{
+        std::cout << "No Alliance Selected";
+    }
+};
+
+//frc::Pose2d HubFinder::getHubPos()
+//{
+
+//};
