@@ -13,10 +13,8 @@ using namespace ctre::phoenix6;
  */
 LaserCan::LaserCan() :
 _hardwareConfigured(true), 
-laserCAN(0)//TODO: change zero to a different number
+laserCAN(28)//TODO: change zero to a different number
 {
-  
-  grpl::LaserCan laserCan = grpl::LaserCan(0);
   // Do hardware configuration and track if it succeeds:
   _hardwareConfigured = ConfigureHardware();
   if (!_hardwareConfigured) {
@@ -40,7 +38,7 @@ void LaserCan::InitializeLaser(){
 }
 
 void LaserCan::Periodic() {
-  std::optional<grpl::LaserCanMeasurement> measurementData = laserCAN.get_measurement();
+   std::optional<grpl::LaserCanMeasurement> measurementData = laserCAN.get_measurement();
   if (measurementData.has_value() && measurementData.value().status == grpl::LASERCAN_STATUS_VALID_MEASUREMENT){
     std::cout << "Distance from target:: " << measurementData.value().distance_mm << "millimeters" << std::endl;
   }
