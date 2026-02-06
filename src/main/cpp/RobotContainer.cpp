@@ -10,7 +10,7 @@
 #include "commands/ExampleCommand.h"
 #include "commands/TeleopDrive.h"
 #include "commands/Collect.h"
-//#include "subsystems/LaserCan.h"
+#include "subsystems/LaserCan.h"
 
 const std::string RobotContainer::noPosition = "No Position";
 const std::string RobotContainer::rightPosition = "Right Auto";
@@ -28,6 +28,7 @@ RobotContainer::RobotContainer() {
   cmd_collect = std::make_shared<Collect>(m_intake);
   m_shooterLoad = std::make_shared<ShooterLoad>();
   m_climber = std::make_shared<Climber>();
+<<<<<<< HEAD
   m_flywheel->SetDefaultCommand(FlywheelTeleop(m_flywheel));
   m_climber->SetDefaultCommand(ClimberTeleop(m_climber));
   m_intake->SetDefaultCommand(IntakeTeleop(m_intake));
@@ -35,6 +36,9 @@ RobotContainer::RobotContainer() {
   m_shooterLoad->SetDefaultCommand(LoaderTeleop(m_shooterLoad));
   m_spindexer->SetDefaultCommand(SpindexerTeleop(m_spindexer));
   //m_laser = std::make_shared<LaserCan>();
+=======
+  m_laser = std::make_shared<LaserCan>();
+>>>>>>> 5d36825946a2d4bb0ff9f39f7d9786d483d72eae
 
   // Configure the button bindings
   ConfigureBindings();
