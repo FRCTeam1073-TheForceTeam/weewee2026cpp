@@ -10,6 +10,7 @@
 #include "commands/ExampleCommand.h"
 #include "commands/TeleopDrive.h"
 
+
 const std::string RobotContainer::noPosition = "No Position";
 const std::string RobotContainer::rightPosition = "Right Auto";
 const std::string RobotContainer::leftPosition = "Left Auto";
@@ -25,9 +26,10 @@ RobotContainer::RobotContainer() {
   m_Localizer = std::make_shared<Localizer>(m_drivetrain, m_Tags);
   m_FieldDisplay = std::make_shared<FieldMapDisplay>(m_drivetrain, m_Localizer, m_FieldMap);
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI, m_Localizer));
-
+  m_Laser = std::make_shared<LaserCan>();
   // Configure the button bindings
   ConfigureBindings();
+  
 }
 
 void RobotContainer::ConfigureBindings() {
