@@ -6,8 +6,8 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include "subsystems/ShooterLoad.h"
 
-#include "subsystems/Flywheel.h"
 /**
  * An example command.
  *
@@ -15,15 +15,13 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class TeleopFlywheel
-    : public frc2::CommandHelper<frc2::Command, TeleopFlywheel> {
+class LoaderTeleop
+    : public frc2::CommandHelper<frc2::Command, LoaderTeleop> {
  public:
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param flywheel The subsystem used by this command.
+  /* You should consider using the more terse Command factories API instead
+   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  explicit TeleopFlywheel(std::shared_ptr<Flywheel> flywheel);
+  LoaderTeleop(std::shared_ptr<ShooterLoad> ShooterLoad);
 
   void Initialize() override;
 
@@ -33,9 +31,6 @@ class TeleopFlywheel
 
   bool IsFinished() override;
 
-
-  
-  
- private:
-  std::shared_ptr<Flywheel> m_flywheel;
+  private:
+   std::shared_ptr<ShooterLoad> m_shooterload;
 };

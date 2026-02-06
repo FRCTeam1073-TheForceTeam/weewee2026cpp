@@ -16,16 +16,16 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Spindex
-    : public frc2::CommandHelper<frc2::Command, Spindex> {
+class SpindexerTeleop
+    : public frc2::CommandHelper<frc2::Command, SpindexerTeleop> {
  public:
  /**
    * Creates a new ExampleCommand.
    *
    * @param spindexer The subsystem used by this command.
    */
-  
-  explicit Spindex(std::shared_ptr<Spindexer> spindexer);
+
+  explicit SpindexerTeleop(std::shared_ptr<Spindexer> spindexer);
 
   void Initialize() override;
 

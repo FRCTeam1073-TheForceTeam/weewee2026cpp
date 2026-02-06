@@ -28,6 +28,12 @@ RobotContainer::RobotContainer() {
   cmd_collect = std::make_shared<Collect>(m_intake);
   m_shooterLoad = std::make_shared<ShooterLoad>();
   m_climber = std::make_shared<Climber>();
+  m_flywheel->SetDefaultCommand(FlywheelTeleop(m_flywheel));
+  m_climber->SetDefaultCommand(ClimberTeleop(m_climber));
+  m_intake->SetDefaultCommand(IntakeTeleop(m_intake));
+  m_shooterHood->SetDefaultCommand(HoodTeleop(m_shooterHood));
+  m_shooterLoad->SetDefaultCommand(LoaderTeleop(m_shooterLoad));
+  m_spindexer->SetDefaultCommand(SpindexerTeleop(m_spindexer));
   //m_laser = std::make_shared<LaserCan>();
 
   // Configure the button bindings

@@ -6,9 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-
-#include "subsystems/Spindexer.h"
-
+#include "subsystems/Intake.h"
 /**
  * An example command.
  *
@@ -16,16 +14,14 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Spindex
-    : public frc2::CommandHelper<frc2::Command, Spindex> {
- public:
- /**
-   * Creates a new ExampleCommand.
-   *
-   * @param spindexer The subsystem used by this command.
+class IntakeTeleop :
+ public frc2::CommandHelper<frc2::Command, IntakeTeleop> {
+ 
+  public:
+  /* You should consider using the more terse Command factories API instead
+   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  
-  explicit Spindex(std::shared_ptr<Spindexer> spindexer);
+  IntakeTeleop(std::shared_ptr<Intake> Intake);
 
   void Initialize() override;
 
@@ -35,6 +31,8 @@ class Spindex
 
   bool IsFinished() override;
 
-  private:
-   std::shared_ptr<Spindexer> m_spindexer;
+   private:
+
+    std::shared_ptr<Intake> m_intake;
+
 };

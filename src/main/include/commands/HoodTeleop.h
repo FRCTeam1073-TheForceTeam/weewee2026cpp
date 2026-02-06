@@ -6,8 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-
-#include "subsystems/Spindexer.h"
+#include "subsystems/ShooterHood.h"
 
 /**
  * An example command.
@@ -16,16 +15,13 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Spindex
-    : public frc2::CommandHelper<frc2::Command, Spindex> {
+class HoodTeleop
+    : public frc2::CommandHelper<frc2::Command, HoodTeleop> {
  public:
- /**
-   * Creates a new ExampleCommand.
-   *
-   * @param spindexer The subsystem used by this command.
+  /* You should consider using the more terse Command factories API instead
+   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  
-  explicit Spindex(std::shared_ptr<Spindexer> spindexer);
+  HoodTeleop(std::shared_ptr<ShooterHood> ShooterHood);
 
   void Initialize() override;
 
@@ -34,7 +30,7 @@ class Spindex
   void End(bool interrupted) override;
 
   bool IsFinished() override;
-
+  
   private:
-   std::shared_ptr<Spindexer> m_spindexer;
+   std::shared_ptr<ShooterHood> m_shooterHood;
 };

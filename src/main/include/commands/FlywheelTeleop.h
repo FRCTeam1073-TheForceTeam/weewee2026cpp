@@ -7,8 +7,7 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
-#include "subsystems/Spindexer.h"
-
+#include "subsystems/Flywheel.h"
 /**
  * An example command.
  *
@@ -16,16 +15,15 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Spindex
-    : public frc2::CommandHelper<frc2::Command, Spindex> {
+class FlywheelTeleop
+    : public frc2::CommandHelper<frc2::Command, FlywheelTeleop> {
  public:
- /**
+  /**
    * Creates a new ExampleCommand.
    *
-   * @param spindexer The subsystem used by this command.
+   * @param flywheel The subsystem used by this command.
    */
-  
-  explicit Spindex(std::shared_ptr<Spindexer> spindexer);
+  explicit FlywheelTeleop(std::shared_ptr<Flywheel> flywheel);
 
   void Initialize() override;
 
@@ -35,6 +33,9 @@ class Spindex
 
   bool IsFinished() override;
 
-  private:
-   std::shared_ptr<Spindexer> m_spindexer;
+
+  
+  
+ private:
+  std::shared_ptr<Flywheel> m_flywheel;
 };
