@@ -18,7 +18,8 @@ HubFinder::HubFinder(std::shared_ptr<Localizer> localizer):_localizer(localizer)
     }
 };
 
-//frc::Pose2d HubFinder::getHubPos()
-//{
-
-//};
+frc::Pose2d HubFinder::getHubPos()
+{
+    frc::Pose2d HubLoc = OurHub.frc::Pose2d::RelativeTo(RoboPos);
+    return HubLoc;
+};

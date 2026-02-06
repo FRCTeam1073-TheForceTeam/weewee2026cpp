@@ -18,15 +18,14 @@ class HubFinder  : public frc2::SubsystemBase {
     
     std::shared_ptr<Localizer> _localizer;
     HubFinder(std::shared_ptr<Localizer> localizer);
-    HubFinder();
 
-    //frc::Pose2d HubLoc;
+    frc::Pose2d HubLoc;
     
-    //frc::Pose2d getHubPos() {};
+    frc::Pose2d getHubPos();
 
     private:
     static std::optional<frc::DriverStation::Alliance> _alliance;
-    //frc::Pose2d RoboPos;
     frc::Pose2d OurHub;
+    frc::Pose2d RoboPos;
 
 };
