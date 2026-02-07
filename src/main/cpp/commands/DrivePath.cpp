@@ -32,6 +32,7 @@ void DrivePath::Initialize() {
   frc::SmartDashboard::PutNumber("DrivePath/Init_Statement", 67);
 
   robotPose = m_localizer->getPose();
+  frc::SmartDashboard::PutNumber("DrivePath/InitRobotPoseTranslationNorm", robotPose.Translation().Norm().value());
   // frc::Transform2d diff = (robotPose - trajectory.value().GetInitialPose().value());
   // if(diff.Translation().Norm() >= 2_m) {
   //   quit = true;
@@ -42,7 +43,7 @@ void DrivePath::Initialize() {
 // Called repeatedly when this Command is scheduled to run
 void DrivePath::Execute() {
   currentTime = frc::Timer::GetFPGATimestamp() - startTime;
-
+  frc::SmartDashboard::PutNumber("DrivePath/CurrentTime", currentTime.value());
   frc::SmartDashboard::PutBoolean("DrivePath/Trajectory", trajectory.has_value());
 
   if(trajectory.has_value()) {

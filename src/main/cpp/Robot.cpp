@@ -37,7 +37,8 @@ void Robot::AutonomousInit() {
   auto command = m_container.GetAutonomousCommand();
   frc::SmartDashboard::PutBoolean("Robot/Robot has Command", command.get());
   if(command.get()) {
-    command.Schedule();
+    //command.Schedule();
+    frc2::CommandScheduler::GetInstance().Schedule(command);
   }
 }
 
