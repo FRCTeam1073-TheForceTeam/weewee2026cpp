@@ -34,15 +34,15 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  // m_autonomousCommand = m_container.GetAutonomousCommand();
-
-  // if (m_autonomousCommand) {
-  //   m_autonomousCommand->Schedule();
-  // }
+  auto command = m_container.GetAutonomousCommand();
+  frc::SmartDashboard::PutBoolean("Robot/Robot has Command", command.get());
+  if(command.get()) {
+    command.Schedule();
+  }
 }
 
 void Robot::AutonomousPeriodic() {
-  m_container.AutonomousPeriodic();
+
 }
 
 void Robot::TeleopInit() {

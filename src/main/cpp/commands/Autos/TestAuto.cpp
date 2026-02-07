@@ -13,5 +13,5 @@
 // }
 
 frc2::CommandPtr TestAuto::Create(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Localizer> localizer, std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory) {
-  return frc2::CommandPtr(frc2::SequentialCommandGroup(DrivePath(drivetrain, localizer, trajectory)));
+  return frc2::CommandPtr(DrivePath(drivetrain, localizer, trajectory));
 }

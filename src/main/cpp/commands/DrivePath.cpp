@@ -15,7 +15,7 @@ DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Loc
   thetaController{1.5, 0.0, 0.01}
 {
   thetaController.EnableContinuousInput(-std::numbers::pi, std::numbers::pi);
-  frc::SmartDashboard::PutString("Drivepath/Status", "Idle");
+  frc::SmartDashboard::PutString("DrivePath/Status", "Idle");
   AddRequirements({m_drivetrain.get(), m_localizer.get()});
 }
 
@@ -29,21 +29,29 @@ void DrivePath::Initialize() {
   yController.Reset();
   thetaController.Reset();
 
-  frc::Transform2d diff = (robotPose - trajectory.value().GetInitialPose().value());
-  if(diff.Translation().Norm() >= 2_m) {
-    quit = true;
-  }
+  frc::SmartDashboard::PutNumber("DrivePath/Init_Statement", 67);
+
+  robotPose = m_localizer->getPose();
+  // frc::Transform2d diff = (robotPose - trajectory.value().GetInitialPose().value());
+  // if(diff.Translation().Norm() >= 2_m) {
+  //   quit = true;
+  // }
+  quit = false;
 }
 
 // Called repeatedly when this Command is scheduled to run
 void DrivePath::Execute() {
   currentTime = frc::Timer::GetFPGATimestamp() - startTime;
-  robotPose = m_localizer->getPose();
+
+  frc::SmartDashboard::PutBoolean("DrivePath/Trajectory", trajectory.has_value());
 
   if(trajectory.has_value()) {
     const auto &traj = trajectory.value();
 
     currentSample = traj.SampleAt(currentTime);
+
+    frc::SmartDashboard::PutBoolean("DrivePath/Current Sample", currentSample.has_value());
+
     if(currentSample.has_value()) {
       const auto &cur = currentSample.value();
       frc::ChassisSpeeds sample_speed = cur.GetChassisSpeeds();
@@ -83,6 +91,7 @@ void DrivePath::Execute() {
     }
   }
   else {
+    frc::SmartDashboard::PutString("DrivePath/Status_Blah", "No Trajectory Found");
     std::cerr << "DrivePath No Trajectory Found" << std::endl;
   }
 }
@@ -94,6 +103,8 @@ void DrivePath::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool DrivePath::IsFinished() {
+  frc::SmartDashboard::PutBoolean("DrivePath/Past Time", currentTime >= endTime);
+  frc::SmartDashboard::PutBoolean("DrivePath/Quit", quit);
   if(currentTime >= endTime || quit) {
     frc::SmartDashboard::PutString("DrivePath/Status", "Finished");
     return true;
