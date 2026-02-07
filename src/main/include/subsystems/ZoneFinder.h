@@ -4,6 +4,9 @@
 #include <frc/geometry/Pose2d.h>
 #include <string>
 #include <units/length.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+#include <frc/geometry/Pose3d.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
 
 
 class ZoneFinder
@@ -25,5 +28,4 @@ class ZoneFinder
 
     private:
     frc::Translation2d CurrentTrans;
-
 };
