@@ -113,7 +113,7 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
     }
 
-    if(((frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
+    if((((int)frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
         m_OI->DriverRumble();
     } else {
         m_OI->DriverStopRumble();
