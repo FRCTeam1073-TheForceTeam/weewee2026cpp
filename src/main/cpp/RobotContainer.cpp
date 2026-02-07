@@ -25,6 +25,7 @@ RobotContainer::RobotContainer() {
   m_Localizer = std::make_shared<Localizer>(m_drivetrain, m_Tags);
   m_FieldDisplay = std::make_shared<FieldMapDisplay>(m_drivetrain, m_Localizer, m_FieldMap);
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI, m_Localizer));
+  m_ZoneFinder = std::make_shared<ZoneFinder>(m_Localizer);
 
   // Configure the button bindings
   ConfigureBindings();
