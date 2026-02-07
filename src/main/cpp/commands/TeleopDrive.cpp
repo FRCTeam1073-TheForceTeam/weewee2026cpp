@@ -40,6 +40,8 @@ void TeleopDrive::Execute() {
     leftX = m_OI->GetDriverLeftX();
     rightX =  m_OI->GetDriverRightX();
     avgTorque = m_drivetrain->GetAverageLoad();
+    currentTime = frc::Timer::GetMatchTime();
+
 
     frc::SmartDashboard::PutBoolean("TeleopDrive/Parking Break", parked);
 
@@ -109,6 +111,12 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
+    }
+
+    if(((frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
+        m_OI->DriverRumble();
+    } else {
+        m_OI->DriverStopRumble();
     }
 }
 

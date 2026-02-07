@@ -53,6 +53,8 @@ private:
     double leftX;
     double leftY;
     double rightX;
+    
+    units::time::second_t currentTime;
 
     units::velocity::meters_per_second_t vx;
     units::velocity::meters_per_second_t vy;
@@ -67,6 +69,6 @@ private:
     units::force::newton_t avgTorque;
     units::force::newton_t torqueGate;
 
-    //TODO: aprilTagFinde, Localizer, and Lidar stuff
+    //TODO: aprilTagFinder, Localizer, and Lidar stuff
 
 };

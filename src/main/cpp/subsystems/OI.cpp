@@ -113,6 +113,14 @@ bool OI::GetDriverDPadDown() {
     return _driverController.GetPOV(180) == 180;
 }
 
+bool OI::DriverRumble() {
+    _driverController.frc::GenericHID::SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
+}
+
+bool OI::DriverStopRumble() {
+    _driverController.frc::GenericHID::SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
+}
+
 bool OI::GetOperatorAButton() {
     return _operatorController.GetAButton();
 }
@@ -163,6 +171,14 @@ bool OI::GetOperatorDPadLeft() {
 
 bool OI::GetOperatorDPadDown() {
     return _operatorController.GetPOV() == 180;
+}
+
+bool OI::OperatorRumble() {
+    _operatorController.frc::GenericHID::SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
+}
+
+bool OI::OperatorStopRumble() {
+    _operatorController.frc::GenericHID::SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
 }
 
 void OI::ZeroDriverController() {
