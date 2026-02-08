@@ -4,11 +4,13 @@ AprilTagFinder::AprilTagFinder()
 {
     std::cout << "Creating April Tag Object" << std::endl;
     _cameras = {
+       /*
         RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Left"), frc::Transform3d(frc::Translation3d(-0.2_m, 0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, -150_deg))),
         RobotCamera(std::make_shared<photon::PhotonCamera>("Back_Right"), frc::Transform3d(frc::Translation3d(-0.2_m, -0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, 150_deg))),
         RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Left"), frc::Transform3d(frc::Translation3d(0.2_m, 0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, -30_deg))),
         RobotCamera(std::make_shared<photon::PhotonCamera>("Front_Right"), frc::Transform3d(frc::Translation3d(0.2_m, -0.239_m, 0.1_m),frc::Rotation3d(0_deg, -15_deg, 30_deg)))
-    };
+       */
+        };
 }
 
 frc::Pose3d AprilTagFinder::estimateFieldToRobotAprilTag(frc::Transform3d cameraToTarget, frc::Pose3d fieldRelativeTagPose, frc::Transform3d robotToCamera) {

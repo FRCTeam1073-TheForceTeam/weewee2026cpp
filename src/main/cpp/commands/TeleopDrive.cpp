@@ -11,7 +11,8 @@ TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr
     m_OI{oi},
     m_localizer{localizer} {
     allianceSign = 1,
-    fieldCentric = true,
+    fieldCentric = false,
+    //fieldCentric changed to false.Needs to be changed back
     lastParkingBreakButton = false,
     lastFieldCentricButton = true,
     parked = false,
