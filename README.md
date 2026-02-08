@@ -83,3 +83,15 @@ components and start CANBus IDs for subsystem hardware at ID 5.
 
 
 Add mechanisms after this...
+| Device Name        | CANBusID | CanBus     |
+| ------------------ | -------- | ---------- |
+| Elevator Front     |    18    |  rio       |
+| Spindexer          |    19    |  rio       |
+| Feeder             |    20    |  rio       |
+| Turret             |    21    |  rio       |
+| ________           |    22    |  rio       |
+| ________           |    23    |  rio       |
+| ________           |    24    |  rio       |
+| ________           |    25    |  rio       |
+| ________           |    26    |  rio       |
+| ________           |    27    |  rio       |
