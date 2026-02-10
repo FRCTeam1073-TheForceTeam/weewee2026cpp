@@ -23,7 +23,6 @@
 #include "subsystems/Intake.h"
 #include "subsystems/Climber.h"
 #include "commands/Climb.h"
-<<<<<<< HEAD
 #include "commands/FlywheelTeleop.h"
 #include "commands/Shoot.h"
 #include "commands/ClimberTeleop.h"
@@ -34,11 +33,9 @@
 #include "commands/LoaderTeleop.h"
 #include "subsystems/Spindexer.h"
 #include "commands/SpindexerTeleop.h"
-=======
 #include "commands/Laser.h"
 #include "subsystems/LaserCan.h"
 
->>>>>>> 5d36825946a2d4bb0ff9f39f7d9786d483d72eae
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -82,13 +79,10 @@ class RobotContainer {
   std::shared_ptr<ShooterLoad> m_shooterLoad;
   std::shared_ptr<Flywheel> m_flywheel;
   std::shared_ptr<Climber> m_climber;
-<<<<<<< HEAD
   std::shared_ptr<ShooterHood> m_shooterHood;
   std::shared_ptr<Spindexer> m_spindexer;
   //std::shared_ptr<LaserCan> m_laser;
-=======
   std::shared_ptr<LaserCan> m_laser;
->>>>>>> 5d36825946a2d4bb0ff9f39f7d9786d483d72eae
 
   bool isRed;
 
