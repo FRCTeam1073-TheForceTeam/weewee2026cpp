@@ -12,13 +12,13 @@
 #include "commands/Collect.h"
 #include "subsystems/LaserCan.h"
 
+#include "commands/Autos/TestAuto.h"
 
 const std::string RobotContainer::noPosition = "No Position";
 const std::string RobotContainer::rightPosition = "Right Auto";
 const std::string RobotContainer::leftPosition = "Left Auto";
 const std::string RobotContainer::centerPosition = "Center Auto";
 const std::string RobotContainer::testAuto = "Test Auto";
-
 
 RobotContainer::RobotContainer() {
   m_drivetrain = std::make_shared<Drivetrain>();
@@ -36,16 +36,23 @@ RobotContainer::RobotContainer() {
   m_climber = std::make_shared<Climber>();
   m_laser = std::make_shared<LaserCan>();
 
+  trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
+  m_ZoneFinder = std::make_shared<ZoneFinder>(m_Localizer);
+
   // Configure the button bindings
   ConfigureBindings();
   
 }
 
-void RobotContainer::ConfigureBindings() {
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+  return TestAuto::Create(m_drivetrain, m_Localizer, trajectory);
 }
 
+void RobotContainer::autonomousInit() {
+}
 
+void RobotContainer::AutonomousPeriodic() {
+}
 
-// frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-//  // TODO:
-// }
+void RobotContainer::ConfigureBindings() {
+}
