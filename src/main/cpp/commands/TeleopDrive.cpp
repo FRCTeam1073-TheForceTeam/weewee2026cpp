@@ -111,11 +111,11 @@ void TeleopDrive::Execute() {
     }
 }
 
-void TeleopDrive::End(bool interuppted) {
-    if(interuppted) {
+void TeleopDrive::End(bool interrupted) {
+    if(interrupted) {
         std::cerr << "TeleopDrive: Interrupted!" << std::endl;
     }
-    Command::End(interuppted);
+    Command::End(interrupted);
 }
 
 bool TeleopDrive::IsFinished() {

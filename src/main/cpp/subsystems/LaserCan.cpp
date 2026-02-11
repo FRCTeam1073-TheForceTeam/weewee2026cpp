@@ -13,7 +13,7 @@ using namespace ctre::phoenix6;
  */
 LaserCan::LaserCan() :
 _hardwareConfigured(true), 
-laserCAN(28)//TODO: change zero to a different number
+laserCAN(28)
 {
   // Do hardware configuration and track if it succeeds:
   _hardwareConfigured = ConfigureHardware();

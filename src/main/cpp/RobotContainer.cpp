@@ -9,6 +9,8 @@
 #include "commands/Autos.h"
 #include "commands/ExampleCommand.h"
 #include "commands/TeleopDrive.h"
+#include "commands/Collect.h"
+#include "subsystems/LaserCan.h"
 
 
 const std::string RobotContainer::noPosition = "No Position";
@@ -27,6 +29,13 @@ RobotContainer::RobotContainer() {
   m_FieldDisplay = std::make_shared<FieldMapDisplay>(m_drivetrain, m_Localizer, m_FieldMap);
   m_drivetrain->SetDefaultCommand(TeleopDrive(m_drivetrain, m_OI, m_Localizer));
   m_Laser = std::make_shared<LaserCan>();
+  m_flywheel = std::make_shared<Flywheel>();
+  m_intake = std::make_shared<Intake>();
+  cmd_collect = std::make_shared<Collect>(m_intake);
+  m_shooterLoad = std::make_shared<ShooterLoad>();
+  m_climber = std::make_shared<Climber>();
+  m_laser = std::make_shared<LaserCan>();
+
   // Configure the button bindings
   ConfigureBindings();
   
