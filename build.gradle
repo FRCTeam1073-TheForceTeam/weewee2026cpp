@@ -50,6 +50,18 @@ wpi.sim.addDriverstation()
 
 model {
     components {
+        // common(NativeLibrarySpec) {
+        //     sources.cpp {
+        //         lib library: "common"
+        //         source {
+        //             srcDir 'modules/common2026'
+        //             include '**/*.cpp'
+        //         }
+        //         exportedHeaders {
+        //             srcDir 'modules/common2026'
+        //         }
+        //     }
+        // }
         frcUserProgram(NativeExecutableSpec) {
             targetPlatform wpi.platforms.roborio
             if (includeDesktopSupport) {
