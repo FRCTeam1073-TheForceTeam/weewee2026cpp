@@ -37,6 +37,7 @@ RobotContainer::RobotContainer() {
   m_laser = std::make_shared<LaserCan>();
 
   trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
+  m_ZoneFinder = std::make_shared<ZoneFinder>(m_Localizer);
 
   // Configure the button bindings
   ConfigureBindings();
