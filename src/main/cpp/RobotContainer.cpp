@@ -36,6 +36,8 @@ RobotContainer::RobotContainer() {
   m_climber = std::make_shared<Climber>();
   m_laser = std::make_shared<LaserCan>();
 
+  m_drivetrain->ResetOdometry(frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_rad)));
+
   // Configure the button bindings
   ConfigureBindings();
   

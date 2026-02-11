@@ -19,6 +19,8 @@ TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr
     last_snap_time = 0,
     angle_tolerance = 0.05_rad,
     torqueGate = 65_N,
+    // TODO: chassisspeeds and speeds appear in the java drivetrain; determine if these are necessary for the c++ file
+    // TODO: pointAtTarget boolean, localizer, lidar and aprilTagFinder appears in the java drivetrain, but it might be a better idea to put these in the localize file
     // Register that this command requires the subsystem.
     AddRequirements({m_drivetrain.get(), m_OI.get()});
 }
@@ -39,6 +41,8 @@ void TeleopDrive::Execute() {
     leftX = m_OI->GetDriverLeftX();
     rightX =  m_OI->GetDriverRightX();
     avgTorque = m_drivetrain->GetAverageLoad();
+    currentTime = frc::Timer::GetMatchTime();
+
 
     frc::SmartDashboard::PutBoolean("TeleopDrive/Parking Break", parked);
 
@@ -98,7 +102,8 @@ void TeleopDrive::Execute() {
                     vx,
                     vy,
                     omega,
-                    frc::Rotation2d{m_localizer->getPose().Rotation()}
+                    //frc::Rotation2d{m_localizer->getPose().Rotation()} TODO:: figure out which one or both work
+                    frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()}
                 )
             );
         }
@@ -108,6 +113,12 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
+    }
+
+    if((((int)frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
+        m_OI->DriverRumble();
+    } else {
+        m_OI->DriverStopRumble();
     }
 }
 
