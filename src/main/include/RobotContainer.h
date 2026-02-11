@@ -19,6 +19,7 @@
 #include "subsystems/FieldMapDisplay.h"
 #include "subsystems/Localizer.h"
 #include "subsystems/FieldMap.h"
+#include "subsystems/LaserCan.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -61,7 +62,7 @@ class RobotContainer {
   std::shared_ptr<FieldMapDisplay> m_FieldDisplay;
   std::shared_ptr<Localizer> m_Localizer;
   std::shared_ptr<FieldMap> m_FieldMap;
-
+  std::shared_ptr<LaserCan> m_Laser;
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
