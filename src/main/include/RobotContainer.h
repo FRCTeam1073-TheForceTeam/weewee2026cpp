@@ -40,11 +40,10 @@
 #include "commands/SpindexerTeleop.h"
 #include "commands/Laser.h"
 #include "subsystems/LaserCan.h"
-
 #include "commands/Autos/TestAuto.h"
-
 #include <choreo/Choreo.h>
 #include "subsystems/ZoneFinder.h"
+#include "subsystems/HubFinder.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -98,9 +97,9 @@ class RobotContainer {
   std::shared_ptr<ShooterHood> m_shooterHood;
   std::shared_ptr<Spindexer> m_spindexer;
   std::shared_ptr<LaserCan> m_laser;
-
   std::shared_ptr<TestAuto> cmd_testAuto;
   std::shared_ptr<ZoneFinder> m_ZoneFinder;
+  std::shared_ptr<HubFinder> m_HubFinder;
 
 
   // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
