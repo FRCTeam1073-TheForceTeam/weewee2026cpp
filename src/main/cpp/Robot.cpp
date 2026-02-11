@@ -7,6 +7,8 @@
 #include <frc2/command/CommandScheduler.h>
 #include "grpl/CanBridge.h"
 
+#include "grpl/CanBridge.h"
+
 Robot::Robot() {
   grpl::start_can_bridge();
 }
