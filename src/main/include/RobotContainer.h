@@ -40,7 +40,10 @@
 #include "commands/SpindexerTeleop.h"
 #include "commands/Laser.h"
 #include "subsystems/LaserCan.h"
-
+#include "commands/Autos/TestAuto.h"
+#include <choreo/Choreo.h>
+#include "subsystems/ZoneFinder.h"
+#include "subsystems/HubFinder.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -57,7 +60,6 @@ class RobotContainer {
   static const std::string leftPosition;
   static const std::string centerPosition;
   static const std::string testAuto;
-
   
   RobotContainer();
   // frc2::CommandPtr GetAutonomousCommand();
@@ -65,7 +67,10 @@ class RobotContainer {
 
   void autonomousInit();
 
-  frc2::Command GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
+
+  void AutonomousPeriodic();
+
   frc2::Command GetTeleopCommand();
   frc2::Command GetDisbaledCommand();
 
@@ -92,14 +97,20 @@ class RobotContainer {
   std::shared_ptr<ShooterHood> m_shooterHood;
   std::shared_ptr<Spindexer> m_spindexer;
   std::shared_ptr<LaserCan> m_laser;
+  std::shared_ptr<TestAuto> cmd_testAuto;
+  std::shared_ptr<ZoneFinder> m_ZoneFinder;
+  std::shared_ptr<HubFinder> m_HubFinder;
+
+
+  // std::shared_ptr<TeleopDrive> cmd_teleopDrive;
 
   bool isRed;
 
   const frc::SendableChooser<std::string> m_positionChooser;
 
-
   const frc::SendableChooser<std::string> m_levelChooser;
 
+  std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory;
 
   void ConfigureBindings();
 

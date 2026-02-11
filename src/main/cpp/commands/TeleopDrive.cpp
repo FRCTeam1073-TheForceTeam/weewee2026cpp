@@ -6,6 +6,10 @@
 #include <frc/DriverStation.h>
 #include <iostream>
 
+#include <choreo/Choreo.h>
+#include <commands/Autos/TestAuto.h>
+
+
 TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi, std::shared_ptr<Localizer> localizer) : 
     m_drivetrain{drivetrain}, 
     m_OI{oi},
@@ -113,6 +117,12 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Omega", m_drivetrain->GetChassisSpeeds().omega.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
+
+        auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
+        frc::SmartDashboard::PutBoolean("TeleopDrive/A Button", m_OI->GetDriverAButton());
+        if(m_OI->GetDriverAButton()) {
+            TestAuto::Create(m_drivetrain, m_localizer, trajectory);
+        }
     }
 
     if((((int)frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
