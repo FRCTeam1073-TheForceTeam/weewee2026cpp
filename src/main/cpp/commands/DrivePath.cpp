@@ -14,6 +14,7 @@ DrivePath::DrivePath(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<Loc
   yController{4.8, 0, 0.01},
   thetaController{1.5, 0.0, 0.01}
 {
+  quit = false;
   thetaController.EnableContinuousInput(-std::numbers::pi, std::numbers::pi);
   frc::SmartDashboard::PutString("DrivePath/Status", "Idle");
   AddRequirements({m_drivetrain.get(), m_localizer.get()});
@@ -33,11 +34,12 @@ void DrivePath::Initialize() {
 
   robotPose = m_localizer->getPose();
   frc::SmartDashboard::PutNumber("DrivePath/InitRobotPoseTranslationNorm", robotPose.Translation().Norm().value());
-  // frc::Transform2d diff = (robotPose - trajectory.value().GetInitialPose().value());
-  // if(diff.Translation().Norm() >= 2_m) {
-  //   quit = true;
-  // }
-  quit = false;
+  frc::Transform2d diff = (robotPose - trajectory.value().GetInitialPose().value());
+  if(diff.Translation().Norm() >= 50_m) { //TODO: change threshold
+    quit = true;
+  }
+  frc::SmartDashboard::PutNumber("DrivePath/translation_diff", diff.Translation().Norm().value());
+  frc::SmartDashboard::PutBoolean("DrivePath/quit", quit);
 }
 
 // Called repeatedly when this Command is scheduled to run
