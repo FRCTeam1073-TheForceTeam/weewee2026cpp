@@ -6,7 +6,6 @@
 
 #include "subsystems/DriveTrain.h"
 #include "subsystems/OI.h"
-#include "subsystems/Localizer.h"
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <cmath>
@@ -20,7 +19,7 @@ public:
    *
    * @param drivetrain The subsystem used by this command.
    */
-    explicit TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi, std::shared_ptr<Localizer> localizer);
+    explicit TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi);
 
     void Initialize() override;
     void Execute() override;
@@ -30,7 +29,6 @@ public:
 private:
     std::shared_ptr<Drivetrain> m_drivetrain;
     std::shared_ptr<OI> m_OI;
-    std::shared_ptr<Localizer> m_localizer;
 
     frc::ChassisSpeeds speeds;
 
@@ -70,7 +68,5 @@ private:
     units::force::newton_t backRightTorque;
     units::force::newton_t avgTorque;
     units::force::newton_t torqueGate;
-
-    //TODO: aprilTagFinder, Localizer, and Lidar stuff
 
 };

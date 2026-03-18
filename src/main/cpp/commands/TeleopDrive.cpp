@@ -6,14 +6,10 @@
 #include <frc/DriverStation.h>
 #include <iostream>
 
-#include <choreo/Choreo.h>
-#include <commands/Autos/TestAuto.h>
 
-
-TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi, std::shared_ptr<Localizer> localizer) : 
+TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr<OI> oi) : 
     m_drivetrain{drivetrain}, 
-    m_OI{oi},
-    m_localizer{localizer} {
+    m_OI{oi} {
     allianceSign = 1,
     fieldCentric = true,
     lastParkingBreakButton = false,
@@ -23,16 +19,13 @@ TeleopDrive::TeleopDrive(std::shared_ptr<Drivetrain> drivetrain, std::shared_ptr
     last_snap_time = 0,
     angle_tolerance = 0.05_rad,
     torqueGate = 65_N,
-    // TODO: chassisspeeds and speeds appear in the java drivetrain; determine if these are necessary for the c++ file
-    // TODO: pointAtTarget boolean, localizer, lidar and aprilTagFinder appears in the java drivetrain, but it might be a better idea to put these in the localize file
-    // Register that this command requires the subsystem.
-    AddRequirements({m_drivetrain.get(), m_OI.get()});
+    AddRequirements({m_drivetrain.get()});
 }
 
 void TeleopDrive::Initialize() {
     std::cerr << "TeleopDrive Init" << std::endl;
-    Command::Initialize();
-    if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+    auto alliance = frc::DriverStation::GetAlliance();
+    if(alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
         allianceSign = 1;
     }
     else {
@@ -106,7 +99,6 @@ void TeleopDrive::Execute() {
                     vx,
                     vy,
                     omega,
-                    //frc::Rotation2d{m_localizer->getPose().Rotation()} TODO:: figure out which one or both work
                     frc::Rotation2d{m_drivetrain->GetGyroHeadingRadians()}
                 )
             );
@@ -118,10 +110,8 @@ void TeleopDrive::Execute() {
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed X", m_drivetrain->GetChassisSpeeds().vx.value());
         frc::SmartDashboard::PutNumber("TeleopDrive/Chassis Speed Y", m_drivetrain->GetChassisSpeeds().vy.value());
 
-        auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Auto");
         frc::SmartDashboard::PutBoolean("TeleopDrive/A Button", m_OI->GetDriverAButton());
         if(m_OI->GetDriverAButton()) {
-            TestAuto::Create(m_drivetrain, m_localizer, trajectory);
         }
     }
 
@@ -136,7 +126,6 @@ void TeleopDrive::End(bool interrupted) {
     if(interrupted) {
         std::cerr << "TeleopDrive: Interrupted!" << std::endl;
     }
-    Command::End(interrupted);
 }
 
 bool TeleopDrive::IsFinished() {
