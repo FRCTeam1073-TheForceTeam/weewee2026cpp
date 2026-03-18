@@ -115,11 +115,15 @@ void TeleopDrive::Execute() {
         }
     }
 
-    if((((int)frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
-        m_OI->DriverRumble();
-    } else {
-        m_OI->DriverStopRumble();
-    }
+    // if((((int)frc::Timer::GetMatchTime().value() - 30) % 25) == 0) {
+    //     std::cerr << "2" << std::endl;
+    //     m_OI->DriverRumble();
+    //     std::cerr << "3" << std::endl;
+    // } else {
+    //     m_OI->DriverStopRumble();
+    //     std::cerr << "4" << std::endl;
+    // }
+    // std::cerr << "5" << std::endl;
 }
 
 void TeleopDrive::End(bool interrupted) {
